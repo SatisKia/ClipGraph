@@ -1,0 +1,1391 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="format-detection" content="telephone=no, email=no, address=no">
+<title>ClipGraph説明書</title>
+<style type="text/css">
+html, body {
+	margin:0;
+	padding:0;
+	line-height:18px;
+}
+* {
+	font-family:"Helvetica";
+	font-size:16px;
+	color:#000000;
+}
+.div_body {
+	background-color:#FFFFFF;
+}
+button {
+	-webkit-appearance:button;
+	margin:2px;
+	padding:2px;
+	width:45px;
+	height:30px;
+	vertical-align:middle;
+	border-left:1px solid #E0E0E0;
+	border-top:1px solid #E0E0E0;
+	border-right:1px solid #808080;
+	border-bottom:1px solid #808080;
+	background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#E0E0E0),color-stop(100%,#A0A0A0));
+	text-shadow:1px 1px #E0E0E0;
+}
+.button_func {
+	width:65px;
+}
+.button_extfunc {
+	width:95px;
+}
+.button_loadextfunc {
+	width:160px;
+}
+.button_savefunc {
+	width:85px;
+}
+.button_import {
+	width:110px;
+}
+.hr {
+	border:0;
+	margin:0;
+	height:4px;
+}
+.hr_border {
+	border-top:1px solid #808080;
+	margin-top:4px;
+	margin-bottom:3px;
+}
+.hr_fract {
+	border-top:1px solid #000000;
+	margin-top:0;
+	margin-bottom:1px;
+}
+.span_expr {
+	font-family:"Courier New";
+	font-size:20px;
+}
+.span_pow {
+	font-family:"Helvetica";
+	font-size:12px;
+	vertical-align:4pt;
+}
+.div_ex {
+	width:100%;
+	text-align:right;
+	background-color:#F8F8F8;
+}
+.div_edit {
+	padding:2px;
+	font-family:"Courier New";
+	text-align:left;
+	background-color:#FFFFFF;
+	border:1px solid #808080;
+}
+.span_example {
+	border:1px solid #000000;
+	border-radius:10px;
+}
+</style>
+</head>
+<body>
+<div class="div_body">
+
+<hr class="hr">
+<b><i><span style="font-size:22px">ClipGraph</span></i><br>
+<span style="font-size:20px">取扱説明書</span><br>
+<i><span style="font-size:18px">User&apos;s Guide</span></i></b><br>
+
+<a name="mokuji"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">目次</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<a href="#menu">メニューボタン</a><br>
+<hr class="hr">
+<a href="#env">環境設定</a><br>
+<hr class="hr">
+<a href="#val">数値入力</a><br>
+<hr class="hr">
+<a href="#rect">線形座標、対数座標</a><br>
+<hr class="hr">
+<a href="#param">媒介変数</a><br>
+<hr class="hr">
+<a href="#polar">極座標</a><br>
+<hr class="hr">
+<a href="#table">数表機能</a><br>
+<hr class="hr">
+<a href="#program">プログラム機能</a><br>
+<hr class="hr">
+<a href="#gijyutu">技術情報</a><br>
+<hr class="hr">
+<a href="#button">ボタンの働き</a><br>
+
+<a name="menu"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">メニューボタン</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<button><img src="icon1.png" width="20" height="20"></button>グラフ画面<br>
+<hr class="hr">
+<button><img src="icon6.png" width="20" height="20"></button>計算式入力画面<br>
+<hr class="hr">
+<button><img src="icon7.png" width="20" height="20"></button>エディター画面<br>
+<hr class="hr">
+<button><img src="icon3.png" width="20" height="20"></button>計算式の履歴／エラー表示<br>
+<hr class="hr">
+<button><img src="icon4.png" width="20" height="20"></button>変数値入力画面<br>
+<hr class="hr">
+<button><img src="icon2.png" width="20" height="20"></button>数表画面<br>
+<hr class="hr">
+<button><img src="icon5.png" width="20" height="20"></button>環境設定画面<br>
+
+<a name="env"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">環境設定</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<button><img src="icon5.png" width="20" height="20"></button>ボタンを押すと、環境設定画面になります。<br>
+<hr class="hr">
+<b>目盛り線</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>X方向</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+X方向目盛り線の描画単位を指定します。単位は座標値です。<span class="span_expr">0.0</span>を指定すると目盛り線の表示が行われません。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Y方向</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Y方向目盛り線の描画単位を指定します。単位は座標値です。<span class="span_expr">0.0</span>を指定すると目盛り線の表示が行われません。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+●設定した場合、前回までのグラフは消去されます。<br>
+</td></tr></table>
+<hr class="hr">
+<b>目盛り文字</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>X方向</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+X方向目盛り文字の表示単位を正の整数で指定します。単位はX方向目盛り線の数です。<span class="span_expr">0</span>を指定すると目盛り文字の表示が行われません。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Y方向</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Y方向目盛り文字の表示単位を正の整数で指定します。単位はY方向目盛り線の数です。<span class="span_expr">0</span>を指定すると目盛り文字の表示が行われません。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+●設定した場合、前回までのグラフは消去されます。<br>
+</td></tr></table>
+<hr class="hr">
+<b>グラフ再生成</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>□座標系の変更時</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+XY座標系(線形座標、対数座標)内での切り替え時にグラフを再生成させる場合、チェックを付けます。XY座標系・媒介変数・極座標間での切り替え時は、このオプションに関わらず、計算式、グラフともにクリアされます。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>□角度の単位変更時</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+角度指定(Deg、Rad、Grad)の変更時にグラフを再生成させる場合、チェックを付けます。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>□ウィンドウ座標の変更時</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+<img src="hand.png" width="20" height="20">ツールでのグラフ画面スクロール、<img src="zoom.png" width="20" height="20">ツールでのグラフ画面のトリミング、<button><img src="init.png" width="20" height="20"></button>ボタンでのウィンドウ設定変更時に、グラフを再生成させる場合、チェックを付けます。<br>
+</td></tr></table>
+<hr class="hr">
+<b>環境設定ｴｸｽﾎﾟｰﾄ</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+ボタンを押すと、環境設定内容がテキスト表示されます。テキスト内容を「すべて選択」してコピー(クリップボードにコピー)し、メモ帳などにペーストして保存しておいてください。<br>
+</td></tr></table>
+<hr class="hr">
+<b>環境設定ｲﾝﾎﾟｰﾄ</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+テキストエリアに環境設定内容を入力(メモ帳などからコピー&amp;ペースト)して、<button class="button_import">ｲﾝﾎﾟｰﾄする</button>ボタンを押してください。テキストエリアに入力する内容は、エクスポート時の内容全てである必要はありません。反映させたい内容のみを入力してください。<br>
+</td></tr></table>
+
+<a name="val"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">数値入力</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<b>■浮動小数点</b><br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例1&nbsp;&nbsp;</span> 123.45<br>
+<hr class="hr">
+<div class="div_ex">
+	<span class="span_expr">123</span><button>.</button><span class="span_expr">45</span><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例2&nbsp;&nbsp;</span> -1.2e+3 (指数表記)<br>
+<hr class="hr">
+<div class="div_ex">
+	<button>\-</button><span class="span_expr">1</span><button>.</button><span class="span_expr">2</span><button>e+</button><span class="span_expr">3</span><br>
+</div>
+<hr class="hr">
+<b>■複素数</b><br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例1&nbsp;&nbsp;</span> 12.3+4.5i (実数部12.3と虚数部+4.5)<br>
+<hr class="hr">
+<div class="div_ex">
+	<span class="span_expr">12</span><button>.</button><span class="span_expr">3</span><button>\+</button><span class="span_expr">4</span><button>.</button><span class="span_expr">5</span><button>i</button><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例2&nbsp;&nbsp;</span> 1e-2-3e+4i (実数部1e-2と虚数部-3e+4)<br>
+<hr class="hr">
+<div class="div_ex">
+	<span class="span_expr">1</span><button>e-</button><span class="span_expr">2</span><button>\-</button><span class="span_expr">3</span><button>e+</button><span class="span_expr">4</span><button>i</button><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例3&nbsp;&nbsp;</span> -i (実数部は省略できます。また、虚数部の1は省略できます。)<br>
+<hr class="hr">
+<div class="div_ex">
+	<button>\-</button><button>i</button><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例4&nbsp;&nbsp;</span> (12 34) (実数部12と虚数部34)<br>
+<hr class="hr">
+<div class="div_ex">
+	<button>(</button><span class="span_expr">12</span><button>SP</button><span class="span_expr">34</span><button>)</button><br>
+</div>
+
+<a name="rect"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">線形座標、対数座標</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+●線形座標グラフを描画するには、線形座標モードにします。対数座標グラフを描画するには、X軸対数・Y軸対数・対数座標モードにします。<br>
+<hr class="hr">
+●計算式1(上段)に変数xを含む計算式y=f(x)を入力します。X座標値xに対するY座標値yを求めます。<br>
+<hr class="hr">
+<b>■ウィンドウ設定</b><br>
+<hr class="hr">
+<button><img src="init.png" width="20" height="20"></button>ボタンを押すとウィンドウ設定画面になります。<br>
+<hr class="hr">
+<b>オフセット指定</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>X方向オフセット</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+原点のX方向位置を、グラフ画面左からのオフセットで指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Y方向オフセット</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+原点のY方向位置を、グラフ画面上からのオフセットで指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>X方向の単位</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+X軸対数モードの場合、X方向での10<span class="span_pow">n</span>から10<span class="span_pow">n+1</span>の間隔を指定します。その他のモードの場合、X方向での値1.0分の間隔を指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Y方向の単位</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Y軸対数モードの場合、Y方向での10<span class="span_pow">n</span>から10<span class="span_pow">n+1</span>の間隔を指定します。その他のモードの場合、Y方向での値1.0分の間隔を指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+<b>ウィンドウ指定</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Left</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+グラフ画面左のX座標値を指定します。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Right</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+グラフ画面右のX座標値を指定します。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Bottom</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+グラフ画面下のY座標値を指定します。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Top</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+グラフ画面上のY座標値を指定します。<br>
+</td></tr></table>
+<hr class="hr">
+●ウィンドウで指定した場合、若干の誤差が生じます。<br>
+<hr class="hr">
+●設定した場合、前回までのグラフは消去されます。<br>
+<hr class="hr">
+<b>■グラフを描画する</b><br>
+<hr class="hr">
+●計算式1(上段)に変数xを含む計算式を入力し、<button><img src="draw.png" width="20" height="20"></button>ボタンを押します。<br>
+<hr class="hr">
+●変数xは<button>x,t</button>ボタンで入力します。<br>
+<hr class="hr">
+●計算式の先頭での<button>(</button>ボタン入力および末尾での<button>)</button>ボタン入力は省略することができます。<br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例1&nbsp;&nbsp;</span> y=√(x<span class="span_pow">2</span>+x-1)のグラフを描画する。<br>
+<hr class="hr">
+<div class="div_ex">
+	線形座標モードにする<br>
+	<button class="button_func">sqrt</button><button>(</button><button class="button_func">sqr</button><button>x,t</button><button>+</button><button>x,t</button><button>-</button><span class="span_expr">1</span><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">sqrt(sqr x+x-1</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_rect_zoom.png"><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例2&nbsp;&nbsp;</span><br>
+<table>
+	<tr>
+		<td valign="middle">y=sin(x+</td>
+		<td align="center">
+			π<br>
+			<hr class="hr_fract" style="width:25px">
+			2
+		</td>
+		<td valign="middle">)のグラフを描画する。</td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	線形座標モードにする<br>
+	角度の単位をRadにする<br>
+	<button class="button_func">sin</button><button>(</button><button>x,t</button><button>+</button><button class="button_func">pi</button><button>/</button><span class="span_expr">2</span><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">sin(x+!pi/2</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_rect_graph_2.png"><br>
+</div>
+<hr class="hr">
+<b>■トレースツール</b><br>
+<hr class="hr">
+●グラフ描画後にグラフ画面内をタップすることで、X座標値に対応するY座標値を取得します。<br>
+<hr class="hr">
+●水平方向にドラッグすることでリアルタイムにY座標値を確認できます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_trace_1.png"><br>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">x=</span></td><td><hr class="hr"><div class="div_edit">0.775</div></td></tr>
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">y=</span></td><td><hr class="hr"><div class="div_edit">0.7144210340559314</div></td></tr>
+	</table>
+	<hr class="hr">
+</div>
+<hr class="hr">
+<b>■手のひらツール</b><br>
+<hr class="hr">
+●グラフ画面をドラッグでスクロールさせます。<br>
+<hr class="hr">
+●環境設定で、ウィンドウ座標の変更時にグラフ再生成するように設定している場合、画面外であった部分のグラフが自動的に生成されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_hand_1.png"><br>
+	<hr class="hr">
+	<img src="guide_rect_hand_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ボックスズームツール</b><br>
+<hr class="hr">
+●グラフ画面をドラッグで領域指定して放すと、指定領域がグラフ画面サイズまで拡大されます。<br>
+<hr class="hr">
+●環境設定で、ウィンドウ座標の変更時にグラフ再生成するように設定している場合、グラフが自動的に再生成されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_trim_1.png"><br>
+	<hr class="hr">
+	<img src="guide_rect_trim_2.png"><br>
+	(y=x<span class="span_pow">3</span>-4*x)<br>
+</div>
+<hr class="hr">
+<b>■拡大</b><br>
+<hr class="hr">
+●<button>＋</button>ボタンでグラフ画面を拡大できます。<br>
+<hr class="hr">
+●グラフ画面の中心を基準に拡大されます。<br>
+<hr class="hr">
+●環境設定で、ウィンドウ座標の変更時にグラフ再生成するように設定している場合、グラフが自動的に再生成されます。設定されていない場合、前回のサンプリングデータの間は直線補間されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_zoom.png"><br>
+	<button>＋</button><br>
+	<hr class="hr">
+	<img src="guide_rect_zoom_in.png"><br>
+</div>
+<hr class="hr">
+<b>■縮小</b><br>
+<hr class="hr">
+●<button>－</button>ボタンでグラフ画面を縮小できます。<br>
+<hr class="hr">
+●グラフ画面の中心を基準に縮小されます。<br>
+<hr class="hr">
+●環境設定で、ウィンドウ座標の変更時にグラフ再生成するように設定している場合、画面外であった部分のグラフが自動的に生成されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_zoom.png"><br>
+	<button>－</button><br>
+	<hr class="hr">
+	<img src="guide_rect_zoom_out.png"><br>
+</div>
+
+<a name="param"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">媒介変数</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+●媒介変数グラフを描画するには、媒介変数モードにします。<br>
+<hr class="hr">
+●計算式1(上段)に変数tを含む計算式x=f(t)を、計算式2(下段)に変数tを含む計算式y=f(t)を入力します。変数tに対するX・Y座標値を求めます。<br>
+<hr class="hr">
+●変数tの範囲をmin・maxエディットボックスで、サンプリング間隔をpchエディットボックスで指定します。<br>
+<hr class="hr">
+<b>■ウィンドウ設定</b><br>
+<hr class="hr">
+<button><img src="init.png" width="20" height="20"></button>ボタンを押すとウィンドウ設定画面になります。<br>
+<hr class="hr">
+<b>オフセット指定</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>X方向オフセット</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+原点のX方向位置を、グラフ画面左からのオフセットで指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Y方向オフセット</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+原点のY方向位置を、グラフ画面上からのオフセットで指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>単位</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+XY方向での値1.0分の間隔を指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+●設定した場合、前回までのグラフは消去されます。<br>
+<hr class="hr">
+<b>■グラフを描画する</b><br>
+<hr class="hr">
+●計算式1(上段)と計算式2(下段)に変数tを含む計算式を入力し、<button><img src="draw.png" width="20" height="20"></button>ボタンを押します。<br>
+<hr class="hr">
+●変数tは<button>x,t</button>ボタンで入力します。<br>
+<hr class="hr">
+●計算式の先頭での<button>(</button>ボタン入力および末尾での<button>)</button>ボタン入力は省略することができます。<br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例1&nbsp;&nbsp;</span> カージオイド<br>
+x=2*cosθ-cos(2*θ)<br>
+y=2*sinθ-sin(2*θ)<br>
+<hr class="hr">
+<div class="div_ex">
+	角度の単位をDegにする<br>
+	min値を<span class="span_expr">0.0</span>、max値を<span class="span_expr">360.0</span>、pch値を<span class="span_expr">1.0</span>に設定する<br>
+	(<span class="span_expr">x=</span>) <span class="span_expr">2</span><button>*</button><button class="button_func">cos</button><button>x,t</button><button>-</button><button class="button_func">cos</button><button>(</button><span class="span_expr">2</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">2*cos t-cos(2*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	(<span class="span_expr">y=</span>) <span class="span_expr">2</span><button>*</button><button class="button_func">sin</button><button>x,t</button><button>-</button><button class="button_func">sin</button><button>(</button><span class="span_expr">2</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">2*sin t-sin(2*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_param_zoom.png"><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例2&nbsp;&nbsp;</span> アステロイド<br>
+<table>
+	<tr>
+		<td valign="middle">x=</td>
+		<td align="center">
+			3<br>
+			<hr class="hr_fract" style="width:20px">
+			4
+		</td>
+		<td valign="middle">cosθ+</td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			4
+		</td>
+		<td valign="middle">cos(3*θ)</td>
+	<tr>
+</table>
+<table>
+	<tr>
+		<td valign="middle">y=</td>
+		<td align="center">
+			3<br>
+			<hr class="hr_fract" style="width:20px">
+			4
+		</td>
+		<td valign="middle">sinθ-</td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			4
+		</td>
+		<td valign="middle">sin(3*θ)</td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	角度の単位をDegにする<br>
+	min値を<span class="span_expr">0.0</span>、max値を<span class="span_expr">360.0</span>、pch値を<span class="span_expr">1.0</span>に設定する<br>
+	(<span class="span_expr">x=</span>) <span class="span_expr">3</span><button>/</button><span class="span_expr">4</span><button>*</button><button class="button_func">cos</button><button>x,t</button><button>+</button><span class="span_expr">1</span><button>/</button><span class="span_expr">4</span><button>*</button><button class="button_func">cos</button><button>(</button><span class="span_expr">3</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">3/4*cos t+1/4*cos(3*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	(<span class="span_expr">y=</span>) <span class="span_expr">3</span><button>/</button><span class="span_expr">4</span><button>*</button><button class="button_func">sin</button><button>x,t</button><button>-</button><span class="span_expr">1</span><button>/</button><span class="span_expr">4</span><button>*</button><button class="button_func">sin</button><button>(</button><span class="span_expr">3</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">3/4*sin t-1/4*sin(3*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_param_trim_2.png"><br>
+</div>
+<hr class="hr">
+<b>■トレースツール</b><br>
+<hr class="hr">
+●グラフ描画後にグラフ画面内をタップすることで、タップ位置に最も近いXY座標値を取得します。<br>
+<hr class="hr">
+●ドラッグすることでリアルタイムにXY座標値を確認できます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_trace_1.png"><br>
+	(x=sinθ、y=cosθ)<br>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">t=</span></td><td><hr class="hr"><div class="div_edit">51</div></td></tr>
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">x=</span></td><td><hr class="hr"><div class="div_edit">0.7771459614569708</div></td></tr>
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">y=</span></td><td><hr class="hr"><div class="div_edit">0.6293203910498375</div></td></tr>
+	</table>
+	<hr class="hr">
+</div>
+<hr class="hr">
+<b>■手のひらツール</b><br>
+<hr class="hr">
+●グラフ画面をドラッグでスクロールさせます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_hand_1.png"><br>
+	<hr class="hr">
+	<img src="guide_param_hand_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ボックスズームツール</b><br>
+<hr class="hr">
+●グラフ画面をドラッグで領域指定して放すと、指定領域がグラフ画面サイズまで拡大されます。<br>
+<hr class="hr">
+●領域は強制的にグラフ画面の縦横比率になります。<br>
+<hr class="hr">
+●環境設定で、ウィンドウ座標の変更時にグラフ再生成するように設定している場合、グラフが自動的に再生成されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_trim_1.png"><br>
+	<hr class="hr">
+	<img src="guide_param_trim_2.png"><br>
+</div>
+<hr class="hr">
+<b>■拡大</b><br>
+<hr class="hr">
+●<button>＋</button>ボタンでグラフ画面を拡大できます。<br>
+<hr class="hr">
+●グラフ画面の中心を基準に拡大されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_zoom.png"><br>
+	<button>＋</button><br>
+	<hr class="hr">
+	<img src="guide_param_zoom_in.png"><br>
+</div>
+<hr class="hr">
+<b>■縮小</b><br>
+<hr class="hr">
+●<button>－</button>ボタンでグラフ画面を縮小できます。<br>
+<hr class="hr">
+●グラフ画面の中心を基準に縮小されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_zoom.png"><br>
+	<button>－</button><br>
+	<hr class="hr">
+	<img src="guide_param_zoom_out.png"><br>
+</div>
+
+<a name="polar"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">極座標</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+●極座標グラフを描画するには、極座標モードにします。<br>
+<hr class="hr">
+●計算式1(上段)に変数tを含む計算式r=f(t)を入力します。角度tに対する半径rを求めます。<br>
+<hr class="hr">
+●角度tの範囲をmin・maxエディットボックスで、サンプリング間隔をpchエディットボックスで指定します。<br>
+<hr class="hr">
+●min・max・pch値は角度指定(Deg、Rad、Grad)に依存します。また、角度指定(Deg、Rad、Grad)を変更すると自動的に変換されます。<br>
+<hr class="hr">
+<b>■ウィンドウ設定</b><br>
+<hr class="hr">
+<button><img src="init.png" width="20" height="20"></button>ボタンを押すとウィンドウ設定画面になります。<br>
+<hr class="hr">
+<b>オフセット指定</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>X方向オフセット</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+原点の水平方向位置を、グラフ画面左からのオフセットで指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Y方向オフセット</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+原点の垂直方向位置を、グラフ画面上からのオフセットで指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>単位</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+半径1.0分の間隔を指定します。単位はpixelです。<br>
+</td></tr></table>
+<hr class="hr">
+●設定した場合、前回までのグラフは消去されます。<br>
+<hr class="hr">
+<b>■グラフを描画する</b><br>
+<hr class="hr">
+●計算式1(上段)に変数tを含む計算式を入力し、<button><img src="draw.png" width="20" height="20"></button>ボタンを押します。<br>
+<hr class="hr">
+●変数tは<button>x,t</button>ボタンで入力します。<br>
+<hr class="hr">
+●計算式の先頭での<button>(</button>ボタン入力および末尾での<button>)</button>ボタン入力は省略することができます。<br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例1&nbsp;&nbsp;</span> カージオイド<br>
+<table>
+	<tr>
+		<td valign="middle">r=(2*cos</td>
+		<td align="center">
+			θ<br>
+			<hr class="hr_fract" style="width:25px">
+			2
+		</td>
+		<td valign="middle"><span style="vertical-align:2pt">)<span class="span_pow">2</span></span></td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	角度の単位をDegにする<br>
+	min値を<span class="span_expr">0.0</span>、max値を<span class="span_expr">360.0</span>、pch値を<span class="span_expr">1.0</span>に設定する<br>
+	<button class="button_func">pow</button><button>(</button><span class="span_expr">2</span><button>*</button><button class="button_func">cos</button><button>(</button><button>x,t</button><button>/</button><span class="span_expr">2</span><button>)</button><button>)</button><span class="span_expr">2</span><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">pow(2*cos(t/2))2</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_polar_graph_1.png"><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例2&nbsp;&nbsp;</span> 正葉線 r=2*sin(2*θ)<br>
+<hr class="hr">
+<div class="div_ex">
+	角度の単位をDegにする<br>
+	min値を<span class="span_expr">0.0</span>、max値を<span class="span_expr">360.0</span>、pch値を<span class="span_expr">1.0</span>に設定する<br>
+	<span class="span_expr">2</span><button>*</button><button class="button_func">sin</button><button>(</button><span class="span_expr">2</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">2*sin(2*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_polar_zoom.png"><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例3&nbsp;&nbsp;</span> 放物線<br>
+<table>
+	<tr>
+		<td valign="middle">r=</td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:70px">
+			1-cosθ
+		</td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	角度の単位をDegにする<br>
+	min値を<span class="span_expr">0.0</span>、max値を<span class="span_expr">360.0</span>、pch値を<span class="span_expr">1.0</span>に設定する<br>
+	<span class="span_expr">1</span><button>/</button><button>(</button><span class="span_expr">1</span><button>-</button><button class="button_func">cos</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">1/(1-cos t</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_polar_graph_3.png"><br>
+</div>
+<hr class="hr">
+<b>■トレースツール</b><br>
+<hr class="hr">
+●グラフ描画後にグラフ画面内をタップすることで、タップ位置に最も近いデータ値を取得します。<br>
+<hr class="hr">
+●ドラッグすることでリアルタイムに値を確認できます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_trace_1.png"><br>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">t=</span></td><td><hr class="hr"><div class="div_edit">205</div></td></tr>
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">r=</span></td><td><hr class="hr"><div class="div_edit">1.5320888862379556</div></td></tr>
+	</table>
+	<hr class="hr">
+</div>
+<hr class="hr">
+<b>■手のひらツール</b><br>
+<hr class="hr">
+●グラフ画面をドラッグでスクロールさせます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_hand_1.png"><br>
+	<hr class="hr">
+	<img src="guide_polar_hand_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ボックスズームツール</b><br>
+<hr class="hr">
+●グラフ画面をドラッグで領域指定して放すと、指定領域がグラフ画面サイズまで拡大されます。<br>
+<hr class="hr">
+●領域は強制的にグラフ画面の縦横比率になります。<br>
+<hr class="hr">
+●環境設定で、ウィンドウ座標の変更時にグラフ再生成するように設定している場合、グラフが自動的に再生成されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_trim_1.png"><br>
+	<hr class="hr">
+	<img src="guide_polar_trim_2.png"><br>
+</div>
+<hr class="hr">
+<b>■拡大</b><br>
+<hr class="hr">
+●<button>＋</button>ボタンでグラフ画面を拡大できます。<br>
+<hr class="hr">
+●グラフ画面の中心を基準に拡大されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_zoom.png"><br>
+	<button>＋</button><br>
+	<hr class="hr">
+	<img src="guide_polar_zoom_in.png"><br>
+</div>
+<hr class="hr">
+<b>■縮小</b><br>
+<hr class="hr">
+●<button>－</button>ボタンでグラフ画面を縮小できます。<br>
+<hr class="hr">
+●グラフ画面の中心を基準に縮小されます。<br>
+<hr class="hr">
+●前回までのグラフは消去されます。<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_zoom.png"><br>
+	<button>－</button><br>
+	<hr class="hr">
+	<img src="guide_polar_zoom_out.png"><br>
+</div>
+
+<a name="table"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">数表機能</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+●<button><img src="icon2.png" width="20" height="20"></button>ボタンを押すと、数表画面になります。<br>
+<hr class="hr">
+●トレースツールで計算値を取得して<button>STO</button>ボタンを押すと、数表に登録されます。<br>
+<hr class="hr">
+<button>消</button>ボタン<br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+選択されている計算値を数表から削除します。<br>
+</td></tr></table>
+<hr class="hr">
+<button>&lt;&lt;</button>ボタン<br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+選択されている計算値でグラフ画面上に十字線を描きます。<br>
+</td></tr></table>
+
+<a name="program"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">プログラム機能</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+●<button><img src="icon7.png" width="20" height="20"></button>ボタンを押すと、エディターが起動します。<br>
+<hr class="hr">
+●プログラムメモリーは26個(<span class="span_expr">a</span>～<span class="span_expr">z</span>)あります。<br>
+<hr class="hr">
+●プログラムが変更されると<button class="button_savefunc">保存する</button>ボタンが表示されます。編集内容を保存するには<button class="button_savefunc">保存する</button>ボタンを押してください。<br>
+<hr class="hr">
+●呼び出しは<button>&lt;&lt;</button>ボタンで行います。計算式に関数として入力され、続けて関数パラメータを入力することができます。<br>
+<hr class="hr">
+●<button>&lt;&lt;</button>ボタンが押されると、自動で編集内容が保存されます。<br>
+<hr class="hr">
+●プログラム内で「<span class="span_expr">:parent</span>」コマンドを用いることで、変数値(<span class="span_expr">@A</span>～<span class="span_expr">@Z</span>)を参照することができます。例えば変数<span class="span_expr">@A</span>を参照する場合、「<span class="span_expr">:parent @A</span>」のように記述します。<br>
+
+<a name="gijyutu"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">技術情報</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<b>■計算の優先順位</b><br>
+<hr class="hr">
+下記の順位で計算されます。<br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="0">
+<tr>
+<td width="100%">(1) [-]、^、関数<br>
+(2) *、/、%<br>
+(3) +、-</td>
+</tr>
+</table>
+<hr class="hr">
+●関数が連続している時は右側から左側へ実行されます。<br>
+exp log sqrt x → exp(log(sqrt x))<br>
+<hr class="hr">
+●同順位の演算子が連続している時は左側から右側へ実行されます。<br>
+12+t-34+t → ((12+t)-34)+t<br>
+<hr class="hr">
+●括弧が使用された場合は、括弧内が最優先されます。<br>
+<hr class="hr">
+<b>■関数の入力範囲</b><br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr>
+<td width="33%" bgcolor="#E0E0E0"><b>関数</b></td>
+<td width="67%" bgcolor="#E0E0E0"><b>入力範囲</b></td>
+</tr>
+<tr>
+<td width="33%">asin <i>x</i></td>
+<td width="67%">-1≦<i>x</i>≦1</td>
+</tr>
+<tr>
+<td width="33%">acos <i>x</i></td>
+<td width="67%">-1≦<i>x</i>≦1</td>
+</tr>
+<tr>
+<td width="33%">acosh <i>x</i></td>
+<td width="67%">1≦<i>x</i></td>
+</tr>
+<tr>
+<td width="33%">atanh <i>x</i></td>
+<td width="67%">-1＜<i>x</i>＜1</td>
+</tr>
+<tr>
+<td width="33%">ln <i>x</i></td>
+<td width="67%">0＜<i>x</i></td>
+</tr>
+<tr>
+<td width="33%">log <i>x</i></td>
+<td width="67%">0＜<i>x</i></td>
+</tr>
+<tr>
+<td width="33%">log10 <i>x</i></td>
+<td width="67%">0＜<i>x</i></td>
+</tr>
+<tr>
+<td width="33%">sqrt <i>x</i></td>
+<td width="67%">0≦<i>x</i></td>
+</tr>
+</table>
+
+<a name="button"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">ボタンの働き</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<b>■計算式入力画面</b><br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr><td>
+<button>0</button>～<button>9</button><button>.</button><button>e+</button><button>e-</button><button>i</button><button>\+</button><button>\-</button><br>
+<hr class="hr">
+<b>置数ボタン</b><br>
+数値を入力するときに押します。<br>
+</td></tr>
+<tr><td>
+<button>[-]</button><br>
+<hr class="hr">
+<b>負数ボタン</b><br>
+負の数を入力するときに押します。<br>
+</td></tr>
+<tr><td>
+<button>+</button><button>-</button><button>*</button><button>/</button><button>%</button><br>
+<hr class="hr">
+<b>演算子ボタン</b><br>
+演算子を入力するときに押します。<br>
+</td></tr>
+<tr><td>
+<i>x</i><button>^</button><i>y</i><br>
+<hr class="hr">
+<b>累乗ボタン</b><br>
+<i>x</i>の<i>y</i>乗を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button>(</button><button>)</button><br>
+<hr class="hr">
+<b>括弧入力ボタン</b><br>
+括弧を入力するときに押します。<br>
+</td></tr>
+<tr><td>
+<button>x,t</button><br>
+<hr class="hr">
+<b>変数ボタン</b><br>
+変数x(線形座標・X軸対数・Y軸対数・対数座標モード時)またはt(媒介変数・極座標モード時)を入力するときに押します。<br>
+</td></tr>
+<tr><td>
+<button>RCL</button><br>
+<hr class="hr">
+<b>リコールメモリーボタン</b><br>
+メモリーに記憶した数値を呼び出すときに押します。<br>
+※あらかじめ選択された変数が対象です。<br>
+</td></tr>
+<tr><td>
+<button>SP</button><br>
+<hr class="hr">
+<b>スペースボタン</b><br>
+空白文字を入力するときに押します。<br>
+</td></tr>
+<tr><td>
+<button>DEL</button><br>
+<hr class="hr">
+<b>デリートボタン</b><br>
+間違えて入力した数値や関数を削除するときに押します。<br>
+</td></tr>
+<tr><td>
+<button>AC</button><br>
+<hr class="hr">
+<b>オールクリアボタン</b><br>
+エディットボックス内の全消去を行うときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">sin</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">cos</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">tan</button><i>x</i><br>
+<hr class="hr">
+<b>三角関数ボタン</b><br>
+三角関数を計算するときに押します。引数に指定する値は角度指定(Deg、Rad、Grad)に依存します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">asin</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">acos</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">atan</button><i>x</i><br>
+<hr class="hr">
+<b>逆三角関数</b><br>
+逆三角関数を計算するときに押します。結果は角度指定(Deg、Rad、Grad)に依存します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">sinh</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">cosh</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">tanh</button><i>x</i><br>
+<hr class="hr">
+<b>双曲線関数</b><br>
+双曲線関数を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">asinh</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">acosh</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">atanh</button><i>x</i><br>
+<hr class="hr">
+<b>逆双曲線関数</b><br>
+逆双曲線関数を計算するときに押します。<br>
+</td></tr>
+</table>
+<hr class="hr">
+<hr class="hr">
+<b>●その他の内部関数ボタン</b><br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr><td>
+<button class="button_func">atan2</button><i>y</i><button>SP</button><i>x</i><br>
+<hr class="hr">
+<i>y</i>/<i>x</i>の逆正接を計算します。結果は角度指定(Deg、Rad、Grad)に依存します。<br>
+</td></tr>
+<tr><td>
+(C言語モード)<button class="button_func">log</button><i>x</i><br>
+(電卓モード)<button class="button_func">ln</button><i>x</i><br>
+<hr class="hr">
+自然対数を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+(C言語モード)<button class="button_func">log10</button><i>x</i><br>
+(電卓モード)<button class="button_func">log</button><i>x</i><br>
+<hr class="hr">
+常用対数を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">exp</button><i>x</i><br>
+<hr class="hr">
+eの<i>x</i>乗を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">exp10</button><i>x</i><br>
+<hr class="hr">
+10の<i>x</i>乗を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">sqr</button><i>x</i><br>
+<hr class="hr">
+自乗を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">sqrt</button><i>x</i><br>
+<hr class="hr">
+平方根(ルート)を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">pow</button><i>x</i><button>SP</button><i>y</i><br>
+<hr class="hr">
+<i>x</i>の<i>y</i>乗を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">abs</button><i>x</i><br>
+<hr class="hr">
+絶対値を求めます。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">ceil</button><i>x</i><br>
+<hr class="hr">
+<i>x</i>以上の最小の整数を求めます。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">floor</button><i>x</i><br>
+<hr class="hr">
+<i>x</i>以下の最大の整数を求めます。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">int</button><i>x</i><br>
+<hr class="hr">
+整数に丸めるときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">real</button><i>x</i><br>
+<hr class="hr">
+複素数の実数部を求めます。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">imag</button><i>x</i><br>
+<hr class="hr">
+複素数の虚数部を求めます。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">arg</button><i>x</i><br>
+<hr class="hr">
+複素数の位相角度を求めます。結果は角度指定(Deg、Rad、Grad)に依存します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">norm</button><i>x</i><br>
+<hr class="hr">
+絶対値の自乗を求めます。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">conjg</button><i>x</i><br>
+<hr class="hr">
+共役複素数を求めます。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">polar</button><i>rho</i><button>SP</button><i>theta</i><br>
+<hr class="hr">
+絶対値<i>rho</i>、位相角度<i>theta</i>の複素数値を求めます。<i>theta</i>は角度指定(Deg、Rad、Grad)に依存します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">rand</button><br>
+<hr class="hr">
+0から32767の間で疑似乱数を発生させます。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">time</button><br>
+<hr class="hr">
+現在の時刻を得ます。<br>
+</td></tr>
+</table>
+<hr class="hr">
+<hr class="hr">
+<b>●外部関数ボタン</b><br>
+<hr class="hr">
+<button class="button_loadextfunc">外部関数読み込み</button>ボタンが表示されている場合、読み込むためにボタンを押してください。<br>
+<hr class="hr">
+ストレージクリアまたはCookieクリアを行うと、再度<button class="button_loadextfunc">外部関数読み込み</button>ボタンを押す必要があります。<br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr><td>
+<button class="button_extfunc">pi</button><br>
+<hr class="hr">
+円周率<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">e</button><br>
+<hr class="hr">
+自然対数の底<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">cbrt</button><i>val</i><br>
+<hr class="hr">
+立方根<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">log2</button><i>val</i><br>
+<hr class="hr">
+底2の対数<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">logn</button><i>n</i><button>SP</button><i>val</i><br>
+<hr class="hr">
+底<i>n</i>の対数<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">log1p</button><i>x</i><br>
+<hr class="hr">
+<i>x</i>に1を加えた値の対数<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">expm1</button><i>x</i><br>
+<hr class="hr">
+<i>x</i>の指数から1を引いた値<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">trunc</button><i>x</i><br>
+<hr class="hr">
+0に近い方の整数値に丸めます。<br>
+</td></tr>
+</table>
+<hr class="hr">
+<hr class="hr">
+<b>■グラフ画面</b><br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr><td>
+<hr class="hr">
+<hr class="hr">
+&nbsp;&nbsp;<img src="trace.png" width="20" height="20"><br>
+<b>トレースツール</b><br>
+座標を読み取ります。<br>
+</td></tr>
+<tr><td>
+<hr class="hr">
+<hr class="hr">
+&nbsp;&nbsp;<img src="hand.png" width="20" height="20"><br>
+<b>手のひらツール</b><br>
+グラフ画面をスクロールさせます。<br>
+</td></tr>
+<tr><td>
+<hr class="hr">
+<hr class="hr">
+&nbsp;&nbsp;<img src="zoom.png" width="20" height="20"><br>
+<b>ボックスズームツール</b><br>
+グラフ画面のトリミングを行います。<br>
+</td></tr>
+<tr><td>
+<button>＋</button><br>
+<hr class="hr">
+<b>拡大ボタン</b><br>
+グラフ画面を拡大します。<br>
+</td></tr>
+<tr><td>
+<button>－</button><br>
+<hr class="hr">
+<b>縮小ボタン</b><br>
+グラフ画面を縮小します。<br>
+</td></tr>
+<tr><td>
+<button><img src="init.png" width="20" height="20"></button><br>
+<hr class="hr">
+<b>ウィンドウ設定ボタン</b><br>
+グラフ画面のウィンドウ設定を行います。<br>
+</td></tr>
+<tr><td>
+<button><img src="draw.png" width="20" height="20"></button><br>
+<hr class="hr">
+<b>グラフ描画ボタン</b><br>
+グラフを描きます。<br>
+</td></tr>
+<tr><td>
+<button><img src="clear.png" width="20" height="20"></button><br>
+<hr class="hr">
+<b>クリアボタン</b><br>
+グラフをクリアします。<br>
+</td></tr>
+<tr><td>
+<button>STO</button><br>
+<hr class="hr">
+<b>ストアボタン</b><br>
+トレースした結果を数表に登録するときに押します。<br>
+</td></tr>
+</table>
+
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000">&nbsp;</td>
+	</tr>
+	<tr>
+		<td width="100%" align="right"><i><span style="font-size:16px">ClipGraph Copyright (C) SatisKia</span></i></td>
+	</tr>
+</table>
+<a href="#mokuji">目次へ</a><br>
+<hr class="hr">
+
+</div>
+</body>
+</html>

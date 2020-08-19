@@ -1,0 +1,1393 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width">
+<meta name="format-detection" content="telephone=no, email=no, address=no">
+<title>ClipGraph Instructions</title>
+<style type="text/css">
+html, body {
+	margin:0;
+	padding:0;
+	line-height:18px;
+}
+* {
+	font-family:"Helvetica";
+	font-size:16px;
+	color:#000000;
+}
+.div_body {
+	background-color:#FFFFFF;
+}
+button {
+	-webkit-appearance:button;
+	margin:2px;
+	padding:2px;
+	width:45px;
+	height:30px;
+	vertical-align:middle;
+	border-left:1px solid #E0E0E0;
+	border-top:1px solid #E0E0E0;
+	border-right:1px solid #808080;
+	border-bottom:1px solid #808080;
+	background:-webkit-gradient(linear,left top,left bottom,color-stop(0%,#E0E0E0),color-stop(100%,#A0A0A0));
+	text-shadow:1px 1px #E0E0E0;
+}
+.button_func {
+	width:65px;
+}
+.button_extfunc {
+	width:95px;
+}
+.button_loadextfunc {
+	width:200px;
+}
+.button_savefunc {
+	width:85px;
+}
+.button_import {
+	width:85px;
+}
+.hr {
+	border:0;
+	margin:0;
+	height:4px;
+}
+.hr_border {
+	border-top:1px solid #808080;
+	margin-top:4px;
+	margin-bottom:3px;
+}
+.hr_fract {
+	border-top:1px solid #000000;
+	margin-top:0;
+	margin-bottom:1px;
+}
+.span_expr {
+	font-family:"Courier New";
+	font-size:20px;
+}
+.span_pow {
+	font-family:"Helvetica";
+	font-size:12px;
+	vertical-align:4pt;
+}
+.div_ex {
+	width:100%;
+	text-align:right;
+	background-color:#F8F8F8;
+}
+.div_edit {
+	padding:2px;
+	font-family:"Courier New";
+	text-align:left;
+	background-color:#FFFFFF;
+	border:1px solid #808080;
+}
+.span_example {
+	border:1px solid #000000;
+	border-radius:10px;
+}
+</style>
+</head>
+<body>
+<div class="div_body">
+
+<hr class="hr">
+<b><i><span style="font-size:22px">ClipGraph</span></i><br>
+<span style="font-size:20px">Instruction manual</span><br>
+<i><span style="font-size:18px">User&apos;s Guide</span></i></b><br>
+
+<a name="mokuji"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Contents</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<a href="#menu">Menu button</a><br>
+<hr class="hr">
+<a href="#env">Environment setting</a><br>
+<hr class="hr">
+<a href="#val">Numeric input</a><br>
+<hr class="hr">
+<a href="#rect">Linear coordinates, Logarithmic coordinates</a><br>
+<hr class="hr">
+<a href="#param">Parametric variable</a><br>
+<hr class="hr">
+<a href="#polar">Polar coordinate</a><br>
+<hr class="hr">
+<a href="#table">Numerical table function</a><br>
+<hr class="hr">
+<a href="#program">Program function</a><br>
+<hr class="hr">
+<a href="#gijyutu">Technical information</a><br>
+<hr class="hr">
+<a href="#button">How the button works</a><br>
+
+<a name="menu"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Menu button</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<button><img src="icon1.png" width="20" height="20"></button>Graph screen<br>
+<hr class="hr">
+<button><img src="icon6.png" width="20" height="20"></button>Calculation formula input screen<br>
+<hr class="hr">
+<button><img src="icon7.png" width="20" height="20"></button>Editor<br>
+<hr class="hr">
+<button><img src="icon3.png" width="20" height="20"></button>Calculation history / Error display<br>
+<hr class="hr">
+<button><img src="icon4.png" width="20" height="20"></button>Variable value input screen<br>
+<hr class="hr">
+<button><img src="icon2.png" width="20" height="20"></button>Numerical table screen<br>
+<hr class="hr">
+<button><img src="icon5.png" width="20" height="20"></button>Environment setting screen<br>
+
+<a name="env"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Environment setting</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+Press <button><img src="icon5.png" width="20" height="20"></button> button to display the environment setting screen.<br>
+<hr class="hr">
+<b>Scale line</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Unit X</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the drawing unit of X direction scale lines. Unit is coordinate value. When <span class="span_expr">0.0</span> is specified, scale marks are not displayed.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Unit Y</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the drawing unit of the Y direction scale line. Unit is coordinate value. When <span class="span_expr">0.0</span> is specified, scale marks are not displayed.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+● If set, the previous graph will be deleted.<br>
+</td></tr></table>
+<hr class="hr">
+<b>Scale text</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>X (Every)</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the display unit of X direction tick character as a positive integer. The unit is the number of scale lines in the X direction. A value of <span class="span_expr">0</span> does not take place display of scale character.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Y (Every)</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the display unit of Y direction tick character as a positive integer. The unit is the number of scale lines in the Y direction. A value of <span class="span_expr">0</span> does not take place display of scale character.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+● If set, the previous graph will be deleted.<br>
+</td></tr></table>
+<hr class="hr">
+<b>Graph re-generation</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>□ When changing the coordinate system</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Check this box to regenerate the graph when switching within the XY coordinate system ("Linear", Logarithmic coordinates). When switching between XY coordinate system ("Linear", Logarithmic coordinates), "Parametric" and "Polar", calculation formula and graph are cleared regardless of this option.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>□ When the unit change of angle</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Select this check box to regenerate the graph when changing angle specification (Deg, Rad, Grad).<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>□ When changing the window coordinates</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Check the box to regenerate the graph when scrolling the graph screen with the <img src="hand.png" width="20" height="20"> tool, trimming the graph screen with the <img src="zoom.png" width="20" height="20"> tool, or changing the window setting with the <button><img src="init.png" width="20" height="20"></button> button.<br>
+</td></tr></table>
+<hr class="hr">
+<b>Export profile</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+When you press the button, the contents of the environment setting are displayed as text. Please select all the text contents, then copy (copy it to the clipboard) and paste it in a notepad etc and save it.<br>
+</td></tr></table>
+<hr class="hr">
+<b>Import profile</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+Please enter the contents of the environment setting in the text area (copy & paste from Notepad etc.) and press <button class="button_import">Import</button> button. The contents entered in the text area do not have to be all the contents at the time of export. Enter only the content you want to reflect.<br>
+</td></tr></table>
+
+<a name="val"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Numerical input</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<b>■ Floating point</b><br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 1&nbsp;&nbsp;</span> 123.45<br>
+<hr class="hr">
+<div class="div_ex">
+	<span class="span_expr">123</span><button>.</button><span class="span_expr">45</span><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 2&nbsp;&nbsp;</span> -1.2e+3 (Exponential notation)<br>
+<hr class="hr">
+<div class="div_ex">
+	<button>\-</button><span class="span_expr">1</span><button>.</button><span class="span_expr">2</span><button>e+</button><span class="span_expr">3</span><br>
+</div>
+<hr class="hr">
+<b>■ Complex number</b><br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 1&nbsp;&nbsp;</span> 12.3+4.5i (Real part 12.3 and imaginary part +4.5)<br>
+<hr class="hr">
+<div class="div_ex">
+	<span class="span_expr">12</span><button>.</button><span class="span_expr">3</span><button>\+</button><span class="span_expr">4</span><button>.</button><span class="span_expr">5</span><button>i</button><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 2&nbsp;&nbsp;</span> 1e-2-3e+4i (Real part 1e-2 and imaginary part -3e+4)<br>
+<hr class="hr">
+<div class="div_ex">
+	<span class="span_expr">1</span><button>e-</button><span class="span_expr">2</span><button>\-</button><span class="span_expr">3</span><button>e+</button><span class="span_expr">4</span><button>i</button><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 3&nbsp;&nbsp;</span> -i (The real part can be omitted, and 1 in the imaginary part can be omitted.)<br>
+<hr class="hr">
+<div class="div_ex">
+	<button>\-</button><button>i</button><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 4&nbsp;&nbsp;</span> (12 34) (Real part 12 and imaginary part 34)<br>
+<hr class="hr">
+<div class="div_ex">
+	<button>(</button><span class="span_expr">12</span><button>SP</button><span class="span_expr">34</span><button>)</button><br>
+</div>
+
+<a name="rect"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Linear coordinates, Logarithmic coordinates</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+● To draw a linear coordinate graph, use "Linear" coordinate mode. To draw a logarithmic coordinate graph, set to "X logarithm", "Y logarithm" or "Logarithmic" coordinate mode.<br>
+<hr class="hr">
+● Enter calculation formula y=f(x) including variable x in calculation formula 1 (upper row). Find the Y coordinate value y for the X coordinate value x.<br>
+<hr class="hr">
+<b>■ Window settings</b><br>
+<hr class="hr">
+Press the <button><img src="init.png" width="20" height="20"></button> button to display the window setting screen.<br>
+<hr class="hr">
+<b>Offset specification</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Offset X</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the X direction position of the origin with an offset from the left of the graph screen. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Offset Y</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the Y direction position of the origin as an offset from the graph screen. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Unit X</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+For "X logarithm" or "Logarithmic" mode, specify the interval between 10<span class="span_pow">n</span> and 10<span class="span_pow">n+1</span> in the X direction. For other modes, specify an interval equivalent to the value 1.0 in the X direction. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Unit Y</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+For "Y logarithm" or "Logarithmic" mode, specify the interval between 10<span class="span_pow">n</span> and 10<span class="span_pow">n+1</span> in the Y direction. For other modes, specify an interval equivalent to the value 1.0 in the Y direction. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+<b>Window specification</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Left</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the X coordinate value on the left of the graph screen.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Bottom</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the Y coordinate value at the bottom of the graph screen.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Right</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the X coordinate value on the right of the graph screen.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Top</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the Y coordinate value at the top of the graph screen.<br>
+</td></tr></table>
+<hr class="hr">
+● When specified in the window, some errors will occur.<br>
+<hr class="hr">
+● If set, the previous graph will be deleted.<br>
+<hr class="hr">
+<b>■ To draw a graph</b><br>
+<hr class="hr">
+● In the calculation formula 1 (upper row), enter the formula containing the variable x and press the <button><img src="draw.png" width="20" height="20"></button> button.<br>
+<hr class="hr">
+● Enter the variable x with the <button>x,t</button> button.<br>
+<hr class="hr">
+● You can omit the <button>(</button> button input at the beginning of the calculation formula and the <button>)</button> button input at the end.<br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 1&nbsp;&nbsp;</span> To draw a graph of y=√(x<span class="span_pow">2</span>+x-1)<br>
+<hr class="hr">
+<div class="div_ex">
+	Set to "Linear" coordinate mode<br>
+	<button class="button_func">sqrt</button><button>(</button><button class="button_func">sqr</button><button>x,t</button><button>+</button><button>x,t</button><button>-</button><span class="span_expr">1</span><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">sqrt(sqr x+x-1</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_rect_zoom.png"><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 2&nbsp;&nbsp;</span> To draw a graph of<br>
+<table>
+	<tr>
+		<td valign="middle">y=sin(x+</td>
+		<td align="center">
+			π<br>
+			<hr class="hr_fract" style="width:25px">
+			2
+		</td>
+		<td valign="middle">)</td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	Set to "Linear" coordinate mode<br>
+	Set the angle type to "Rad"<br>
+	<button class="button_func">sin</button><button>(</button><button>x,t</button><button>+</button><button class="button_func">pi</button><button>/</button><span class="span_expr">2</span><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">sin(x+!pi/2</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_rect_graph_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ Trace tool</b><br>
+<hr class="hr">
+● After drawing the graph, tap inside the graph screen to obtain the Y coordinate value corresponding to the X coordinate value.<br>
+<hr class="hr">
+● You can confirm Y coordinate value in real time by dragging horizontally.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_trace_1.png"><br>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">x=</span></td><td><hr class="hr"><div class="div_edit">0.775</div></td></tr>
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">y=</span></td><td><hr class="hr"><div class="div_edit">0.7144210340559314</div></td></tr>
+	</table>
+	<hr class="hr">
+</div>
+<hr class="hr">
+<b>■ Hand tool</b><br>
+<hr class="hr">
+● Scroll the graph screen by dragging it.<br>
+<hr class="hr">
+● If "When changing the window coordinates" is set in the environment setting, graphs outside the screen are automatically generated.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_hand_1.png"><br>
+	<hr class="hr">
+	<img src="guide_rect_hand_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ Box zoom tool</b><br>
+<hr class="hr">
+● When you specify and release the graph screen by dragging it, the specified area is enlarged to the graph screen size.<br>
+<hr class="hr">
+● If "When changing the window coordinates" is set in the environment setting, graphs are automatically regenerated.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_trim_1.png"><br>
+	<hr class="hr">
+	<img src="guide_rect_trim_2.png"><br>
+	(y=x<span class="span_pow">3</span>-4*x)<br>
+</div>
+<hr class="hr">
+<b>■ Expansion</b><br>
+<hr class="hr">
+● You can enlarge the graph screen with the <button>＋</button> button.<br>
+<hr class="hr">
+● It is enlarged based on the center of the graph screen.<br>
+<hr class="hr">
+● If "When changing the window coordinates" is set in the environment setting, graphs are automatically regenerated. If it is not set, linear interpolation will be performed during the previous sampling data.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_zoom.png"><br>
+	<button>＋</button><br>
+	<hr class="hr">
+	<img src="guide_rect_zoom_in.png"><br>
+</div>
+<hr class="hr">
+<b>■ Reduction</b><br>
+<hr class="hr">
+● You can reduce the graph screen with the <button>－</button> button.<br>
+<hr class="hr">
+● Reduced based on the center of the graph screen.<br>
+<hr class="hr">
+● If "When changing the window coordinates" is set in the environment setting, graphs outside the screen are automatically generated.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_rect_zoom.png"><br>
+	<button>－</button><br>
+	<hr class="hr">
+	<img src="guide_rect_zoom_out.png"><br>
+</div>
+
+<a name="param"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Parametric variable</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+● To draw a parametric graph, set it to "Parametric" mode.<br>
+<hr class="hr">
+● Enter calculation formula x=f(t) including variable t in calculation formula 1 (upper row) and calculation expression y=f(t) containing variable t in calculation expression 2 (lower row). Find the X・Y coordinate value for the variable t.<br>
+<hr class="hr">
+● Specify the range of the variable t in the min・max edit box and the sampling interval with the pch edit box.<br>
+<hr class="hr">
+<b>■ Window settings</b><br>
+<hr class="hr">
+Press the <button><img src="init.png" width="20" height="20"></button> button to display the window setting screen.<br>
+<hr class="hr">
+<b>Offset specification</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Offset X</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the X direction position of the origin with an offset from the left of the graph screen. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Offset Y</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the Y direction position of the origin as an offset from the graph screen. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Unit</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify an interval equivalent to the value 1.0 in the XY direction. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+● If set, the previous graph will be deleted.<br>
+<hr class="hr">
+<b>■ To draw a graph</b><br>
+<hr class="hr">
+● Enter the calculation formula including the variable t in calculation formula 1 (upper row) and calculation formula 2 (lower row), and press the <button><img src="draw.png" width="20" height="20"></button> button.<br>
+<hr class="hr">
+● Enter the variable t with the <button>x,t</button> button.<br>
+<hr class="hr">
+● You can omit the <button>(</button> button input at the beginning of the calculation formula and the <button>)</button> button input at the end.<br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 1&nbsp;&nbsp;</span> Cardioid<br>
+x=2*cosθ-cos(2*θ)<br>
+y=2*sinθ-sin(2*θ)<br>
+<hr class="hr">
+<div class="div_ex">
+	Set the angle type to "Deg"<br>
+	The min value of <span class="span_expr">0.0</span>, the max value of <span class="span_expr">360.0</span>, set the pch value to <span class="span_expr">1.0</span><br>
+	(<span class="span_expr">x=</span>) <span class="span_expr">2</span><button>*</button><button class="button_func">cos</button><button>x,t</button><button>-</button><button class="button_func">cos</button><button>(</button><span class="span_expr">2</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">2*cos t-cos(2*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	(<span class="span_expr">y=</span>) <span class="span_expr">2</span><button>*</button><button class="button_func">sin</button><button>x,t</button><button>-</button><button class="button_func">sin</button><button>(</button><span class="span_expr">2</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">2*sin t-sin(2*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_param_zoom.png"><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 2&nbsp;&nbsp;</span> Asteroid<br>
+<table>
+	<tr>
+		<td valign="middle">x=</td>
+		<td align="center">
+			3<br>
+			<hr class="hr_fract" style="width:20px">
+			4
+		</td>
+		<td valign="middle">cosθ+</td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			4
+		</td>
+		<td valign="middle">cos(3*θ)</td>
+	<tr>
+</table>
+<table>
+	<tr>
+		<td valign="middle">y=</td>
+		<td align="center">
+			3<br>
+			<hr class="hr_fract" style="width:20px">
+			4
+		</td>
+		<td valign="middle">sinθ-</td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			4
+		</td>
+		<td valign="middle">sin(3*θ)</td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	Set the angle type to "Deg"<br>
+	the min value of <span class="span_expr">0.0</span>, the max value of <span class="span_expr">360.0</span>, set the pch value to <span class="span_expr">1.0</span><br>
+	(<span class="span_expr">x=</span>) <span class="span_expr">3</span><button>/</button><span class="span_expr">4</span><button>*</button><button class="button_func">cos</button><button>x,t</button><button>+</button><span class="span_expr">1</span><button>/</button><span class="span_expr">4</span><button>*</button><button class="button_func">cos</button><button>(</button><span class="span_expr">3</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">3/4*cos t+1/4*cos(3*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	(<span class="span_expr">y=</span>) <span class="span_expr">3</span><button>/</button><span class="span_expr">4</span><button>*</button><button class="button_func">sin</button><button>x,t</button><button>-</button><span class="span_expr">1</span><button>/</button><span class="span_expr">4</span><button>*</button><button class="button_func">sin</button><button>(</button><span class="span_expr">3</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">3/4*sin t-1/4*sin(3*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_param_trim_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ Trace tool</b><br>
+<hr class="hr">
+● By tapping the graph screen after plotting the graph, you get the XY coordinate value closest to the tap position.<br>
+<hr class="hr">
+● By dragging, XY coordinate values can be confirmed in real time.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_trace_1.png"><br>
+	(x=sinθ, y=cosθ)<br>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">t=</span></td><td><hr class="hr"><div class="div_edit">51</div></td></tr>
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">x=</span></td><td><hr class="hr"><div class="div_edit">0.7771459614569708</div></td></tr>
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">y=</span></td><td><hr class="hr"><div class="div_edit">0.6293203910498375</div></td></tr>
+	</table>
+	<hr class="hr">
+</div>
+<hr class="hr">
+<b>■ Hand tool</b><br>
+<hr class="hr">
+● Scroll the graph screen by dragging it.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_hand_1.png"><br>
+	<hr class="hr">
+	<img src="guide_param_hand_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ Box zoom tool</b><br>
+<hr class="hr">
+● When you specify and release the graph screen by dragging it, the specified area is enlarged to the graph screen size.<br>
+<hr class="hr">
+● The area is forcibly set to the aspect ratio of the graph screen.<br>
+<hr class="hr">
+● If "When changing the window coordinates" is set in the environment setting, graphs are automatically regenerated.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_trim_1.png"><br>
+	<hr class="hr">
+	<img src="guide_param_trim_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ Expansion</b><br>
+<hr class="hr">
+● You can enlarge the graph screen with the <button>＋</button> button.<br>
+<hr class="hr">
+● It is enlarged based on the center of the graph screen.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_zoom.png"><br>
+	<button>＋</button><br>
+	<hr class="hr">
+	<img src="guide_param_zoom_in.png"><br>
+</div>
+<hr class="hr">
+<b>■ Reduction</b><br>
+<hr class="hr">
+● You can reduce the graph screen with the <button>－</button> button.<br>
+<hr class="hr">
+● Reduced based on the center of the graph screen.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_param_zoom.png"><br>
+	<button>－</button><br>
+	<hr class="hr">
+	<img src="guide_param_zoom_out.png"><br>
+</div>
+
+<a name="polar"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Polar coordinate</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+● To draw a polar coordinate graph, set to "Polar" mode.<br>
+<hr class="hr">
+● Enter formula r=f(t) containing variable t in calculation formula 1 (upper row). Find the radius r for angle t.<br>
+<hr class="hr">
+● Specify the range of the angle t in the min・max edit box and the sampling interval with the pch edit box.<br>
+<hr class="hr">
+● min・max・pch value depends on angle designation (Deg, Rad, Grad). Also, if you change the angle designation (Deg, Rad, Grad), it will be converted automatically.<br>
+<hr class="hr">
+<b>■ Window settings</b><br>
+<hr class="hr">
+Press the <button><img src="init.png" width="20" height="20"></button> button to display the window setting screen.<br>
+<hr class="hr">
+<b>Offset specification</b><br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Offset X</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the horizontal position of the origin with the offset from the left of the graph screen. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Offset Y</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify the vertical position of the origin by offset from the graph screen. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+<b>Unit</b><br>
+</td></tr></table>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="20"></td><td>
+Specify an interval equivalent to 1.0 radius. The unit is pixel.<br>
+</td></tr></table>
+<hr class="hr">
+● If set, the previous graph will be deleted.<br>
+<hr class="hr">
+<b>■ To draw a graph</b><br>
+<hr class="hr">
+● Enter the calculation formula including the variable t in the calculation formula 1 (upper row) and press the <button><img src="draw.png" width="20" height="20"></button> button.<br>
+<hr class="hr">
+● Enter the variable t with the <button>x,t</button> button.<br>
+<hr class="hr">
+● You can omit the <button>(</button> button input at the beginning of the calculation formula and the <button>)</button> button input at the end.<br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 1&nbsp;&nbsp;</span> Cardioid<br>
+<table>
+	<tr>
+		<td valign="middle">r=(2*cos</td>
+		<td align="center">
+			θ<br>
+			<hr class="hr_fract" style="width:25px">
+			2
+		</td>
+		<td valign="middle"><span style="vertical-align:2pt">)<span class="span_pow">2</span></span></td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	Set the angle type to "Deg"<br>
+	The min value of <span class="span_expr">0.0</span>, the max value of <span class="span_expr">360.0</span>, set the pch value to <span class="span_expr">1.0</span><br>
+	<button class="button_func">pow</button><button>(</button><span class="span_expr">2</span><button>*</button><button class="button_func">cos</button><button>(</button><button>x,t</button><button>/</button><span class="span_expr">2</span><button>)</button><button>)</button><span class="span_expr">2</span><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">pow(2*cos(t/2))2</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_polar_graph_1.png"><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 2&nbsp;&nbsp;</span> The positive blind line r=2*sin(2*θ)<br>
+<hr class="hr">
+<div class="div_ex">
+	Set the angle type to "Deg"<br>
+	The min value of <span class="span_expr">0.0</span>, the max value of <span class="span_expr">360.0</span>, set the pch value to <span class="span_expr">1.0</span><br>
+	<span class="span_expr">2</span><button>*</button><button class="button_func">sin</button><button>(</button><span class="span_expr">2</span><button>*</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">2*sin(2*t</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_polar_zoom.png"><br>
+</div>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example 3&nbsp;&nbsp;</span> Parabola<br>
+<table>
+	<tr>
+		<td valign="middle">r=</td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:70px">
+			1-cosθ
+		</td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	Set the angle type to "Deg"<br>
+	The min value of <span class="span_expr">0.0</span>, the max value of <span class="span_expr">360.0</span>, set the pch value to <span class="span_expr">1.0</span><br>
+	<span class="span_expr">1</span><button>/</button><button>(</button><span class="span_expr">1</span><button>-</button><button class="button_func">cos</button><button>x,t</button><br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">1/(1-cos t</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_polar_graph_3.png"><br>
+</div>
+<hr class="hr">
+<b>■ Trace tool</b><br>
+<hr class="hr">
+● By tapping the graph screen after plotting the graph, you get the data value closest to the tap position.<br>
+<hr class="hr">
+● By dragging, you can check the value in real time.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_trace_1.png"><br>
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">t=</span></td><td><hr class="hr"><div class="div_edit">205</div></td></tr>
+		<tr><td width="30%"></td><td><hr class="hr"><span class="span_expr">r=</span></td><td><hr class="hr"><div class="div_edit">1.5320888862379556</div></td></tr>
+	</table>
+	<hr class="hr">
+</div>
+<hr class="hr">
+<b>■ Hand tool</b><br>
+<hr class="hr">
+● Scroll the graph screen by dragging it.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_hand_1.png"><br>
+	<hr class="hr">
+	<img src="guide_polar_hand_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ Box zoom tool</b><br>
+<hr class="hr">
+● When you specify and release the graph screen by dragging it, the specified area is enlarged to the graph screen size.<br>
+<hr class="hr">
+● The area is forcibly set to the aspect ratio of the graph screen.<br>
+<hr class="hr">
+● If "When changing the window coordinates" is set in the environment setting, graphs are automatically regenerated.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_trim_1.png"><br>
+	<hr class="hr">
+	<img src="guide_polar_trim_2.png"><br>
+</div>
+<hr class="hr">
+<b>■ Expansion</b><br>
+<hr class="hr">
+● You can enlarge the graph screen with the <button>＋</button> button.<br>
+<hr class="hr">
+● It is enlarged based on the center of the graph screen.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_zoom.png"><br>
+	<button>＋</button><br>
+	<hr class="hr">
+	<img src="guide_polar_zoom_in.png"><br>
+</div>
+<hr class="hr">
+<b>■ Reduction</b><br>
+<hr class="hr">
+● You can reduce the graph screen with the <button>－</button> button.<br>
+<hr class="hr">
+● Reduced based on the center of the graph screen.<br>
+<hr class="hr">
+● Previous graphs are deleted.<br>
+<hr class="hr">
+<div class="div_ex">
+	<hr class="hr">
+	<img src="guide_polar_zoom.png"><br>
+	<button>－</button><br>
+	<hr class="hr">
+	<img src="guide_polar_zoom_out.png"><br>
+</div>
+
+<a name="table"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Numerical table function</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+● Press the <button><img src="icon2.png" width="20" height="20"></button> button to display the number table screen.<br>
+<hr class="hr">
+● When you obtain the calculated value with the trace tool and press the <button>STO</button> button, it is registered in the number table.<br>
+<hr class="hr">
+<button>Del</button> button<br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+Delete the selected calculation value from the numerical table.<br>
+</td></tr></table>
+<hr class="hr">
+<button>&lt;&lt;</button> button<br>
+<hr class="hr">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"><tr><td width="10"></td><td>
+Draw a crosshair on the graph screen with the selected calculation value.<br>
+</td></tr></table>
+
+<a name="program"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Program function</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+● When you press <button><img src="icon7.png" width="20" height="20"></button> button, the editor starts up.<br>
+<hr class="hr">
+● There are 26 program memories (<span class="span_expr">a</span> ~ <span class="span_expr">z</span>).<br>
+<hr class="hr">
+● When the program is changed, <button class="button_savefunc">Save</button> button will be displayed. Please press <button class="button_savefunc">Save</button> button to save edited contents.<br>
+<hr class="hr">
+● To call it as a function, use the <button>&lt;&lt;</button> button. It is input as a function in the calculation formula, and you can enter function parameters subsequently.<br>
+<hr class="hr">
+● When the <button>&lt;&lt;</button> button is pressed, edited contents are automatically saved.<br>
+<hr class="hr">
+● Variable value (<span class="span_expr">@A</span> ~ <span class="span_expr">@Z</span>) can be referenced by using command &quot;<span class="span_expr">:parent</span>&quot; in the program. For example, when referring to the variable <span class="span_expr">@A</span>, write it like &quot;<span class="span_expr">:parent @A</span>&quot;.<br>
+
+<a name="gijyutu"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Technical information</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<b>■ Priority of the calculation</b><br>
+<hr class="hr">
+It is calculated in the following ranking.<br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="0">
+<tr>
+<td width="100%">(1) [-], ^, Function<br>
+(2) *, /, %<br>
+(3) +, -</td>
+</tr>
+</table>
+<hr class="hr">
+● When function are consecutive, they are executed from the right side to the left side.<br>
+exp log sqrt x → exp(log(sqrt x))<br>
+<hr class="hr">
+● When the operators of the same rank are consecutive, they are executed from the left side to the right side.<br>
+12+t-34+t → ((12+t)-34)+t<br>
+<hr class="hr">
+● When parentheses are used, parentheses take the highest priority.<br>
+<hr class="hr">
+<b>■ Input range of function</b><br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr>
+<td width="33%" bgcolor="#E0E0E0"><b>Function</b></td>
+<td width="67%" bgcolor="#E0E0E0"><b>Input range</b></td>
+</tr>
+<tr>
+<td width="33%">asin <i>x</i></td>
+<td width="67%">-1≦<i>x</i>≦1</td>
+</tr>
+<tr>
+<td width="33%">acos <i>x</i></td>
+<td width="67%">-1≦<i>x</i>≦1</td>
+</tr>
+<tr>
+<td width="33%">acosh <i>x</i></td>
+<td width="67%">1≦<i>x</i></td>
+</tr>
+<tr>
+<td width="33%">atanh <i>x</i></td>
+<td width="67%">-1＜<i>x</i>＜1</td>
+</tr>
+<tr>
+<td width="33%">ln <i>x</i></td>
+<td width="67%">0＜<i>x</i></td>
+</tr>
+<tr>
+<td width="33%">log <i>x</i></td>
+<td width="67%">0＜<i>x</i></td>
+</tr>
+<tr>
+<td width="33%">log10 <i>x</i></td>
+<td width="67%">0＜<i>x</i></td>
+</tr>
+<tr>
+<td width="33%">sqrt <i>x</i></td>
+<td width="67%">0≦<i>x</i></td>
+</tr>
+</table>
+
+<a name="button"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">How the button works</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<b>■ Calculation formula input screen</b><br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr><td>
+<button>0</button> ~ <button>9</button><button>.</button><button>e+</button><button>e-</button><button>i</button><button>\+</button><button>\-</button><br>
+<hr class="hr">
+<b>Numeric button</b><br>
+Press to enter numeric values.<br>
+</td></tr>
+<tr><td>
+<button>[-]</button><br>
+<hr class="hr">
+<b>Negative button</b><br>
+Press to enter a negative number.<br>
+</td></tr>
+<tr><td>
+<button>+</button><button>-</button><button>*</button><button>/</button><button>%</button><br>
+<hr class="hr">
+<b>Operator button</b><br>
+Press to enter the operator.<br>
+</td></tr>
+<tr><td>
+<i>x</i><button>^</button><i>y</i><br>
+<hr class="hr">
+<b>Power button</b><br>
+Press to calculate <i>x</i> to the <i>y</i>th power.<br>
+</td></tr>
+<tr><td>
+<button>(</button><button>)</button><br>
+<hr class="hr">
+<b>Parentheses input button</b><br>
+Press to enter parentheses.<br>
+</td></tr>
+<tr><td>
+<button>x,t</button><br>
+<hr class="hr">
+<b>Variable button</b><br>
+Press to enter variable x ("Linear", "X logarithm", "Y logarithm" or "Logarithmic" coordinate mode) or t ("Parametric" or "Polar" coordinate mode).<br>
+</td></tr>
+<tr><td>
+<button>RCL</button><br>
+<hr class="hr">
+<b>Recall memory button</b><br>
+Press to recall numerical values stored in memory.<br>
+* Variables selected in advance are eligible.<br>
+</td></tr>
+<tr><td>
+<button>SP</button><br>
+<hr class="hr">
+<b>Space button</b><br>
+Press to enter a space character.<br>
+</td></tr>
+<tr><td>
+<button>DEL</button><br>
+<hr class="hr">
+<b>Delete button</b><br>
+Press this to delete numbers or functions entered by mistake.<br>
+</td></tr>
+<tr><td>
+<button>AC</button><br>
+<hr class="hr">
+<b>All clear button</b><br>
+Press to erase all in the edit box.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">sin</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">cos</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">tan</button><i>x</i><br>
+<hr class="hr">
+<b>Trigonometric function button</b><br>
+Press to calculate trigonometric functions. The value specified for the argument depends on the angle specification (Deg, Rad, Grad).<br>
+</td></tr>
+<tr><td>
+<button class="button_func">asin</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">acos</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">atan</button><i>x</i><br>
+<hr class="hr">
+<b>Inverse trigonometric functions</b><br>
+Press to calculate the inverse trigonometric function. The result depends on angle specification (Deg, Rad, Grad).<br>
+</td></tr>
+<tr><td>
+<button class="button_func">sinh</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">cosh</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">tanh</button><i>x</i><br>
+<hr class="hr">
+<b>Hyperbolic function</b><br>
+Press to calculate hyperbolic function.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">asinh</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">acosh</button><i>x</i><br>
+<hr class="hr">
+<button class="button_func">atanh</button><i>x</i><br>
+<hr class="hr">
+<b>Inverse hyperbolic functions</b><br>
+Press to calculate the inverse hyperbolic function.<br>
+</td></tr>
+</table>
+<hr class="hr">
+<hr class="hr">
+<b>● Other internal function button</b><br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr><td>
+<button class="button_func">atan2</button><i>y</i><button>SP</button><i>x</i><br>
+<hr class="hr">
+Calculate the arc tangent of <i>y</i>/<i>x</i>. The result depends on angle specification (Deg, Rad, Grad).<br>
+</td></tr>
+<tr><td>
+(C language mode)<button class="button_func">log</button><i>x</i><br>
+(Calculator mode)<button class="button_func">ln</button><i>x</i><br>
+<hr class="hr">
+Press to calculate natural logarithm.<br>
+</td></tr>
+<tr><td>
+(C language mode)<button class="button_func">log10</button><i>x</i><br>
+(Calculator mode)<button class="button_func">log</button><i>x</i><br>
+<hr class="hr">
+Press to calculate common logarithm.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">exp</button><i>x</i><br>
+<hr class="hr">
+<b>calculate e to the <i>x</i>th power</b><br>
+Press to calculate e to the <i>x</i>th power.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">exp10</button><i>x</i><br>
+<hr class="hr">
+<b>calculate 10 to the <i>x</i>th power</b><br>
+Press to calculate 10 to the <i>x</i>th power.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">sqr</button><i>x</i><br>
+<hr class="hr">
+Press to calculate the square.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">sqrt</button><i>x</i><br>
+<hr class="hr">
+Press to calculate square root.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">pow</button><i>x</i><button>SP</button><i>y</i><br>
+<hr class="hr">
+Press to calculate <i>x</i> to the <i>y</i>th power.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">abs</button><i>x</i><br>
+<hr class="hr">
+Calculate the absolute value.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">ceil</button><i>x</i><br>
+<hr class="hr">
+Calculate the smallest integer greater than or equal to <i>x</i>.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">floor</button><i>x</i><br>
+<hr class="hr">
+Calculate the largest integer less than or equal to <i>x</i>.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">int</button><i>x</i><br>
+<hr class="hr">
+Press to round to an integer.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">real</button><i>x</i><br>
+<hr class="hr">
+Find the real part of a complex number.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">imag</button><i>x</i><br>
+<hr class="hr">
+Find the imaginary part of a complex number.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">arg</button><i>x</i><br>
+<hr class="hr">
+Find the phase angle of a complex number. The result depends on angle specification (Deg, Rad, Grad).<br>
+</td></tr>
+<tr><td>
+<button class="button_func">norm</button><i>x</i><br>
+<hr class="hr">
+Find the square of the absolute value.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">conjg</button><i>x</i><br>
+<hr class="hr">
+Find conjugate complex numbers.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">polar</button><i>rho</i><button>SP</button><i>theta</i><br>
+<hr class="hr">
+Calculate the complex value of absolute value <i>rho</i> and phase angle <i>theta</i>. <i>theta</i> depends on the angle specification (Deg, Rad, Grad).<br>
+</td></tr>
+<tr><td>
+<button class="button_func">rand</button><br>
+<hr class="hr">
+Generate pseudorandom numbers between 0 and 32767.<br>
+</td></tr>
+<tr><td>
+<button class="button_func">time</button><br>
+<hr class="hr">
+Gets the current time.<br>
+</td></tr>
+</table>
+<hr class="hr">
+<hr class="hr">
+<b>● External function button</b><br>
+<hr class="hr">
+If the <button class="button_loadextfunc">Load external function</button> button is displayed, press the button to read.<br>
+<hr class="hr">
+After clearing the storage or clearing the cookie, you need to press the <button class="button_loadextfunc">Load external function</button> button again.<br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr><td>
+<button class="button_extfunc">pi</button><br>
+<hr class="hr">
+Pi<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">e</button><br>
+<hr class="hr">
+Base of natural logarithm<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">cbrt</button><i>val</i><br>
+<hr class="hr">
+Cube root<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">log2</button><i>val</i><br>
+<hr class="hr">
+Logarithm of base 2<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">logn</button><i>n</i><button>SP</button><i>val</i><br>
+<hr class="hr">
+Logarithm of base <i>n</i><br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">log1p</button><i>x</i><br>
+<hr class="hr">
+Computes the natural logarithm of 1+<i>x</i>.<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">expm1</button><i>x</i><br>
+<hr class="hr">
+Computes the e raised to the given power <i>x</i>, minus 1.<br>
+</td></tr>
+<tr><td>
+<button class="button_extfunc">trunc</button><i>x</i><br>
+<hr class="hr">
+Computes the nearest integer not greater in magnitude than <i>x</i>.<br>
+</td></tr>
+</table>
+<hr class="hr">
+<hr class="hr">
+<b>■ Graph screen</b><br>
+<hr class="hr">
+<table width="100%" border="1" cellspacing="1" cellpadding="1">
+<tr><td>
+<hr class="hr">
+<hr class="hr">
+&nbsp;&nbsp;<img src="trace.png" width="20" height="20"><br>
+<b>Trace tool</b><br>
+Read the coordinates.<br>
+</td></tr>
+<tr><td>
+<hr class="hr">
+<hr class="hr">
+&nbsp;&nbsp;<img src="hand.png" width="20" height="20"><br>
+<b>Hand tool</b><br>
+Scroll the graph screen.<br>
+</td></tr>
+<tr><td>
+<hr class="hr">
+<hr class="hr">
+&nbsp;&nbsp;<img src="zoom.png" width="20" height="20"><br>
+<b>Box zoom tool</b><br>
+Trim the graph screen.<br>
+</td></tr>
+<tr><td>
+<button>＋</button><br>
+<hr class="hr">
+<b>Enlargement button</b><br>
+Enlarges the graph screen.<br>
+</td></tr>
+<tr><td>
+<button>－</button><br>
+<hr class="hr">
+<b>Reduction button</b><br>
+Reduce the graph screen.<br>
+</td></tr>
+<tr><td>
+<button><img src="init.png" width="20" height="20"></button><br>
+<hr class="hr">
+<b>Window settings button</b><br>
+Perform window setting of the graph screen.<br>
+</td></tr>
+<tr><td>
+<button><img src="draw.png" width="20" height="20"></button><br>
+<hr class="hr">
+<b>Graph drawing button</b><br>
+Draw a graph.<br>
+</td></tr>
+<tr><td>
+<button><img src="clear.png" width="20" height="20"></button><br>
+<hr class="hr">
+<b>Clear button</b><br>
+Clear the graph.<br>
+</td></tr>
+<tr><td>
+<button>STO</button><br>
+<hr class="hr">
+<b>Store button</b><br>
+Press to register the result of tracing in a table.<br>
+</td></tr>
+</table>
+
+<br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000">&nbsp;</td>
+	</tr>
+	<tr>
+		<td width="100%" align="right"><i><span style="font-size:16px">ClipGraph Copyright (C) SatisKia</span></i></td>
+	</tr>
+</table>
+<a href="#mokuji">To the contents</a><br>
+<hr class="hr">
+
+</div>
+</body>
+</html>
