@@ -388,6 +388,9 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	listImage = new ListBox();
 	listImage.setLineNum( (isAndroidTablet() || isIPad()) ? 19 : 21 );
 
+	// 定義定数の値
+	setDefineValue();
+
 	// 計算処理メイン・クラスを生成する
 	setProcEnv( new _ProcEnv() );
 	topProc = new _Proc( _PROC_DEF_PARENT_MODE, _PROC_DEF_PRINT_ASSERT, _PROC_DEF_PRINT_WARN, _PROC_DEF_GUPDATE_FLAG );
