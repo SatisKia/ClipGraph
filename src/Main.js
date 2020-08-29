@@ -181,9 +181,6 @@ var nativeRequest;
 var electron = null;
 
 var divEdit;
-var divLog;
-var divTable;
-var divSelectImage;
 
 var inputVars;
 
@@ -352,10 +349,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	englishFlag = (getProfileInt( "ENV_", "Language", LANG_JAPANESE ) == LANG_ENGLISH);
 	updateLanguage();
 
-	divEdit        = document.getElementById( editId        );
-	divLog         = document.getElementById( logId         );
-	divTable       = document.getElementById( tableId       );
-	divSelectImage = document.getElementById( selectImageId );
+	divEdit = document.getElementById( editId );
 
 	inputVars = document.getElementsByName( "graph_edit_var" );
 
@@ -381,12 +375,29 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	editExpr[0][0].setDispLen( 26, 8 );
 	editExpr[0][1] = new EditExpr( 2 );
 	editExpr[0][1].setDispLen( 26, 8 );
-	logExpr = new ListBox();
+	logExpr = new ListBox( logId );
 	logExpr.setLineNum( 12 );
-	listTable[0] = new ListBox();
+	_addGraphEventListener( logExpr.element(), "click", function( e ){
+		if( logExpr.click( e, 0, 18 ) ){
+			updateLogExpr();
+		}
+	});
+	listTable[0] = new ListBox( tableId );
 	listTable[0].setLineNum( 19 );
-	listImage = new ListBox();
+	_addGraphEventListener( listTable[0].element(), "click", function( e ){
+		if( listTable[0].click( e, 24, 18 ) ){
+			updateListTable( graphUI );
+		}
+	});
+	listImage = new ListBox( selectImageId );
 	listImage.setLineNum( (isAndroidTablet() || isIPad()) ? 19 : 21 );
+	_addGraphEventListener( listImage.element(), "click", function( e ){
+		if( listImage.click( e, 0, 18 ) ){
+			updateListImage();
+
+			getListImage();
+		}
+	});
 
 	// 定義定数の値
 	setDefineValue();
@@ -607,6 +618,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 		} else if( canUseCookie() ){
 			cssSetStyleDisplayById( "button_cookie_clear", true );
 		}
+	}
+
+	if( common.isApp() ){
+		cssSetStyleDisplayById( "button_get_content", true );
 	}
 
 	if( getUrlParameter( "menu" ) == "option" ){
@@ -1198,7 +1213,7 @@ function doChangeSkinTrans( select ){
 }
 function doGraphEditSkinImage(){
 	skinImage = document.getElementById( "graph_edit_skin_image" ).value;
-	if( skinImage.indexOf( "://" ) < 0 ){
+	if( (skinImage.indexOf( "://" ) < 0) && !skinImage.startsWith( "data:" ) ){
 		skinImage = "http://" + skinImage;
 		document.getElementById( "graph_edit_skin_image" ).value = skinImage;
 	}
@@ -1502,7 +1517,7 @@ function updateLogExpr(){
 		}
 	}
 	html += "</table>";
-	divLog.innerHTML = html;
+	logExpr.element().innerHTML = html;
 }
 
 function addLogExpr(){
@@ -1687,7 +1702,7 @@ function updateListImage(){
 		}
 	}
 	html += "</table>";
-	divSelectImage.innerHTML = html;
+	listImage.element().innerHTML = html;
 }
 
 function upListImage( e ){
@@ -3731,7 +3746,7 @@ function updateListTable( _this ){
 		}
 	}
 	html += "</table>";
-	divTable.innerHTML = html;
+	listTable[graphIndex()].element().innerHTML = html;
 }
 function addListTable(){
 	var x  = "" + document.getElementById( "graph_edit_trace_x"  ).value;
@@ -3869,6 +3884,7 @@ function updateLanguage(){
 	document.getElementById( "graph_static_color_text" ).innerHTML = englishFlag ? "Text:" : "文字:";
 	document.getElementById( "graph_static_color_graph2" ).innerHTML = englishFlag ? "Graph:" : "グラフ:";
 	document.getElementById( "button_return2" ).innerHTML = englishFlag ? "Return" : "戻る";
+	document.getElementById( "button_get_content" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
 	document.getElementById( "button_selectimage_del" ).innerHTML = englishFlag ? "Del" : "消";
 	document.getElementById( "button_return3" ).innerHTML = englishFlag ? "Return" : "戻る";
 	document.getElementById( "button_profile_import2" ).innerHTML = englishFlag ? "Import" : "ｲﾝﾎﾟｰﾄする";
@@ -4507,4 +4523,19 @@ function changeVar2(){
 
 	document.getElementById( "button_ui_var_1" ).disabled = false;
 	document.getElementById( "button_ui_var_2" ).disabled = true;
+}
+
+function getContent(){
+	if( nativeRequest ){
+		nativeRequest.send( "get_content" );
+	}
+}
+function onContentBase64( data ){
+	skinImage = data;
+	document.getElementById( "graph_edit_skin_image" ).value = skinImage;
+	updateSkin();
+
+	writeProfileString( "ENV_", "SkinImage", skinImage );
+
+	addListImage();
 }
