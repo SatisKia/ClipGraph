@@ -4584,17 +4584,15 @@ function onKeyDown( key ){
 	case _KEY_TAB:
 		if( (exprType == 0) && (graphUI._mode == _UI_GRAPH_MODE_PARAM) ){
 			doEditExpr2();
-			return true;
 		} else {
 			doEditExpr1();
-			return true;
 		}
-		break;
+		return true;
 
-	case _KEY_UP   : topEditExpr(); break;
-	case _KEY_DOWN : endEditExpr(); break;
-	case _KEY_LEFT : backwardEditExpr(); break;
-	case _KEY_RIGHT: forwardEditExpr(); break;
+	case _KEY_UP   : topEditExpr(); return true;
+	case _KEY_DOWN : endEditExpr(); return true;
+	case _KEY_LEFT : backwardEditExpr(); return true;
+	case _KEY_RIGHT: forwardEditExpr(); return true;
 
 	case _KEY_BACKSPACE: delEditExpr(); break;
 	case _KEY_DELETE   : delEditExpr(); break;
