@@ -4089,7 +4089,6 @@ _Graph.prototype = {
    );
  },
  _drawYText : function( x, y ){
-  var xx;
   var text = floatToString( y, 15 );
   var tmp = new __TextInfo();
   this._gWorld.getTextInfo( text, tmp );
@@ -4097,18 +4096,27 @@ _Graph.prototype = {
   var ascent = tmp._ascent;
   var descent = tmp._descent;
   if( (this._gWorld.imgPosX( x ) - (width + 1)) < 0 ){
-   xx = 1;
+   this._gWorld.drawText(
+    text,
+    1,
+    this._gWorld.imgPosY( y ) - descent,
+    false
+    );
   } else if( this._gWorld.imgPosX( x ) >= this._gWorld._width ){
-   xx = this._gWorld._width - width;
+   this._gWorld.drawText(
+    text,
+    this._gWorld._width,
+    this._gWorld.imgPosY( y ) - descent,
+    true
+    );
   } else {
-   xx = this._gWorld.imgPosX( x ) - width;
+   this._gWorld.drawText(
+    text,
+    this._gWorld.imgPosX( x ),
+    this._gWorld.imgPosY( y ) - descent,
+    true
+    );
   }
-  this._gWorld.drawText(
-   text,
-   xx,
-   this._gWorld.imgPosY( y ) - descent,
-   false
-   );
  },
  clear : function( backColor, scaleColor, unitColor, unitX, unitY, textColor, textX, textY ){
   var i;
@@ -17120,7 +17128,129 @@ _Canvas.prototype = {
   return this._context.getImageData( 0, 0, w, h );
  }
 };
+function _StringUtil(){
+ this._fontSize = 0;
+ this._fontFamily = "";
+ this._text = document.createElement( "span" );
+ this._textStyle = "visibility:hidden;position:absolute;left:0;top:0";
+ this._text.style.cssText = this._textStyle;
+ document.body.appendChild( this._text );
+ this._h = "";
+ this._e = "";
+}
+_StringUtil.prototype = {
+ setFont : function( size, family ){
+  this._fontSize = size;
+  this._fontFamily = (family.indexOf( " " ) >= 0) ? "'" + family + "'" : family;
+  this._text.style.cssText = this._textStyle + ";font:" + this._fontSize + "px " + this._fontFamily;
+ },
+ stringWidth : function( str ){
+  this._text.innerHTML = "'";
+  var tmp = this._text.offsetWidth;
+  str = str.replace( new RegExp( "<", "igm" ), "&lt;" );
+  str = str.replace( new RegExp( ">", "igm" ), "&gt;" );
+  this._text.innerHTML = "'" + str + "'";
+  return this._text.offsetWidth - tmp * 2;
+ },
+ fontHeight : function(){
+  return this._fontSize;
+ },
+ trim : function( str ){
+  var ret = "";
+  var i;
+  var top = 0;
+  for( i = 0; i < str.length; i++ ){
+   if( (str.charAt( i ) != " ") && (str.charAt( i ) != "　") ){
+    break;
+   }
+   top++;
+  }
+  if( top < str.length ){
+   var end = str.length - 1;
+   for( i = end; i >= 0; i-- ){
+    if( (str.charAt( i ) != " ") && (str.charAt( i ) != "　") ){
+     break;
+    }
+    end--;
+   }
+   ret = str.substring( top, end + 1 );
+  }
+  return ret;
+ },
+ truncate : function( str, width, truncation ){
+  if( this.stringWidth( str ) <= width ){
+   return str;
+  }
+  width -= this.stringWidth( truncation );
+  var ret = "";
+  for( var i = 0; i < str.length; i++ ){
+   ret += str.charAt( i );
+   if( this.stringWidth( ret ) > width ){
+    if( ret.length > 1 ){
+     ret = ret.substring( 0, ret.length - 1 );
+     break;
+    }
+   }
+  }
+  return ret + truncation;
+ },
+ setHeadWrap : function( str ){
+  this._h = str;
+ },
+ setEndWrap : function( str ){
+  this._e = str;
+ },
+ wrap : function( str, width ){
+  var ret = new Array();
+  var chr;
+  var j = 0;
+  ret[j] = "";
+  for( var i = 0; i < str.length; i++ ){
+   ret[j] += str.charAt( i );
+   if( stringWidth( ret[j] ) > width ){
+    if( ret[j].length > 1 ){
+     ret[j] = ret[j].substring( 0, ret[j].length - 1 );
+     i--;
+     if( this._h.length > 0 ){
+      while( true ){
+       if( i + 1 < str.length ){
+        chr = str.charAt( i + 1 );
+        if( this._h.indexOf( chr ) >= 0 ){
+         ret[j] += chr;
+         i++;
+        } else {
+         break;
+        }
+       } else {
+        break;
+       }
+      }
+     }
+     if( this._e.length > 0 ){
+      while( true ){
+       if( ret[j].length > 1 ){
+        chr = ret[j].charAt( ret[j].length - 1 );
+        if( this._e.indexOf( chr ) >= 0 ){
+         ret[j] = ret[j].substring( 0, ret[j].length - 1 );
+         i--;
+        } else {
+         break;
+        }
+       } else {
+        break;
+       }
+      }
+     }
+    }
+    j++;
+    ret[j] = "";
+   }
+  }
+  return ret;
+ }
+};
 var canvas;
+var su;
 var colorBack = 0;
 var colorR = 0;
 var colorG = 0;
@@ -17154,6 +17284,9 @@ function canvasLine( x1, y1, x2, y2 ){
   canvas.setColor( colorR, colorG, colorB, colorA );
  }
  canvas.line( x1, y1, x2, y2 );
+}
+function canvasDrawString( text, x, y ){
+ canvas.drawString( text, x, y + 2 );
 }
 var _input_file_cnt;
 var _input_file_num;
@@ -19925,6 +20058,45 @@ function doClearCookie( button ){
   location.replace( "index.html?menu=option" );
  }
 }
+var _key_state = 0;
+var _key_array = new Array();
+_key_array[0] = 16;
+_key_array[1] = 17;
+function setKeyArray( array ){
+ var len = array.length;
+ _key_array = new Array();
+ for( var i = 0; i < len; i++ ){
+  _key_array[i] = array[i];
+ }
+}
+function keyBit( key ){
+ var len = _key_array.length;
+ for( var i = 0; i < len; i++ ){
+  if( _key_array[i] == key ){
+   return _SHIFTL( 1, i );
+  }
+ }
+ return 0;
+}
+function keyDown( e ){
+ var k = keyBit( e.keyCode );
+ if( _AND( _key_state, k ) == 0 ){
+  _key_state += k;
+ }
+ if( onKeyDown( e.keyCode ) ){
+  e.preventDefault();
+ }
+}
+function keyUp( e ){
+ var k = keyBit( e.keyCode );
+ if( _AND( _key_state, k ) != 0 ){
+  _key_state -= k;
+ }
+ if( onKeyUp( e.keyCode ) ){
+  e.preventDefault();
+ }
+}
+var keyShiftOnly = false;
 function Electron( main ){
  this._main = main;
  try {
@@ -20134,6 +20306,9 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  regGWorldDefCharInfo( 0 );
  setCanvasEnv( new _CanvasEnv() );
  canvas = new _Canvas( canvasId );
+ su = new _StringUtil();
+ canvas.setFont( 10, "Helvetica" );
+ su.setFont( 10, "Helvetica" );
  inputFile = new Array();
  for( i = 0; i < inputFileIds.length; i++ ){
   inputFile[i] = new _InputFile( inputFileIds[i] );
@@ -20147,21 +20322,21 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  logExpr = new ListBox( logId );
  logExpr.setLineNum( 12 );
  _addGraphEventListener( logExpr.element(), "click", function( e ){
-  if( logExpr.click( e, 0, 18 ) ){
+  if( logExpr.click( e, 0, 20 ) ){
    updateLogExpr();
   }
  });
  listTable[0] = new ListBox( tableId );
  listTable[0].setLineNum( 19 );
  _addGraphEventListener( listTable[0].element(), "click", function( e ){
-  if( listTable[0].click( e, 24, 18 ) ){
+  if( listTable[0].click( e, 24, 20 ) ){
    updateListTable( graphUI );
   }
  });
  listImage = new ListBox( selectImageId );
  listImage.setLineNum( (isAndroidTablet() || isIPad()) ? 19 : 21 );
  _addGraphEventListener( listImage.element(), "click", function( e ){
-  if( listImage.click( e, 0, 18 ) ){
+  if( listImage.click( e, 0, 20 ) ){
    updateListImage();
    getListImage();
   }
@@ -20420,6 +20595,8 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   nativeRequest.setScheme( "native" );
   nativeRequest.send( "start_load_extfunc/" + extFuncFile[loadNum] );
  }
+ _addGraphEventListener( document, "keydown", keyDown );
+ _addGraphEventListener( document, "keyup", keyUp );
  if( electron != null ){
   setEnglish( electron.isEnglish() );
  }
@@ -21948,6 +22125,16 @@ function gWorldFill( gWorld, x, y, w, h ){
 function gWorldLine( gWorld, x1, y1, x2, y2 ){
  if( topProc._gUpdateFlag ){
   canvasLine( x1, y1, x2, y2 );
+ }
+}
+function gWorldTextColor( gWorld, text, x, y, color, right ){
+ if( topProc._gUpdateFlag ){
+  if( right ){
+   x -= su.stringWidth( text );
+  }
+  canvasSetColor( COLOR_WIN[color] );
+  canvasDrawString( text, x, y );
+  canvasSetColor( COLOR_WIN[gWorld._color] );
  }
 }
 function doCommandGColor( index, rgb ){
@@ -24081,4 +24268,116 @@ function onContentBase64( data ){
  updateSkin();
  writeProfileString( "ENV_", "SkinImage", skinImage );
  addListImage();
+}
+function onKeyDown( key ){
+ if( menu != 2 ){
+  return false;
+ }
+ if(
+  (document.activeElement == document.getElementById( "graph_edit_min" )) ||
+  (document.activeElement == document.getElementById( "graph_edit_max" )) ||
+  (document.activeElement == document.getElementById( "graph_edit_pitch" ))
+ ){
+  return false;
+ }
+ switch( key ){
+ case 9:
+  if( (exprType == 0) && (graphUI._mode == 4) ){
+   doEditExpr2();
+   return true;
+  } else {
+   doEditExpr1();
+   return true;
+  }
+  break;
+ case 38 : topEditExpr(); break;
+ case 40 : endEditExpr(); break;
+ case 37 : backwardEditExpr(); break;
+ case 39: forwardEditExpr(); break;
+ case 8: delEditExpr(); break;
+ case 46 : delEditExpr(); break;
+ case 48 : doButton0(); break;
+ case 96: doButton0(); break;
+ case 49 : doButton1(); break;
+ case 97: doButton1(); break;
+ case 50 : doButton2(); break;
+ case 98: doButton2(); break;
+ case 51 : doButton3(); break;
+ case 99: doButton3(); break;
+ case 52 : doButton4(); break;
+ case 100: doButton4(); break;
+ case 53 : doButton5(); break;
+ case 101: doButton5(); break;
+ case 54 : doButton6(); break;
+ case 102: doButton6(); break;
+ case 55 : doButton7(); break;
+ case 103: doButton7(); break;
+ case 56:
+ if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButton8();
+  } else {
+   doButtonTop();
+  }
+  break;
+ case 104: doButton8(); break;
+ case 57:
+ if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButton9();
+  } else {
+   doButtonEnd();
+  }
+  break;
+ case 105: doButton9(); break;
+ case 110: doButtonPoint(); break;
+ case 190: doButtonPoint(); break;
+ case 187:
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButtonPlus();
+  } else {
+   doButtonAdd();
+  }
+  break;
+ case 189:
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButtonSub();
+  } else {
+   doButtonMinus();
+  }
+  break;
+ case 32: doButtonSpace(); break;
+ case 73: doButtonI(); break;
+ case 106: doButtonMul(); break;
+ case 186: doButtonMul(); break;
+ case 111: doButtonDiv(); break;
+ case 191: doButtonDiv(); break;
+ case 107:
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButtonAdd();
+  } else {
+   doButtonPlus();
+  }
+  break;
+ case 109:
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButtonSub();
+  } else {
+   doButtonMinus();
+  }
+  break;
+ case 88: doButtonVar(); break;
+ case 84: doButtonVar(); break;
+ case 13: doButtonEnter(); break;
+ }
+ if( key == 16 ){
+  keyShiftOnly = true;
+ } else {
+  keyShiftOnly = false;
+ }
+ return false;
+}
+function onKeyUp( key ){
+ if( (key == 16) && keyShiftOnly ){
+  doButtonSHIFT();
+ }
+ return false;
 }

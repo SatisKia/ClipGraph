@@ -94,7 +94,9 @@ function onError( e ){
 
 // キャンバス
 #include "_Canvas.js"
+#include "_StringUtil.js"
 var canvas;
+var su;
 var colorBack = 0;
 var colorR = 0;
 var colorG = 0;
@@ -128,6 +130,9 @@ function canvasLine( x1, y1, x2, y2 ){
 		canvas.setColor( colorR, colorG, colorB, colorA );
 	}
 	canvas.line( x1, y1, x2, y2 );
+}
+function canvasDrawString( text, x, y ){
+	canvas.drawString( text, x, y + 2 );
 }
 
 // ファイル選択
@@ -176,6 +181,10 @@ var graphUI;
 var nativeRequest;
 
 #include "Profile.js"
+
+// キー関連
+#include "KeyEvent.js"
+var keyShiftOnly = false;
 
 #include "Electron.js"
 var electron = null;
@@ -359,6 +368,9 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	// キャンバス
 	setCanvasEnv( new _CanvasEnv() );
 	canvas = new _Canvas( canvasId );
+	su = new _StringUtil();
+	canvas.setFont( 10, "Helvetica" );
+	su.setFont( 10, "Helvetica" );
 //	canvasClear();
 
 	// ファイル選択コントロール
@@ -378,21 +390,21 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	logExpr = new ListBox( logId );
 	logExpr.setLineNum( 12 );
 	_addGraphEventListener( logExpr.element(), "click", function( e ){
-		if( logExpr.click( e, 0, 18 ) ){
+		if( logExpr.click( e, 0, 20 ) ){
 			updateLogExpr();
 		}
 	});
 	listTable[0] = new ListBox( tableId );
 	listTable[0].setLineNum( 19 );
 	_addGraphEventListener( listTable[0].element(), "click", function( e ){
-		if( listTable[0].click( e, 24, 18 ) ){
+		if( listTable[0].click( e, 24, 20 ) ){
 			updateListTable( graphUI );
 		}
 	});
 	listImage = new ListBox( selectImageId );
 	listImage.setLineNum( (isAndroidTablet() || isIPad()) ? 19 : 21 );
 	_addGraphEventListener( listImage.element(), "click", function( e ){
-		if( listImage.click( e, 0, 18 ) ){
+		if( listImage.click( e, 0, 20 ) ){
 			updateListImage();
 
 			getListImage();
@@ -713,6 +725,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 		nativeRequest.setScheme( "native" );
 		nativeRequest.send( "start_load_extfunc/" + extFuncFile[loadNum] );
 	}
+
+	// キー関連
+	_addGraphEventListener( document, "keydown", keyDown );
+	_addGraphEventListener( document, "keyup", keyUp );
 
 	if( electron != null ){
 		setEnglish( electron.isEnglish() );
@@ -2136,6 +2152,16 @@ function gWorldFill( gWorld, x, y, w, h ){
 function gWorldLine( gWorld, x1, y1, x2, y2 ){
 	if( topProc._gUpdateFlag ){
 		canvasLine( x1, y1, x2, y2 );
+	}
+}
+function gWorldTextColor( gWorld, text, x, y, color, right ){
+	if( topProc._gUpdateFlag ){
+		if( right ){
+			x -= su.stringWidth( text );
+		}
+		canvasSetColor( COLOR_WIN[color] );
+		canvasDrawString( text, x, y );
+		canvasSetColor( COLOR_WIN[gWorld._color] );
 	}
 }
 function doCommandGColor( index, rgb ){
@@ -4538,4 +4564,131 @@ function onContentBase64( data ){
 	writeProfileString( "ENV_", "SkinImage", skinImage );
 
 	addListImage();
+}
+
+// キー関連
+function onKeyDown( key ){
+	if( menu != _UI_GRAPH_MENU_MAIN ){
+		return false;
+	}
+
+	if(
+		(document.activeElement == document.getElementById( "graph_edit_min"   )) ||
+		(document.activeElement == document.getElementById( "graph_edit_max"   )) ||
+		(document.activeElement == document.getElementById( "graph_edit_pitch" ))
+	){
+		return false;
+	}
+
+	switch( key ){
+	case _KEY_TAB:
+		if( (exprType == 0) && (graphUI._mode == _UI_GRAPH_MODE_PARAM) ){
+			doEditExpr2();
+			return true;
+		} else {
+			doEditExpr1();
+			return true;
+		}
+		break;
+
+	case _KEY_UP   : topEditExpr(); break;
+	case _KEY_DOWN : endEditExpr(); break;
+	case _KEY_LEFT : backwardEditExpr(); break;
+	case _KEY_RIGHT: forwardEditExpr(); break;
+
+	case _KEY_BACKSPACE: delEditExpr(); break;
+	case _KEY_DELETE   : delEditExpr(); break;
+
+	case _KEY_0    : doButton0(); break;
+	case _KEY_NUM_0: doButton0(); break;
+	case _KEY_1    : doButton1(); break;
+	case _KEY_NUM_1: doButton1(); break;
+	case _KEY_2    : doButton2(); break;
+	case _KEY_NUM_2: doButton2(); break;
+	case _KEY_3    : doButton3(); break;
+	case _KEY_NUM_3: doButton3(); break;
+	case _KEY_4    : doButton4(); break;
+	case _KEY_NUM_4: doButton4(); break;
+	case _KEY_5    : doButton5(); break;
+	case _KEY_NUM_5: doButton5(); break;
+	case _KEY_6    : doButton6(); break;
+	case _KEY_NUM_6: doButton6(); break;
+	case _KEY_7    : doButton7(); break;
+	case _KEY_NUM_7: doButton7(); break;
+	case _KEY_8:
+	if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButton8();
+		} else {
+			doButtonTop();
+		}
+		break;
+	case _KEY_NUM_8: doButton8(); break;
+	case _KEY_9:
+	if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButton9();
+		} else {
+			doButtonEnd();
+		}
+		break;
+	case _KEY_NUM_9: doButton9(); break;
+
+	case _KEY_NUM_POINT: doButtonPoint(); break;
+	case 190: doButtonPoint(); break;	// .>キー
+	case 187:	// ;+キー
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButtonPlus();
+		} else {
+			doButtonAdd();
+		}
+		break;
+	case 189:	// -=キー
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButtonSub();
+		} else {
+			doButtonMinus();
+		}
+		break;
+	case _KEY_SPACE: doButtonSpace(); break;
+
+	case _KEY_I: doButtonI(); break;
+
+	case _KEY_NUM_MUL: doButtonMul(); break;
+	case 186: doButtonMul(); break;	// :*キー
+	case _KEY_NUM_DIV: doButtonDiv(); break;
+	case 191: doButtonDiv(); break;	// /?キー
+	case _KEY_NUM_ADD:
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButtonAdd();
+		} else {
+			doButtonPlus();
+		}
+		break;
+	case _KEY_NUM_SUB:
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButtonSub();
+		} else {
+			doButtonMinus();
+		}
+		break;
+
+	case _KEY_X: doButtonVar(); break;
+	case _KEY_T: doButtonVar(); break;
+
+	case _KEY_ENTER: doButtonEnter(); break;
+	}
+
+	if( key == _KEY_SHIFT ){
+		keyShiftOnly = true;
+	} else {
+		keyShiftOnly = false;
+	}
+
+	return false;
+}
+function onKeyUp( key ){
+	if( (key == _KEY_SHIFT) && keyShiftOnly ){
+		doButtonSHIFT();
+	}
+
+	return false;
 }

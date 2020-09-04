@@ -88,6 +88,11 @@ button {
 	border:1px solid #000000;
 	border-radius:10px;
 }
+.span_key {
+	border:1px solid #000000;
+	border-radius:3px;
+	padding:2px;
+}
 </style>
 </head>
 <body>
@@ -125,6 +130,8 @@ button {
 <a href="#gijyutu">Technical information</a><br>
 <hr class="hr">
 <a href="#button">How the button works</a><br>
+<hr class="hr">
+<a href="#keyboard">Keyboard assignment</a><br>
 
 <a name="menu"></a><br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
@@ -519,7 +526,7 @@ Specify the Y coordinate value at the top of the graph screen.<br>
 
 ● To draw a parametric graph, set it to "Parametric" mode.<br>
 <hr class="hr">
-● Enter calculation formula x=f(t) including variable t in calculation formula 1 (upper row) and calculation expression y=f(t) containing variable t in calculation expression 2 (lower row). Find the X・Y coordinate value for the variable t.<br>
+● Enter calculation formula x=f(t) including variable t in calculation formula 1 (upper row) and calculation formula y=f(t) containing variable t in calculation formula 2 (lower row). Find the X・Y coordinate value for the variable t.<br>
 <hr class="hr">
 ● Specify the range of the variable t in the min・max edit box and the sampling interval with the pch edit box.<br>
 <hr class="hr">
@@ -1374,6 +1381,101 @@ Clear the graph.<br>
 <b>Store button</b><br>
 Press to register the result of tracing in a table.<br>
 </td></tr>
+</table>
+
+<a name="keyboard"></a><br>
+<table width="100%" border="0" cellspacing="0" cellpadding="0">
+	<tr>
+		<td width="100%" bgcolor="#000000"><span style="font-size:20px; color:#FFFFFF">Keyboard assignment</span></td>
+	</tr>
+</table>
+<hr class="hr">
+
+<table width="100%" border="1" cellspacing="1" cellpadding="4">
+<tr>
+<td width="50%"><span class="span_key">&nbsp;Tab&nbsp;</span></td>
+<td width="50%">Focus switching for calculation formula 1 (upper row) and calculation formula 2 (lower row)</td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;↑&nbsp;</span></td>
+<td><button>|←</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;↓&nbsp;</span></td>
+<td><button>→|</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;←&nbsp;</span></td>
+<td><button>←</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;→&nbsp;</span></td>
+<td><button>→</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Backspace&nbsp;</span> / <span class="span_key">&nbsp;Delete&nbsp;</span></td>
+<td><button>DEL</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;0&nbsp;</span>～<span class="span_key">&nbsp;9&nbsp;</span> / Numeric key <span class="span_key">&nbsp;0&nbsp;</span>～<span class="span_key">&nbsp;9&nbsp;</span></td>
+<td><button>0</button>～<button>9</button></td>
+</tr>
+<tr>
+<td>Numeric key <span class="span_key">&nbsp;.&nbsp;</span> / <span class="span_key">&nbsp;<span style="vertical-align:-2pt">.</span> <span style="vertical-align:2pt">&gt;</span>&nbsp;</span></td>
+<td><button>.</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+Numeric key <span class="span_key">&nbsp;+&nbsp;</span> / <span class="span_key">&nbsp;<span style="vertical-align:-2pt">;</span> <span style="vertical-align:2pt">+</span>&nbsp;</span></td>
+<td><button>\+</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+Numeric key <span class="span_key">&nbsp;-&nbsp;</span> / <span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">-</span> <span style="vertical-align:2pt">=</span>&nbsp;</span></td>
+<td><button>\-</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Space&nbsp;</span></td>
+<td><button>SP</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;I&nbsp;</span></td>
+<td><button>i</button></td>
+</tr>
+<tr>
+<td>Numeric key <span class="span_key">&nbsp;*&nbsp;</span> / <span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">:</span> <span style="vertical-align:2pt">*</span>&nbsp;</span></td>
+<td><button>*</button></td>
+</tr>
+<tr>
+<td>Numeric key <span class="span_key">&nbsp;/&nbsp;</span> / <span class="span_key">&nbsp;<span style="vertical-align:-2pt">/</span> <span style="vertical-align:2pt">?</span>&nbsp;</span></td>
+<td><button>/</button></td>
+</tr>
+<tr>
+<td>Numeric key <span class="span_key">&nbsp;+&nbsp;</span> / <span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">;</span> <span style="vertical-align:2pt">+</span>&nbsp;</span></td>
+<td><button>+</button></td>
+</tr>
+<tr>
+<td>Numeric key <span class="span_key">&nbsp;-&nbsp;</span> / <span class="span_key">&nbsp;<span style="vertical-align:-2pt">-</span> <span style="vertical-align:2pt">=</span>&nbsp;</span></td>
+<td><button>-</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">8</span> <span style="vertical-align:2pt">(</span>&nbsp;</span></td>
+<td><button>(</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">9</span> <span style="vertical-align:2pt">)</span>&nbsp;</span></td>
+<td><button>)</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;X&nbsp;</span> / <span class="span_key">&nbsp;T&nbsp;</span></td>
+<td><button>x,t</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Enter&nbsp;</span></td>
+<td><button><img src="draw.png" width="20" height="20"></button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span></td>
+<td><button class="button_func">SHIFT</button></td>
+</tr>
 </table>
 
 <br>
