@@ -9,16 +9,16 @@
 <title></title>
 
 <!--リリース用-->
-<script type="text/javascript" src="clip.js?v=200903"></script>
-<script type="text/javascript" src="Main.js?v=200904"></script>
+<script type="text/javascript" src="clip.js?v=201003"></script>
+<script type="text/javascript" src="Main.js?v=201003"></script>
 
 <!--デバッグ用
-<script type="text/javascript" src="clip.debug.js?v=200903"></script>
-<script type="text/javascript" src="Main.debug.js?v=200904"></script>
+<script type="text/javascript" src="clip.debug.js?v=201003"></script>
+<script type="text/javascript" src="Main.debug.js?v=201003"></script>
 -->
 
 <!--ライブラリ未使用版デバッグ用
-<script type="text/javascript" src="All.debug.js?v=200904"></script>
+<script type="text/javascript" src="All.debug.js?v=201003"></script>
 -->
 
 <script type="text/javascript">
@@ -177,7 +177,7 @@ button:disabled {
 	border-bottom:1px solid #808080;
 }
 .button_color_graph {
-	width:26px;
+	width:24px;
 }
 .button_color:disabled {
 	border:3px solid #2080B0;
@@ -753,46 +753,50 @@ input[type="number"]::-webkit-inner-spin-button {
 		</table>
 		<table>
 			<tr>
-				<td><button id="button_7" class="button_number button5_1 height35">7</button></td>
-				<td><button id="button_8" class="button_number button5_2 height35">8</button></td>
-				<td><button id="button_9" class="button_number button5_3 height35">9</button></td>
-				<td><button id="button_mul" class="button_op button5_4 height35">*</button></td>
-				<td><button id="button_div" class="button_op button5_5 height35">/</button></td>
+				<td><button id="button_7" class="button_number button6_1 height35">7</button></td>
+				<td><button id="button_8" class="button_number button6_2 height35">8</button></td>
+				<td><button id="button_9" class="button_number button6_3 height35">9</button></td>
+				<td><button id="button_eplus" class="button_symbol button6_4 height35">e+</button></td>
+				<td><button id="button_mul" class="button_op button6_5 height35">*</button></td>
+				<td><button id="button_div" class="button_op button6_6 height35">/</button></td>
 			</tr>
 		</table>
 		<table>
 			<tr>
-				<td><button id="button_4" class="button_number button5_1 height35">4</button></td>
-				<td><button id="button_5" class="button_number button5_2 height35">5</button></td>
-				<td><button id="button_6" class="button_number button5_3 height35">6</button></td>
-				<td><button id="button_add" class="button_op button5_4 height35">+</button></td>
-				<td><button id="button_sub" class="button_op button5_5 height35">-</button></td>
+				<td><button id="button_4" class="button_number button6_1 height35">4</button></td>
+				<td><button id="button_5" class="button_number button6_2 height35">5</button></td>
+				<td><button id="button_6" class="button_number button6_3 height35">6</button></td>
+				<td><button id="button_eminus" class="button_symbol button6_4 height35">e-</button></td>
+				<td><button id="button_add" class="button_op button6_5 height35">+</button></td>
+				<td><button id="button_sub" class="button_op button6_6 height35">-</button></td>
 			</tr>
 		</table>
 		<table>
 			<tr>
-				<td><button id="button_1" class="button_number button5_1 height35">1</button></td>
-				<td><button id="button_2" class="button_number button5_2 height35">2</button></td>
-				<td><button id="button_3" class="button_number button5_3 height35">3</button></td>
-				<td><button id="button_mod" class="button_op button5_4 height35">%</button></td>
-				<td><button id="button_pow" class="button_op button5_5 height35">^</button></td>
+				<td><button id="button_1" class="button_number button6_1 height35">1</button></td>
+				<td><button id="button_2" class="button_number button6_2 height35">2</button></td>
+				<td><button id="button_3" class="button_number button6_3 height35">3</button></td>
+				<td><button id="button_plus" class="button_symbol button6_4 height35">\+</button></td>
+				<td><button id="button_mod" class="button_op button6_5 height35">%</button></td>
+				<td><button id="button_pow" class="button_op button6_6 height35">^</button></td>
 			</tr>
 		</table>
 		<table>
 			<tr>
-				<td><button id="button_0" class="button_number button5_1 height35">0</button></td>
-				<td><button id="button_point" class="button_number button5_2 height35">.</button></td>
-				<td><button id="button_i" class="button_symbol button5_3 height35">i</button></td>
-				<td><button id="button_unary_minus" class="button_op button5_4 height35">[-]</button></td>
-				<td><button id="button_enter" class="button_enter button5_5 height35"><img src="draw.png" width="20" height="20"></button></td>
-			</tr>
-		</table>
-		<table>
-			<tr>
-				<td><button id="button_eplus" class="button_symbol button6_1 height35">e+</button></td>
-				<td><button id="button_eminus" class="button_symbol button6_2 height35">e-</button></td>
-				<td><button id="button_plus" class="button_symbol button6_3 height35">\+</button></td>
+				<td><button id="button_0" class="button_number button6_1 height35">0</button></td>
+				<td><button id="button_point" class="button_number button6_2 height35">.</button></td>
+				<td><button id="button_i" class="button_number button6_3 height35">i</button></td>
 				<td><button id="button_minus" class="button_symbol button6_4 height35">\-</button></td>
+				<td><button id="button_unary_minus" class="button_op button6_5 height35">[-]</button></td>
+				<td><button id="button_enter" class="button_enter button6_6 height35"><img src="draw.png" width="20" height="20"></button></td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td><button id="button_deg" class="button_symbol button6_1 height35">d</button></td>
+				<td><button id="button_grad" class="button_symbol button6_2 height35">g</button></td>
+				<td><button id="button_rad" class="button_symbol button6_3 height35">r</button></td>
+				<td><button id="button_factorial" class="button_symbol button6_4 height35">!</button></td>
 				<td><button name="button_shift" class="button_shift height35" style="width:108px">SHIFT</button></td>
 			</tr>
 		</table>
@@ -863,7 +867,7 @@ input[type="number"]::-webkit-inner-spin-button {
 				<td><button name="button_func" class="button_func button4_1 height35">sqr</button></td>
 				<td><button name="button_func" class="button_func button4_2 height35">sqrt</button></td>
 				<td><button name="button_func" class="button_func button4_3 height35">pow</button></td>
-				<td><button class="button_func button4_4 height35" disabled>&nbsp;</button></td>
+				<td><button name="button_func" class="button_func button4_4 height35">fact</button></td>
 			</tr>
 		</table>
 		<table>
@@ -1487,8 +1491,14 @@ input[type="number"]::-webkit-inner-spin-button {
 		<hr class="hr">
 		<table>
 			<tr>
-				<td width="52" align="right" valign="top" rowspan="2"><span id="graph_static_color_graph" class="span">ｸﾞﾗﾌ:</span></td>
-				<td width="2" rowspan="2"></td>
+				<td width="4" rowspan="2"></td>
+				<td width="66" valign="top" rowspan="2">
+					<select id="graph_select_index" class="select_common" style="width:60px; height:35px" onchange="doChangeIndex( this )">
+						<option value="0" selected>ｸﾞﾗﾌ1</option>
+						<option value="1">ｸﾞﾗﾌ2</option>
+						<option value="2">ｸﾞﾗﾌ3</option>
+					</select>
+				</td>
 				<td><form action="javascript:doButtonColorGraph(  1 )"><button id="color_graph_01" class="button_color button_color_graph button_color_01">&nbsp;</button></form></td>
 				<td><form action="javascript:doButtonColorGraph(  3 )"><button id="color_graph_03" class="button_color button_color_graph button_color_03">&nbsp;</button></form></td>
 				<td><form action="javascript:doButtonColorGraph(  5 )"><button id="color_graph_05" class="button_color button_color_graph button_color_05">&nbsp;</button></form></td>
@@ -2275,26 +2285,82 @@ input[type="number"]::-webkit-inner-spin-button {
 			<hr class="hr">
 			<table>
 				<tr>
-					<td width="65" align="right" valign="top" rowspan="2"><span id="graph_static_color_graph2" class="span">グラフ:</span></td>
+					<td width="65" align="right" valign="top" rowspan="2"><span id="graph_static_color_graph1" class="span">ｸﾞﾗﾌ1:</span></td>
 					<td width="2" rowspan="2"></td>
-					<td><form action="javascript:doButtonColorGraph(  1 )"><button id="color_graph2_01" class="button_color button_color_01">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph(  3 )"><button id="color_graph2_03" class="button_color button_color_03">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph(  5 )"><button id="color_graph2_05" class="button_color button_color_05">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph(  7 )"><button id="color_graph2_07" class="button_color button_color_07">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph(  9 )"><button id="color_graph2_09" class="button_color button_color_09">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph( 11 )"><button id="color_graph2_11" class="button_color button_color_11">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph( 13 )"><button id="color_graph2_13" class="button_color button_color_13">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph(  0 )"><button id="color_graph2_00" class="button_color button_color_00">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  1 )"><button id="color_graph1_01" class="button_color button_color_01">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  3 )"><button id="color_graph1_03" class="button_color button_color_03">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  5 )"><button id="color_graph1_05" class="button_color button_color_05">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  7 )"><button id="color_graph1_07" class="button_color button_color_07">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  9 )"><button id="color_graph1_09" class="button_color button_color_09">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1( 11 )"><button id="color_graph1_11" class="button_color button_color_11">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1( 13 )"><button id="color_graph1_13" class="button_color button_color_13">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  0 )"><button id="color_graph1_00" class="button_color button_color_00">&nbsp;</button></form></td>
 				</tr>
 				<tr>
-					<td><form action="javascript:doButtonColorGraph(  2 )"><button id="color_graph2_02" class="button_color button_color_02">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph(  4 )"><button id="color_graph2_04" class="button_color button_color_04" disabled>&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph(  6 )"><button id="color_graph2_06" class="button_color button_color_06">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph(  8 )"><button id="color_graph2_08" class="button_color button_color_08">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph( 10 )"><button id="color_graph2_10" class="button_color button_color_10">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph( 12 )"><button id="color_graph2_12" class="button_color button_color_12">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph( 14 )"><button id="color_graph2_14" class="button_color button_color_14">&nbsp;</button></form></td>
-					<td><form action="javascript:doButtonColorGraph( 15 )"><button id="color_graph2_15" class="button_color button_color_15">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  2 )"><button id="color_graph1_02" class="button_color button_color_02">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  4 )"><button id="color_graph1_04" class="button_color button_color_04" disabled>&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  6 )"><button id="color_graph1_06" class="button_color button_color_06">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1(  8 )"><button id="color_graph1_08" class="button_color button_color_08">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1( 10 )"><button id="color_graph1_10" class="button_color button_color_10">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1( 12 )"><button id="color_graph1_12" class="button_color button_color_12">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1( 14 )"><button id="color_graph1_14" class="button_color button_color_14">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph1( 15 )"><button id="color_graph1_15" class="button_color button_color_15">&nbsp;</button></form></td>
+				</tr>
+			</table>
+			<hr class="hr">
+			<hr class="hr">
+			<hr class="hr">
+			<hr class="hr">
+			<table>
+				<tr>
+					<td width="65" align="right" valign="top" rowspan="2"><span id="graph_static_color_graph2" class="span">ｸﾞﾗﾌ2:</span></td>
+					<td width="2" rowspan="2"></td>
+					<td><form action="javascript:doButtonColorGraph2(  1 )"><button id="color_graph2_01" class="button_color button_color_01">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2(  3 )"><button id="color_graph2_03" class="button_color button_color_03">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2(  5 )"><button id="color_graph2_05" class="button_color button_color_05">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2(  7 )"><button id="color_graph2_07" class="button_color button_color_07">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2(  9 )"><button id="color_graph2_09" class="button_color button_color_09">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2( 11 )"><button id="color_graph2_11" class="button_color button_color_11">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2( 13 )"><button id="color_graph2_13" class="button_color button_color_13">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2(  0 )"><button id="color_graph2_00" class="button_color button_color_00">&nbsp;</button></form></td>
+				</tr>
+				<tr>
+					<td><form action="javascript:doButtonColorGraph2(  2 )"><button id="color_graph2_02" class="button_color button_color_02">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2(  4 )"><button id="color_graph2_04" class="button_color button_color_04" disabled>&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2(  6 )"><button id="color_graph2_06" class="button_color button_color_06">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2(  8 )"><button id="color_graph2_08" class="button_color button_color_08">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2( 10 )"><button id="color_graph2_10" class="button_color button_color_10">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2( 12 )"><button id="color_graph2_12" class="button_color button_color_12">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2( 14 )"><button id="color_graph2_14" class="button_color button_color_14">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph2( 15 )"><button id="color_graph2_15" class="button_color button_color_15">&nbsp;</button></form></td>
+				</tr>
+			</table>
+			<hr class="hr">
+			<hr class="hr">
+			<hr class="hr">
+			<hr class="hr">
+			<table>
+				<tr>
+					<td width="65" align="right" valign="top" rowspan="2"><span id="graph_static_color_graph3" class="span">ｸﾞﾗﾌ3:</span></td>
+					<td width="2" rowspan="2"></td>
+					<td><form action="javascript:doButtonColorGraph3(  1 )"><button id="color_graph3_01" class="button_color button_color_01">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3(  3 )"><button id="color_graph3_03" class="button_color button_color_03">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3(  5 )"><button id="color_graph3_05" class="button_color button_color_05">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3(  7 )"><button id="color_graph3_07" class="button_color button_color_07">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3(  9 )"><button id="color_graph3_09" class="button_color button_color_09">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3( 11 )"><button id="color_graph3_11" class="button_color button_color_11">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3( 13 )"><button id="color_graph3_13" class="button_color button_color_13">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3(  0 )"><button id="color_graph3_00" class="button_color button_color_00">&nbsp;</button></form></td>
+				</tr>
+				<tr>
+					<td><form action="javascript:doButtonColorGraph3(  2 )"><button id="color_graph3_02" class="button_color button_color_02">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3(  4 )"><button id="color_graph3_04" class="button_color button_color_04" disabled>&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3(  6 )"><button id="color_graph3_06" class="button_color button_color_06">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3(  8 )"><button id="color_graph3_08" class="button_color button_color_08">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3( 10 )"><button id="color_graph3_10" class="button_color button_color_10">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3( 12 )"><button id="color_graph3_12" class="button_color button_color_12">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3( 14 )"><button id="color_graph3_14" class="button_color button_color_14">&nbsp;</button></form></td>
+					<td><form action="javascript:doButtonColorGraph3( 15 )"><button id="color_graph3_15" class="button_color button_color_15">&nbsp;</button></form></td>
 				</tr>
 			</table>
 		</div>

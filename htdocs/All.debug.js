@@ -1278,6 +1278,34 @@ function _UNSIGNED( x, umax ){
  if( x < 0 ) return x + umax;
  return x;
 }
+function _MODF( x, _int ){
+ var tmp = x.toString().split( "." );
+ var k;
+ if( tmp[1] ){
+  if( (tmp[1].indexOf( "e" ) >= 0) || (tmp[1].indexOf( "E" ) >= 0) ){
+   k = 1;
+  } else {
+   k = _POW( 10, tmp[1].length );
+  }
+ } else {
+  k = 1;
+ }
+ var i = _INT( x );
+ _int.set( i );
+ return (x * k - i * k) / k;
+}
+function _FACTORIAL( x ){
+ var m = false;
+ if( x < 0 ){
+  m = true;
+  x = 0 - x;
+ }
+ var f = 1;
+ for( var i = 2; i <= x; i++ ){
+  f *= i;
+ }
+ return m ? -f : f;
+}
 function _CHAR( chr ){
  return chr.charCodeAt( 0 );
 }
@@ -2081,14 +2109,15 @@ _Time.prototype = {
  },
  _reduce1 : function(){
   var _m, _s, _f;
-  _m = this._hour - _INT( this._hour );
-  this._hour = _INT( this._hour );
+  var _int = new _Float();
+  _m = _MODF( this._hour, _int );
+  this._hour = _int.val();
   this._min += _m * 60.0;
-  _s = this._min - _INT( this._min );
-  this._min = _INT( this._min );
+  _s = _MODF( this._min, _int );
+  this._min = _int.val();
   this._sec += _s * 60.0;
-  _f = this._sec - _INT( this._sec );
-  this._sec = _INT( this._sec );
+  _f = _MODF( this._sec, _int );
+  this._sec = _int.val();
   this._frame += _f * this._fps;
  },
  _reduce2 : function(){
@@ -3030,10 +3059,10 @@ _Value.prototype = {
   return floatToValue( x );
  },
  modf : function( _int ){
-  var x = this.toFloat();
-  var i = _INT( x );
-  _int.set( i );
-  return floatToValue( x - i );
+  return floatToValue( _MODF( this.toFloat(), _int ) );
+ },
+ factorial : function(){
+  return floatToValue( _FACTORIAL( this.toFloat() ) );
  },
  farg : function(){
   return this._complex().farg();
@@ -3491,7 +3520,7 @@ __ArrayNode.prototype = {
    this._vector[i].ass( value[i] );
   }
  },
- setVector2 : function( real, imag, num ){
+ setComplexVector : function( real, imag, num ){
   if( num > this._vectorNum ){
    this._newVector( num - 1 );
   } else {
@@ -3500,6 +3529,25 @@ __ArrayNode.prototype = {
   for( var i = 0; i < num; i++ ){
    this._vector[i].setReal( real[i] );
    this._vector[i].setImag( imag[i] );
+  }
+ },
+ setFractVector : function( value, denom, num ){
+  if( num > this._vectorNum ){
+   this._newVector( num - 1 );
+  } else {
+   this._resizeVector( num - 1 );
+  }
+  var nu;
+  for( var i = 0; i < num; i++ ){
+   nu = value[i];
+   if( nu < 0 ){
+    this._vector[i].fractSetMinus( true );
+    nu = -nu;
+   } else {
+    this._vector[i].fractSetMinus( false );
+   }
+   this._vector[i].setNum( nu );
+   this._vector[i].setDenom( denom[i] );
   }
  },
  val : function( index ){
@@ -3573,11 +3621,17 @@ _Array.prototype = {
   }
   this._node[index].setVector( value, num );
  },
- setVector2 : function( index, real, imag, num, moveFlag ){
+ setComplexVector : function( index, real, imag, num, moveFlag ){
   if( moveFlag ){
    this.move( index );
   }
-  this._node[index].setVector2( real, imag, num );
+  this._node[index].setComplexVector( real, imag, num );
+ },
+ setFractVector : function( index, value, denom, num, moveFlag ){
+  if( moveFlag ){
+   this.move( index );
+  }
+  this._node[index].setFractVector( value, denom, num );
  },
  setMatrix : function( index, src, moveFlag ){
   if( moveFlag ){
@@ -3585,11 +3639,33 @@ _Array.prototype = {
   }
   this._mat[index].ass( src );
  },
- setMatrix2 : function( index, real, imag, moveFlag ){
+ setComplexMatrix : function( index, real, imag, moveFlag ){
   if( real._len == imag._len ){
-   var src = dupMatrix( real );
+   var src = new _Matrix( real._row, real._col );
    for( var i = 0; i < real._len; i++ ){
-    src._mat[i].setImag( imag._mat[i].real() );
+    src._mat[i].setReal( real._mat[i].toFloat() );
+    src._mat[i].setImag( imag._mat[i].toFloat() );
+   }
+   if( moveFlag ){
+    this.move( index );
+   }
+   this._mat[index].ass( src );
+  }
+ },
+ setFractMatrix : function( index, value, denom, moveFlag ){
+  if( value._len == denom._len ){
+   var src = new _Matrix( value._row, value._col );
+   var nu;
+   for( var i = 0; i < value._len; i++ ){
+    nu = value._mat[i].toFloat();
+    if( nu < 0 ){
+     src._mat[i].fractSetMinus( true );
+     nu = -nu;
+    } else {
+     src._mat[i].fractSetMinus( false );
+    }
+    src._mat[i].setNum( nu );
+    src._mat[i].setDenom( denom._mat[i].toFloat() );
    }
    if( moveFlag ){
     this.move( index );
@@ -9367,6 +9443,15 @@ _Proc.prototype = {
   }
   return 0x00;
  },
+ _funcFact : function( _this, param, code, token, value, seFlag ){
+  var ret;
+  var tmpValue = new _Matrix();
+  if( (ret = _this._getFuncParam( param, code, token, tmpValue, seFlag )) != 0x00 ){
+   return ret;
+  }
+  value.ass( tmpValue._mat[0].factorial() );
+  return 0x00;
+ },
  _funcInt : function( _this, param, code, token, value, seFlag ){
   var ret;
   var tmpValue = new _Matrix();
@@ -9522,7 +9607,7 @@ _Proc.prototype = {
     if( val == 0 ){
      var i;
      switch( token ){
-     case 68:
+     case 69:
       for( i = 0; i < str1.length; i++ ){
        val = str1.charCodeAt( i ) - str2.charCodeAt( i );
        if( val != 0 ){
@@ -9530,7 +9615,7 @@ _Proc.prototype = {
        }
       }
       break;
-     case 69:
+     case 70:
       var chr1, chr2;
       for( i = 0; i < str1.length; i++ ){
        chr1 = str1.charCodeAt( i );
@@ -9585,7 +9670,7 @@ _Proc.prototype = {
   } else {
    _this._curLine._token.unlock( lock );
   }
-  value.ass( (token == 73) ? procGWorld()._color : doFuncGColor24( procGWorld()._color ) );
+  value.ass( (token == 74) ? procGWorld()._color : doFuncGColor24( procGWorld()._color ) );
   return 0x00;
  },
  _funcGCX : function( _this, param, code, token, value, seFlag ){
@@ -9707,7 +9792,7 @@ _Proc.prototype = {
   ret = doFuncEval( _this, childProc, childParam, string.str(), value );
   childProc.end();
   childParam.end();
-  return ret;
+  return (ret == 0x00) ? 0x00 : _this._retError( 0x2110, code, token );
  },
  doFuncEval : function( childProc, childParam, string, value ){
   var ret;
@@ -13767,6 +13852,7 @@ var _procSubFunc = [
  _Proc.prototype._funcLdexp,
  _Proc.prototype._funcFrexp,
  _Proc.prototype._funcModf,
+ _Proc.prototype._funcFact,
  _Proc.prototype._funcInt,
  _Proc.prototype._funcReal,
  _Proc.prototype._funcImag,
@@ -14269,6 +14355,7 @@ var _TOKEN_FUNC = [
  "ldexp",
  "frexp",
  "modf",
+ "fact",
  "int",
  "real",
  "imag",
@@ -14704,7 +14791,51 @@ _Token.prototype = {
   case '-': top++ ; swi = true ; break;
   default : top = 0; swi = false; break;
   }
-  if( string.charAt( top ) == '\'' ){
+  if( string.charAt( string.length - 1 ) == '!' ){
+   var tmpString = string.substring( top, string.length - 1 );
+   if( isCharEscape( tmpString, top ) ){
+    switch( tmpString.charAt( top + 1 ) ){
+    case 'b':
+    case 'B':
+     value.ass( stringToInt( tmpString, top + 2, stop, 2 ) );
+     break;
+    case '0':
+     value.ass( stringToInt( tmpString, top + 2, stop, 8 ) );
+     break;
+    case '1':
+    case '2':
+    case '3':
+    case '4':
+    case '5':
+    case '6':
+    case '7':
+    case '8':
+    case '9':
+     value.ass( stringToInt( tmpString, top + 1, stop, 10 ) );
+     break;
+    case 'x':
+    case 'X':
+     value.ass( stringToInt( tmpString, top + 2, stop, 16 ) );
+     break;
+    default:
+     return false;
+    }
+   } else {
+    if( (param._mode & 0x0100) != 0 ){
+     value.ass( stringToInt( tmpString, 0, stop, param._radix ) );
+    } else {
+     value.ass( stringToInt( tmpString, 0, stop, 10 ) );
+    }
+   }
+   if( stop._val < tmpString.length ){
+    return false;
+   }
+   if( swi ){
+    value.ass( value.factorial().minus() );
+   } else {
+    value.ass( value.factorial() );
+   }
+  } else if( string.charAt( top ) == '\'' ){
    value.ass( 0.0 );
    j = 0;
    for( i = 1; ; i++ ){
@@ -14742,15 +14873,9 @@ _Token.prototype = {
    case 'b':
    case 'B':
     value.ass( stringToInt( string, top + 2, stop, 2 ) );
-    if( stop._val < string.length ){
-     return false;
-    }
     break;
    case '0':
     value.ass( stringToInt( string, top + 2, stop, 8 ) );
-    if( stop._val < string.length ){
-     return false;
-    }
     break;
    case '1':
    case '2':
@@ -14762,18 +14887,15 @@ _Token.prototype = {
    case '8':
    case '9':
     value.ass( stringToInt( string, top + 1, stop, 10 ) );
-    if( stop._val < string.length ){
-     return false;
-    }
     break;
    case 'x':
    case 'X':
     value.ass( stringToInt( string, top + 2, stop, 16 ) );
-    if( stop._val < string.length ){
-     return false;
-    }
     break;
    default:
+    return false;
+   }
+   if( stop._val < string.length ){
     return false;
    }
    if( swi ){
@@ -17599,6 +17721,10 @@ function getProcErrorDefString( err, token, isCalculator, isEnglish ){
   if( isEnglish ) error = "Function call failed.";
   else error = "関数呼び出しに失敗しました";
   break;
+ case 0x2110:
+  if( isEnglish ) error = "Execution of evaluation was interrupted.";
+  else error = "evalの実行が中断されました";
+  break;
  case 0x2120:
   if( isEnglish ) error = "\"" + token + "\" too many nests.";
   else error = token + "のネスト数が多すぎます";
@@ -18009,7 +18135,7 @@ EditExpr.prototype = {
   }
  }
 };
-var editExpr = new Array();
+var editExpr = new Array( 3 );
 function ListBoxObj( obj ){
  this._obj = obj;
  this._before = null;
@@ -18186,7 +18312,7 @@ ListBox.prototype = {
  }
 };
 var logExpr;
-var listTable = new Array();
+var listTable = new Array( 3 );
 function ListTableItem( x, y1, y2 ){
  this._x = x;
  this._y1 = y1;
@@ -18637,6 +18763,7 @@ function doButtonDownInt( id, step, min ){
 }
 function printUsage( token, proc, param, isEnglish, divId ){
  var usage = new String();
+ if( token == "!" ){ usage = isEnglish ? "factorial" : "階乗"; }
  if( token == "e+" ){ usage = isEnglish ? "exponent part of floating point constant" : "浮動小数点定数の指数部"; }
  if( token == "e-" ){ usage = isEnglish ? "exponent part of floating point constant" : "浮動小数点定数の指数部"; }
  if( token == "d" ){ usage = isEnglish ? "degrees" : "度"; }
@@ -18683,7 +18810,7 @@ function printUsage( token, proc, param, isEnglish, divId ){
  if( token == "acosh " ){ usage = "acosh &lt;x&gt; : " + (isEnglish ? "inverse hyperbolic cosine" : "逆双曲線余弦"); }
  if( token == "atanh " ){ usage = "atanh &lt;x&gt; : " + (isEnglish ? "inverse hyperbolic tangent" : "逆双曲線正接"); }
  if( token == "ln " ){ usage = "ln &lt;x&gt; : " + (isEnglish ? "natural logarithm" : "自然対数"); }
-if( token == "log " ){ usage = "log &lt;x&gt; : " + (param._calculator ? (isEnglish ? "base 10 logarithm" : "底10の対数") : (isEnglish ? "natural logarithm" : "自然対数")); }
+ if( token == "log " ){ usage = "log &lt;x&gt; : " + (param._calculator ? (isEnglish ? "base 10 logarithm" : "底10の対数") : (isEnglish ? "natural logarithm" : "自然対数")); }
  if( token == "log10 " ){ usage = "log10 &lt;x&gt; : " + (isEnglish ? "base 10 logarithm" : "底10の対数"); }
  if( token == "exp " ){ usage = "exp &lt;x&gt; : " + (isEnglish ? "exponent" : "指数"); }
  if( token == "exp10 " ){ usage = "exp10 &lt;x&gt; : " + (isEnglish ? "base 10 exponent" : "底10の指数"); }
@@ -18698,6 +18825,7 @@ if( token == "log " ){ usage = "log &lt;x&gt; : " + (param._calculator ? (isEngl
  if( token == "frexp " ){ usage = "frexp &lt;x&gt; &lt;var_exp&gt; : " + (isEnglish ? "returns the mantissa of &lt;x&gt;, stores the exponent in &lt;var_exp&gt;" : "&lt;x&gt;の仮数を返し、変数&lt;var_exp&gt;に指数を格納"); }
  if( token == "modf " ){ usage = "modf &lt;x&gt; &lt;var_int&gt; : " + (isEnglish ? "returns the fraction part of &lt;x&gt;, stores the integer part in &lt;var_int&gt;" : "&lt;x&gt;の小数部を返し、変数&lt;var_int&gt;に整数部を格納"); }
  if( token == "pow " ){ usage = "pow &lt;x&gt; &lt;y&gt; : " + (isEnglish ? "the &lt;y&gt; power of &lt;x&gt;" : "&lt;x&gt;の&lt;y&gt;乗"); }
+ if( token == "fact " ){ usage = "fact &lt;x&gt; : " + (isEnglish ? "factorial of &lt;x&gt;" : "&lt;x&gt;の階乗"); }
  if( token == "num " ){ usage = "num &lt;x&gt; : " + (isEnglish ? "numerator of fraction" : "分数の分子"); }
  if( token == "denom " ){ usage = "denom &lt;x&gt; : " + (isEnglish ? "denominator of fraction" : "分数の分母"); }
  if( token == "real " ){ usage = "real &lt;x&gt; : " + (isEnglish ? "real part of complex number" : "複素数の実数部"); }
@@ -18875,7 +19003,7 @@ function GraphUI( proc, param ){
  this._colorScale = 12;
  this._colorUnit = 14;
  this._colorText = 15;
- this._color = 4;
+ this._color = new Array();
  this._unitX = 1.0;
  this._unitY = 1.0;
  this._textX = 1;
@@ -19079,8 +19207,8 @@ GraphUI.prototype = {
    this.indexToColor( this._colorUnit ), this._unitX, this._unitY,
    this.indexToColor( this._colorText ), this._textX, this._textY
    );
-  if( this.indexToColor( this._color ) != this._graph.color() ){
-   this._graph.setColor( this.indexToColor( this._color ) );
+  if( this.indexToColor( this._color[this._graph._curIndex] ) != this._graph.color() ){
+   this._graph.setColor( this.indexToColor( this._color[this._graph._curIndex] ) );
   }
 try {
   this._graph.rePlot();
@@ -19379,8 +19507,8 @@ try {
    }
    break;
   }
-  if( this.indexToColor( this._color ) != this._graph.color() ){
-   this._graph.setColor( this.indexToColor( this._color ) );
+  if( this.indexToColor( this._color[this._graph._curIndex] ) != this._graph.color() ){
+   this._graph.setColor( this.indexToColor( this._color[this._graph._curIndex] ) );
   }
 try {
   switch( this._graph.mode() ){
@@ -19447,10 +19575,10 @@ try {
    this._mode = mode;
   }
   switch( this._mode ){
-  case 0: newMode = 0 ; this._graph.setLogScaleX( 0.0 ); this._graph.setLogScaleY( 0.0 ); break;
-  case 1 : newMode = 0 ; this._graph.setLogScaleX( 10.0 ); this._graph.setLogScaleY( 0.0 ); break;
-  case 2 : newMode = 0 ; this._graph.setLogScaleX( 0.0 ); this._graph.setLogScaleY( 10.0 ); break;
-  case 3: newMode = 0 ; this._graph.setLogScaleX( 10.0 ); this._graph.setLogScaleY( 10.0 ); break;
+  case 0: newMode = 0 ; onGraphSetLogScaleX( this, 0.0 ); onGraphSetLogScaleY( this, 0.0 ); break;
+  case 1 : newMode = 0 ; onGraphSetLogScaleX( this, 10.0 ); onGraphSetLogScaleY( this, 0.0 ); break;
+  case 2 : newMode = 0 ; onGraphSetLogScaleX( this, 0.0 ); onGraphSetLogScaleY( this, 10.0 ); break;
+  case 3: newMode = 0 ; onGraphSetLogScaleX( this, 10.0 ); onGraphSetLogScaleY( this, 10.0 ); break;
   case 4 : newMode = 1; break;
   case 5 : newMode = 2; break;
   }
@@ -19461,7 +19589,7 @@ try {
    switch( newMode ){
    case 0:
     this._param._var._label.setLabel( _CHAR( 'x' ), "x", true );
-    this._graph.setIndex( _CHAR( 'x' ) );
+    onGraphSetIndex( this, _CHAR( 'x' ) );
     this._staticExpr1 = "y=";
     this._staticExpr2 = "";
     this._staticX = "x=";
@@ -19473,7 +19601,7 @@ try {
     break;
    case 1:
     this._param._var._label.setLabel( _CHAR( 't' ), "t", true );
-    this._graph.setIndex( _CHAR( 't' ) );
+    onGraphSetIndex( this, _CHAR( 't' ) );
     this._staticExpr1 = "x=";
     this._staticExpr2 = "y=";
     this._staticX = "t=";
@@ -19485,7 +19613,7 @@ try {
     break;
    case 2:
     this._param._var._label.setLabel( _CHAR( 't' ), "t", true );
-    this._graph.setIndex( _CHAR( 't' ) );
+    onGraphSetIndex( this, _CHAR( 't' ) );
     this._staticExpr1 = "r=";
     this._staticExpr2 = "";
     this._staticX = "t=";
@@ -19498,7 +19626,7 @@ try {
    }
    onGraphUpdateStatic( this );
    this.clearTable();
-   this._graph.setMode( newMode );
+   onGraphSetMode( this, newMode );
    this.setMinMaxPitch();
    this._setWindow();
    this.clear();
@@ -20314,11 +20442,13 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   inputFile[i] = new _InputFile( inputFileIds[i] );
  }
  procError = new _ProcError();
- editExpr[0] = new Array();
- editExpr[0][0] = new EditExpr( 1 );
- editExpr[0][0].setDispLen( 26, 8 );
- editExpr[0][1] = new EditExpr( 2 );
- editExpr[0][1].setDispLen( 26, 8 );
+ for( i = 0; i < 3; i++ ){
+  editExpr[i] = new Array();
+  editExpr[i][0] = new EditExpr( 1 );
+  editExpr[i][0].setDispLen( 26, 8 );
+  editExpr[i][1] = new EditExpr( 2 );
+  editExpr[i][1].setDispLen( 26, 8 );
+ }
  logExpr = new ListBox( logId );
  logExpr.setLineNum( 12 );
  _addGraphEventListener( logExpr.element(), "click", function( e ){
@@ -20326,10 +20456,12 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
    updateLogExpr();
   }
  });
- listTable[0] = new ListBox( tableId );
- listTable[0].setLineNum( 19 );
+ for( i = 0; i < 3; i++ ){
+  listTable[i] = new ListBox( tableId );
+  listTable[i].setLineNum( 19 );
+ }
  _addGraphEventListener( listTable[0].element(), "click", function( e ){
-  if( listTable[0].click( e, 24, 20 ) ){
+  if( listTable[graphIndex()].click( e, 24, 20 ) ){
    updateListTable( graphUI );
   }
  });
@@ -20356,6 +20488,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  setGlobalParam( topParam );
  srand( time() );
  rand();
+ for( i = 1; i < 3; i++ ){
+  procGraph().addGraph();
+ }
+ procGraph().selGraph( getProfileInt( "ENV_", "GraphIndex", 0 ) );
  procGWorld().create( canvas.width(), canvas.height(), true );
  graphUI = new GraphUI( topProc, topParam );
  updateLogButton();
@@ -20397,6 +20533,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  updateGraphEditScreen();
  updateGraphRadioEnvType();
  doButtonUIGraph();
+ initSelect( "graph_select_index", graphIndex() );
  initSelect( "graph_select_mode", graphUI._mode );
  initSelect( "graph_select_var", 0 );
  document.getElementById( "check_replot_mode" ).checked = graphUI.rePlotModeFlag();
@@ -20439,6 +20576,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  _addGraphEventListenerById( "button_add", event, doButtonAdd );
  _addGraphEventListenerById( "button_sub", event, doButtonSub );
  _addGraphEventListenerById( "button_unary_minus", event, doButtonUnaryMinus );
+ _addGraphEventListenerById( "button_deg", event, doButtonDeg );
+ _addGraphEventListenerById( "button_grad", event, doButtonGrad );
+ _addGraphEventListenerById( "button_rad", event, doButtonRad );
+ _addGraphEventListenerById( "button_factorial", event, doButtonFactorial );
  _addGraphEventListenerById( "button_pow", event, doButtonPow );
  elements = document.getElementsByName( "button_shift" );
  for( i = 0; i < elements.length; i++ ){
@@ -21161,6 +21302,10 @@ function doButtonMod( e ){ insEditExpr( "%" ); }
 function doButtonAdd( e ){ insEditExpr( "+" ); }
 function doButtonSub( e ){ insEditExpr( "-" ); }
 function doButtonUnaryMinus( e ){ insEditExpr( "[-]" ); }
+function doButtonDeg( e ){ insEditExpr( "d" ); }
+function doButtonGrad( e ){ insEditExpr( "g" ); }
+function doButtonRad( e ){ insEditExpr( "r" ); }
+function doButtonFactorial( e ){ insEditExpr( "!" ); }
 function doButtonPow( e ){ insEditExpr( "^" ); }
 function doButtonEnter( e ){
  doButtonUIGraph();
@@ -22393,38 +22538,40 @@ function updateButtonColorText(){
  document.getElementById( "color_text_15" ).disabled = (graphUI._colorText == 15);
 }
 function updateButtonColorGraph(){
- document.getElementById( "color_graph_00" ).disabled = (graphUI._color == 0);
- document.getElementById( "color_graph_01" ).disabled = (graphUI._color == 1);
- document.getElementById( "color_graph_02" ).disabled = (graphUI._color == 2);
- document.getElementById( "color_graph_03" ).disabled = (graphUI._color == 3);
- document.getElementById( "color_graph_04" ).disabled = (graphUI._color == 4);
- document.getElementById( "color_graph_05" ).disabled = (graphUI._color == 5);
- document.getElementById( "color_graph_06" ).disabled = (graphUI._color == 6);
- document.getElementById( "color_graph_07" ).disabled = (graphUI._color == 7);
- document.getElementById( "color_graph_08" ).disabled = (graphUI._color == 8);
- document.getElementById( "color_graph_09" ).disabled = (graphUI._color == 9);
- document.getElementById( "color_graph_10" ).disabled = (graphUI._color == 10);
- document.getElementById( "color_graph_11" ).disabled = (graphUI._color == 11);
- document.getElementById( "color_graph_12" ).disabled = (graphUI._color == 12);
- document.getElementById( "color_graph_13" ).disabled = (graphUI._color == 13);
- document.getElementById( "color_graph_14" ).disabled = (graphUI._color == 14);
- document.getElementById( "color_graph_15" ).disabled = (graphUI._color == 15);
- document.getElementById( "color_graph2_00" ).disabled = (graphUI._color == 0);
- document.getElementById( "color_graph2_01" ).disabled = (graphUI._color == 1);
- document.getElementById( "color_graph2_02" ).disabled = (graphUI._color == 2);
- document.getElementById( "color_graph2_03" ).disabled = (graphUI._color == 3);
- document.getElementById( "color_graph2_04" ).disabled = (graphUI._color == 4);
- document.getElementById( "color_graph2_05" ).disabled = (graphUI._color == 5);
- document.getElementById( "color_graph2_06" ).disabled = (graphUI._color == 6);
- document.getElementById( "color_graph2_07" ).disabled = (graphUI._color == 7);
- document.getElementById( "color_graph2_08" ).disabled = (graphUI._color == 8);
- document.getElementById( "color_graph2_09" ).disabled = (graphUI._color == 9);
- document.getElementById( "color_graph2_10" ).disabled = (graphUI._color == 10);
- document.getElementById( "color_graph2_11" ).disabled = (graphUI._color == 11);
- document.getElementById( "color_graph2_12" ).disabled = (graphUI._color == 12);
- document.getElementById( "color_graph2_13" ).disabled = (graphUI._color == 13);
- document.getElementById( "color_graph2_14" ).disabled = (graphUI._color == 14);
- document.getElementById( "color_graph2_15" ).disabled = (graphUI._color == 15);
+ document.getElementById( "color_graph_00" ).disabled = (graphUI._color[graphIndex()] == 0);
+ document.getElementById( "color_graph_01" ).disabled = (graphUI._color[graphIndex()] == 1);
+ document.getElementById( "color_graph_02" ).disabled = (graphUI._color[graphIndex()] == 2);
+ document.getElementById( "color_graph_03" ).disabled = (graphUI._color[graphIndex()] == 3);
+ document.getElementById( "color_graph_04" ).disabled = (graphUI._color[graphIndex()] == 4);
+ document.getElementById( "color_graph_05" ).disabled = (graphUI._color[graphIndex()] == 5);
+ document.getElementById( "color_graph_06" ).disabled = (graphUI._color[graphIndex()] == 6);
+ document.getElementById( "color_graph_07" ).disabled = (graphUI._color[graphIndex()] == 7);
+ document.getElementById( "color_graph_08" ).disabled = (graphUI._color[graphIndex()] == 8);
+ document.getElementById( "color_graph_09" ).disabled = (graphUI._color[graphIndex()] == 9);
+ document.getElementById( "color_graph_10" ).disabled = (graphUI._color[graphIndex()] == 10);
+ document.getElementById( "color_graph_11" ).disabled = (graphUI._color[graphIndex()] == 11);
+ document.getElementById( "color_graph_12" ).disabled = (graphUI._color[graphIndex()] == 12);
+ document.getElementById( "color_graph_13" ).disabled = (graphUI._color[graphIndex()] == 13);
+ document.getElementById( "color_graph_14" ).disabled = (graphUI._color[graphIndex()] == 14);
+ document.getElementById( "color_graph_15" ).disabled = (graphUI._color[graphIndex()] == 15);
+ for( var i = 0; i < 3; i++ ){
+  document.getElementById( "color_graph" + (i + 1) + "_00" ).disabled = (graphUI._color[i] == 0);
+  document.getElementById( "color_graph" + (i + 1) + "_01" ).disabled = (graphUI._color[i] == 1);
+  document.getElementById( "color_graph" + (i + 1) + "_02" ).disabled = (graphUI._color[i] == 2);
+  document.getElementById( "color_graph" + (i + 1) + "_03" ).disabled = (graphUI._color[i] == 3);
+  document.getElementById( "color_graph" + (i + 1) + "_04" ).disabled = (graphUI._color[i] == 4);
+  document.getElementById( "color_graph" + (i + 1) + "_05" ).disabled = (graphUI._color[i] == 5);
+  document.getElementById( "color_graph" + (i + 1) + "_06" ).disabled = (graphUI._color[i] == 6);
+  document.getElementById( "color_graph" + (i + 1) + "_07" ).disabled = (graphUI._color[i] == 7);
+  document.getElementById( "color_graph" + (i + 1) + "_08" ).disabled = (graphUI._color[i] == 8);
+  document.getElementById( "color_graph" + (i + 1) + "_09" ).disabled = (graphUI._color[i] == 9);
+  document.getElementById( "color_graph" + (i + 1) + "_10" ).disabled = (graphUI._color[i] == 10);
+  document.getElementById( "color_graph" + (i + 1) + "_11" ).disabled = (graphUI._color[i] == 11);
+  document.getElementById( "color_graph" + (i + 1) + "_12" ).disabled = (graphUI._color[i] == 12);
+  document.getElementById( "color_graph" + (i + 1) + "_13" ).disabled = (graphUI._color[i] == 13);
+  document.getElementById( "color_graph" + (i + 1) + "_14" ).disabled = (graphUI._color[i] == 14);
+  document.getElementById( "color_graph" + (i + 1) + "_15" ).disabled = (graphUI._color[i] == 15);
+ }
 }
 function doButtonColorBack( color ){
  graphUI._colorBack = color;
@@ -22452,9 +22599,28 @@ function doButtonColorText( color ){
  writeProfileInt( "ENV_", "TextColor", graphUI._colorText );
 }
 function doButtonColorGraph( color ){
- graphUI._color = color;
+ graphUI._color[graphIndex()] = color;
  updateButtonColorGraph();
- writeProfileInt( "ENV_", "GraphColor", graphUI._color );
+ if( graphIndex() == 0 ){
+  writeProfileInt( "ENV_", "GraphColor", graphUI._color[0] );
+ } else {
+  writeProfileInt( "ENV_", "GraphColor" + (graphIndex() + 1), graphUI._color[graphIndex()] );
+ }
+}
+function doButtonColorGraph1( color ){
+ graphUI._color[0] = color;
+ updateButtonColorGraph();
+ writeProfileInt( "ENV_", "GraphColor", graphUI._color[0] );
+}
+function doButtonColorGraph2( color ){
+ graphUI._color[1] = color;
+ updateButtonColorGraph();
+ writeProfileInt( "ENV_", "GraphColor2", graphUI._color[1] );
+}
+function doButtonColorGraph3( color ){
+ graphUI._color[2] = color;
+ updateButtonColorGraph();
+ writeProfileInt( "ENV_", "GraphColor3", graphUI._color[2] );
 }
 function changeExprVar(){
  var i, j;
@@ -22533,6 +22699,20 @@ function doChangeMode( select ){
  case 5: doGraphPolar (); break;
  }
  changeExprVar();
+}
+function doChangeIndex( select ){
+ procGraph().selGraph( select.selectedIndex );
+ updateButtonColorGraph();
+ updateEditExpr();
+ updateListTable( graphUI );
+ document.getElementById( "graph_edit_trace_x" ).value = "";
+ document.getElementById( "graph_edit_trace_y1" ).value = "";
+ document.getElementById( "graph_edit_trace_y2" ).value = "";
+ updateInputExpr1();
+ updateInputExpr2();
+ graphUI._editExpr1 = document.getElementById( "graph_edit_expr1" ).value;
+ graphUI._editExpr2 = document.getElementById( "graph_edit_expr2" ).value;
+ writeProfileInt( "ENV_", "GraphIndex", graphIndex() );
 }
 function updateGraphEditScreen(){
  document.getElementById( "graph_edit_unit_x" ).value = "" + graphUI._unitX + ((graphUI._unitX == _INT( graphUI._unitX )) ? ".0" : "");
@@ -22747,16 +22927,52 @@ function doGraphEditTop(){
   graphUI.resetEnvOffset();
  }
 }
+function onGraphSetMode( _this, mode ){
+ var saveIndex = graphIndex();
+ for( var i = 0; i < 3; i++ ){
+  _this._graph.selGraph( i );
+  _this._graph.setMode( mode );
+ }
+ _this._graph.selGraph( saveIndex );
+}
+function onGraphSetIndex( _this, index ){
+ var saveIndex = graphIndex();
+ for( var i = 0; i < 3; i++ ){
+  _this._graph.selGraph( i );
+  _this._graph.setIndex( index );
+ }
+ _this._graph.selGraph( saveIndex );
+}
+function onGraphSetLogScaleX( _this, base ){
+ var saveIndex = graphIndex();
+ for( var i = 0; i < 3; i++ ){
+  _this._graph.selGraph( i );
+  _this._graph.setLogScaleX( base );
+ }
+ _this._graph.selGraph( saveIndex );
+}
+function onGraphSetLogScaleY( _this, base ){
+ var saveIndex = graphIndex();
+ for( var i = 0; i < 3; i++ ){
+  _this._graph.selGraph( i );
+  _this._graph.setLogScaleY( base );
+ }
+ _this._graph.selGraph( saveIndex );
+}
 function onGraphClearExpr( _this ){
- editExpr[graphIndex()][0].delAll();
- editExpr[graphIndex()][1].delAll();
+ for( var i = 0; i < 3; i++ ){
+  editExpr[i][0].delAll();
+  editExpr[i][1].delAll();
+ }
  writeProfileExpr();
  updateEditExpr();
  document.getElementById( "graph_edit_expr1" ).value = "";
  document.getElementById( "graph_edit_expr2" ).value = "";
 }
 function onGraphClearTable( _this ){
- listTable[graphIndex()].delAll();
+ for( var i = 0; i < 3; i++ ){
+  listTable[i].delAll();
+ }
  updateListTable( _this );
  writeProfileTable();
 }
@@ -23599,6 +23815,10 @@ function doButtonSTO( e ){
 function updateLanguage(){
  document.title = englishFlag ? "ClipGraph" : "関数グラフ";
  var select;
+ select = document.getElementById( "graph_select_index" );
+ select.options[0].innerHTML = englishFlag ? "Graph 1" : "ｸﾞﾗﾌ1";
+ select.options[1].innerHTML = englishFlag ? "Graph 2" : "ｸﾞﾗﾌ2";
+ select.options[2].innerHTML = englishFlag ? "Graph 3" : "ｸﾞﾗﾌ3";
  select = document.getElementById( "graph_select_mode" );
  select.options[0].innerHTML = englishFlag ? "Linear" : "線形座標";
  select.options[1].innerHTML = englishFlag ? "X logarithm" : "X軸対数";
@@ -23611,7 +23831,6 @@ function updateLanguage(){
  document.getElementById( "button_log_del" ).innerHTML = englishFlag ? "Del" : "消";
  document.getElementById( "button_log_delall" ).innerHTML = englishFlag ? "Clear" : "クリアする";
  document.getElementById( "button_console_clear" ).innerHTML = englishFlag ? "Clear" : "クリアする";
- document.getElementById( "graph_static_color_graph" ).innerHTML = englishFlag ? "Graph:" : "ｸﾞﾗﾌ:";
  document.getElementById( "button_env_cancel" ).innerHTML = englishFlag ? "Cancel" : "ｷｬﾝｾﾙ";
  document.getElementById( "button_env_reset" ).innerHTML = englishFlag ? "&nbsp;&nbsp;Reset&nbsp;&nbsp;" : "初期化する";
  document.getElementById( "graph_static_env_offset" ).innerHTML = englishFlag ? "Offset specification (pixels)" : "オフセット指定(pixels)";
@@ -23681,7 +23900,9 @@ function updateLanguage(){
  document.getElementById( "graph_static_color_scale" ).innerHTML = englishFlag ? "Scale:" : "X/Y軸:";
  document.getElementById( "graph_static_color_unit" ).innerHTML = englishFlag ? "Unit:" : "目盛り線:";
  document.getElementById( "graph_static_color_text" ).innerHTML = englishFlag ? "Text:" : "文字:";
- document.getElementById( "graph_static_color_graph2" ).innerHTML = englishFlag ? "Graph:" : "グラフ:";
+ document.getElementById( "graph_static_color_graph1" ).innerHTML = englishFlag ? "Graph 1:" : "グラフ1:";
+ document.getElementById( "graph_static_color_graph2" ).innerHTML = englishFlag ? "Graph 2:" : "グラフ2:";
+ document.getElementById( "graph_static_color_graph3" ).innerHTML = englishFlag ? "Graph 3:" : "グラフ3:";
  document.getElementById( "button_return2" ).innerHTML = englishFlag ? "Return" : "戻る";
  document.getElementById( "button_get_content" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
  document.getElementById( "button_selectimage_del" ).innerHTML = englishFlag ? "Del" : "消";
@@ -23968,7 +24189,10 @@ function onGraphInitEnv( _this ){
  _this._colorScale = getProfileInt( "ENV_", "ScaleColor", 12 );
  _this._colorUnit = getProfileInt( "ENV_", "UnitColor" , 14 );
  _this._colorText = getProfileInt( "ENV_", "TextColor" , 15 );
- _this._color = getProfileInt( "ENV_", "GraphColor", 4 );
+ _this._color[0] = getProfileInt( "ENV_", "GraphColor", 4 );
+ for( var i = 1; i < 3; i++ ){
+  _this._color[i] = getProfileInt( "ENV_", "GraphColor" + (i + 1), 4 );
+ }
  _this._proc.setAngType( getProfileInt( "ENV_", "Angle", 0 ), false );
  var calculatorMode = getProfileInt( "ENV_", "Calculator", -1 );
  if( calculatorMode < 0 ){
@@ -23992,8 +24216,12 @@ function writeProfileVar( index ){
  writeProfileString( "VAR_", String.fromCharCode( index ), "" + val );
 }
 function getProfileExpr(){
- editExpr[graphIndex()][0].importLog( getProfileString( "EXPR_", "1", "" ) );
- editExpr[graphIndex()][1].importLog( getProfileString( "EXPR_", "2", "" ) );
+ editExpr[0][0].importLog( getProfileString( "EXPR_", "1", "" ) );
+ editExpr[0][1].importLog( getProfileString( "EXPR_", "2", "" ) );
+ for( var i = 1; i < 3; i++ ){
+  editExpr[i][0].importLog( getProfileString( "EXPR" + (i + 1) + "_", "1", "" ) );
+  editExpr[i][1].importLog( getProfileString( "EXPR" + (i + 1) + "_", "2", "" ) );
+ }
  var forward = new _String();
  var after = new _String();
  editExpr[graphIndex()][0].get( forward, after, false );
@@ -24003,10 +24231,16 @@ function getProfileExpr(){
 }
 function writeProfileExpr(){
  var expr = new _String();
- editExpr[graphIndex()][0].exportLog( expr );
+ editExpr[0][0].exportLog( expr );
  writeProfileString( "EXPR_", "1", expr.str() );
- editExpr[graphIndex()][1].exportLog( expr );
+ editExpr[0][1].exportLog( expr );
  writeProfileString( "EXPR_", "2", expr.str() );
+ for( var i = 1; i < 3; i++ ){
+  editExpr[i][0].exportLog( expr );
+  writeProfileString( "EXPR" + (i + 1) + "_", "1", expr.str() );
+  editExpr[i][1].exportLog( expr );
+  writeProfileString( "EXPR" + (i + 1) + "_", "2", expr.str() );
+ }
 }
 function onEditExprUpdateSelAll( id, flag ){
 }
@@ -24042,18 +24276,41 @@ function getProfileTable(){
   if( x.length == 0 ){
    break;
   }
-  listTable[graphIndex()].add( new ListTableItem( x, y1, y2 ) );
+  listTable[0].add( new ListTableItem( x, y1, y2 ) );
  }
  endGetProfile();
+ for( var i = 1; i < 3; i++ ){
+  beginGetProfile( "TABLE" + (i + 1) + "_" );
+  while( true ){
+   x = getProfile();
+   y1 = getProfile();
+   y2 = getProfile();
+   if( x.length == 0 ){
+    break;
+   }
+   listTable[i].add( new ListTableItem( x, y1, y2 ) );
+  }
+  endGetProfile();
+ }
 }
 function writeProfileTable(){
+ var i;
  beginWriteProfile();
- for( var i = 0; i < listTable[graphIndex()].num(); i++ ){
-  writeProfile( listTable[graphIndex()].obj( i )._x );
-  writeProfile( listTable[graphIndex()].obj( i )._y1 );
-  writeProfile( listTable[graphIndex()].obj( i )._y2 );
+ for( i = 0; i < listTable[0].num(); i++ ){
+  writeProfile( listTable[0].obj( i )._x );
+  writeProfile( listTable[0].obj( i )._y1 );
+  writeProfile( listTable[0].obj( i )._y2 );
  }
  endWriteProfile( "TABLE_" );
+ for( var j = 1; j < 3; j++ ){
+  beginWriteProfile();
+  for( i = 0; i < listTable[j].num(); i++ ){
+   writeProfile( listTable[j].obj( i )._x );
+   writeProfile( listTable[j].obj( i )._y1 );
+   writeProfile( listTable[j].obj( i )._y2 );
+  }
+  endWriteProfile( "TABLE" + (j + 1) + "_" );
+ }
 }
 function writeProfileAngle(){
  var type = new _Integer();
@@ -24280,6 +24537,11 @@ function onKeyDown( key ){
  ){
   return false;
  }
+ if( key == 16 ){
+  keyShiftOnly = true;
+ } else {
+  keyShiftOnly = false;
+ }
  switch( key ){
  case 9:
   if( (exprType == 0) && (graphUI._mode == 4) ){
@@ -24292,90 +24554,111 @@ function onKeyDown( key ){
  case 40 : endEditExpr(); return true;
  case 37 : backwardEditExpr(); return true;
  case 39: forwardEditExpr(); return true;
- case 8: delEditExpr(); break;
- case 46 : delEditExpr(); break;
- case 48 : doButton0(); break;
- case 96: doButton0(); break;
- case 49 : doButton1(); break;
- case 97: doButton1(); break;
- case 50 : doButton2(); break;
- case 98: doButton2(); break;
- case 51 : doButton3(); break;
- case 99: doButton3(); break;
- case 52 : doButton4(); break;
- case 100: doButton4(); break;
- case 53 : doButton5(); break;
- case 101: doButton5(); break;
- case 54 : doButton6(); break;
- case 102: doButton6(); break;
- case 55 : doButton7(); break;
- case 103: doButton7(); break;
+ case 8: delEditExpr(); return true;
+ case 46 : delEditExpr(); return true;
+ case 48 : doButton0(); return true;
+ case 96: doButton0(); return true;
+ case 49:
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButton1();
+  } else {
+   doButtonFactorial();
+  }
+  return true;
+ case 97: doButton1(); return true;
+ case 50 : doButton2(); return true;
+ case 98: doButton2(); return true;
+ case 51 : doButton3(); return true;
+ case 99: doButton3(); return true;
+ case 52 : doButton4(); return true;
+ case 100: doButton4(); return true;
+ case 53:
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButton5();
+  } else {
+   doButtonMod();
+  }
+  return true;
+ case 101: doButton5(); return true;
+ case 54 : doButton6(); return true;
+ case 102: doButton6(); return true;
+ case 55 : doButton7(); return true;
+ case 103: doButton7(); return true;
  case 56:
- if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
    doButton8();
   } else {
    doButtonTop();
   }
-  break;
- case 104: doButton8(); break;
+  return true;
+ case 104: doButton8(); return true;
  case 57:
- if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
    doButton9();
   } else {
    doButtonEnd();
   }
-  break;
- case 105: doButton9(); break;
- case 110: doButtonPoint(); break;
- case 190: doButtonPoint(); break;
+  return true;
+ case 105: doButton9(); return true;
+ case 110: doButtonPoint(); return true;
+ case 190: doButtonPoint(); return true;
+ case 68: doButtonDeg(); return true;
+ case 69:
+  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+   doButtonEPlus();
+  } else {
+   doButtonEMinus();
+  }
+  return true;
+ case 71: doButtonGrad(); return true;
+ case 73: doButtonI(); return true;
+ case 82: doButtonRad(); return true;
  case 187:
   if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
    doButtonPlus();
   } else {
    doButtonAdd();
   }
-  break;
+  return true;
  case 189:
   if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
    doButtonSub();
   } else {
    doButtonMinus();
   }
-  break;
- case 32: doButtonSpace(); break;
- case 73: doButtonI(); break;
- case 106: doButtonMul(); break;
- case 186: doButtonMul(); break;
- case 111: doButtonDiv(); break;
- case 191: doButtonDiv(); break;
+  return true;
  case 107:
   if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
    doButtonAdd();
   } else {
    doButtonPlus();
   }
-  break;
+  return true;
  case 109:
   if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
    doButtonSub();
   } else {
    doButtonMinus();
   }
-  break;
- case 88: doButtonVar(); break;
- case 84: doButtonVar(); break;
- case 13: doButtonEnter(); break;
- }
- if( key == 16 ){
-  keyShiftOnly = true;
- } else {
-  keyShiftOnly = false;
+  return true;
+ case 106: doButtonMul(); return true;
+ case 186: doButtonMul(); return true;
+ case 111: doButtonDiv(); return true;
+ case 191: doButtonDiv(); return true;
+ case 222:
+  doButtonPow();
+  return true;
+ case 88: doButtonVar(); return true;
+ case 84: doButtonVar(); return true;
+ case 32: doButtonSpace(); return true;
+ case 13: doButtonEnter(); return true;
  }
  return false;
 }
 function onKeyUp( key ){
  if( (key == 16) && keyShiftOnly ){
   doButtonSHIFT();
+  return true;
  }
  return false;
 }

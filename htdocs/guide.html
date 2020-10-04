@@ -93,6 +93,11 @@ button {
 	border-radius:3px;
 	padding:2px;
 }
+.hr_key {
+	border:0;
+	margin:0;
+	height:10px;
+}
 </style>
 </head>
 <body>
@@ -1058,7 +1063,7 @@ exp log sqrt x → exp(log(sqrt x))<br>
 <hr class="hr">
 <table width="100%" border="1" cellspacing="1" cellpadding="1">
 <tr><td>
-<button>0</button>～<button>9</button><button>.</button><button>e+</button><button>e-</button><button>i</button><button>\+</button><button>\-</button><br>
+<button>0</button>～<button>9</button><button>.</button><button>e+</button><button>e-</button><button>i</button><button>\+</button><button>\-</button><button>d</button><button>g</button><button>r</button><button>!</button><br>
 <hr class="hr">
 <b>置数ボタン</b><br>
 数値を入力するときに押します。<br>
@@ -1205,6 +1210,11 @@ eの<i>x</i>乗を計算するときに押します。<br>
 <button class="button_func">pow</button><i>x</i><button>SP</button><i>y</i><br>
 <hr class="hr">
 <i>x</i>の<i>y</i>乗を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<button class="button_func">fact</button><i>x</i><br>
+<hr class="hr">
+<i>x</i>の階乗を計算するときに押します。<br>
 </td></tr>
 <tr><td>
 <button class="button_func">abs</button><i>x</i><br>
@@ -1411,48 +1421,88 @@ eの<i>x</i>乗を計算するときに押します。<br>
 <td><button>→</button></td>
 </tr>
 <tr>
-<td><span class="span_key">&nbsp;Backspace&nbsp;</span> / <span class="span_key">&nbsp;Delete&nbsp;</span></td>
-<td><button>DEL</button></td>
-</tr>
-<tr>
-<td><span class="span_key">&nbsp;0&nbsp;</span>～<span class="span_key">&nbsp;9&nbsp;</span> / テンキー<span class="span_key">&nbsp;0&nbsp;</span>～<span class="span_key">&nbsp;9&nbsp;</span></td>
+<td><span class="span_key">&nbsp;0&nbsp;</span>～<span class="span_key">&nbsp;9&nbsp;</span><br>
+<hr class="hr_key">
+テンキー<span class="span_key">&nbsp;0&nbsp;</span>～<span class="span_key">&nbsp;9&nbsp;</span></td>
 <td><button>0</button>～<button>9</button></td>
 </tr>
 <tr>
-<td>テンキー<span class="span_key">&nbsp;.&nbsp;</span> / <span class="span_key">&nbsp;<span style="vertical-align:-2pt">.</span> <span style="vertical-align:2pt">&gt;</span>&nbsp;</span></td>
+<td>テンキー<span class="span_key">&nbsp;.&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">.</span> <span style="vertical-align:2pt">&gt;</span>&nbsp;</span></td>
 <td><button>.</button></td>
 </tr>
 <tr>
-<td><span class="span_key">&nbsp;Shift&nbsp;</span>+テンキー<span class="span_key">&nbsp;+&nbsp;</span> / <span class="span_key">&nbsp;<span style="vertical-align:-2pt">;</span> <span style="vertical-align:2pt">+</span>&nbsp;</span></td>
-<td><button>\+</button></td>
+<td><span class="span_key">&nbsp;E&nbsp;</span></td>
+<td><button>e+</button></td>
 </tr>
 <tr>
-<td><span class="span_key">&nbsp;Shift&nbsp;</span>+テンキー<span class="span_key">&nbsp;-&nbsp;</span> / <span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">-</span> <span style="vertical-align:2pt">=</span>&nbsp;</span></td>
-<td><button>\-</button></td>
-</tr>
-<tr>
-<td><span class="span_key">&nbsp;Space&nbsp;</span></td>
-<td><button>SP</button></td>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;E&nbsp;</span></td>
+<td><button>e-</button></td>
 </tr>
 <tr>
 <td><span class="span_key">&nbsp;I&nbsp;</span></td>
 <td><button>i</button></td>
 </tr>
 <tr>
-<td>テンキー<span class="span_key">&nbsp;*&nbsp;</span> / <span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">:</span> <span style="vertical-align:2pt">*</span>&nbsp;</span></td>
-<td><button>*</button></td>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+テンキー<span class="span_key">&nbsp;+&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">;</span> <span style="vertical-align:2pt">+</span>&nbsp;</span></td>
+<td><button>\+</button></td>
 </tr>
 <tr>
-<td>テンキー<span class="span_key">&nbsp;/&nbsp;</span> / <span class="span_key">&nbsp;<span style="vertical-align:-2pt">/</span> <span style="vertical-align:2pt">?</span>&nbsp;</span></td>
-<td><button>/</button></td>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+テンキー<span class="span_key">&nbsp;-&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">-</span> <span style="vertical-align:2pt">=</span>&nbsp;</span></td>
+<td><button>\-</button></td>
 </tr>
 <tr>
-<td>テンキー<span class="span_key">&nbsp;+&nbsp;</span> / <span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">;</span> <span style="vertical-align:2pt">+</span>&nbsp;</span></td>
+<td><span class="span_key">&nbsp;D&nbsp;</span></td>
+<td><button>d</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;G&nbsp;</span></td>
+<td><button>g</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;R&nbsp;</span></td>
+<td><button>r</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">1</span> <span style="vertical-align:2pt">!</span>&nbsp;</span></td>
+<td><button>!</button></td>
+</tr>
+<tr>
+<td>テンキー<span class="span_key">&nbsp;+&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">;</span> <span style="vertical-align:2pt">+</span>&nbsp;</span></td>
 <td><button>+</button></td>
 </tr>
 <tr>
-<td>テンキー<span class="span_key">&nbsp;-&nbsp;</span> / <span class="span_key">&nbsp;<span style="vertical-align:-2pt">-</span> <span style="vertical-align:2pt">=</span>&nbsp;</span></td>
+<td>テンキー<span class="span_key">&nbsp;-&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">-</span> <span style="vertical-align:2pt">=</span>&nbsp;</span></td>
 <td><button>-</button></td>
+</tr>
+<tr>
+<td>テンキー<span class="span_key">&nbsp;*&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">:</span> <span style="vertical-align:2pt">*</span>&nbsp;</span></td>
+<td><button>*</button></td>
+</tr>
+<tr>
+<td>テンキー<span class="span_key">&nbsp;/&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">/</span> <span style="vertical-align:2pt">?</span>&nbsp;</span></td>
+<td><button>/</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">5</span> <span style="vertical-align:2pt">%</span>&nbsp;</span></td>
+<td><button>%</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;<span style="vertical-align:-6pt">^</span> <span style="vertical-align:2pt">~</span>&nbsp;</span></td>
+<td><button>^</button></td>
 </tr>
 <tr>
 <td><span class="span_key">&nbsp;Shift&nbsp;</span>+<span class="span_key">&nbsp;<span style="vertical-align:-2pt">8</span> <span style="vertical-align:2pt">(</span>&nbsp;</span></td>
@@ -1463,8 +1513,20 @@ eの<i>x</i>乗を計算するときに押します。<br>
 <td><button>)</button></td>
 </tr>
 <tr>
-<td><span class="span_key">&nbsp;X&nbsp;</span> / <span class="span_key">&nbsp;T&nbsp;</span></td>
+<td><span class="span_key">&nbsp;X&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;T&nbsp;</span></td>
 <td><button>x,t</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Space&nbsp;</span></td>
+<td><button>SP</button></td>
+</tr>
+<tr>
+<td><span class="span_key">&nbsp;Backspace&nbsp;</span><br>
+<hr class="hr_key">
+<span class="span_key">&nbsp;Delete&nbsp;</span></td>
+<td><button>DEL</button></td>
 </tr>
 <tr>
 <td><span class="span_key">&nbsp;Enter&nbsp;</span></td>

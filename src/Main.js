@@ -144,12 +144,14 @@ var inputFile;
 var procError;
 var silentErr = false;
 
+#define _GRAPH_NUM 3
+
 #include "EditExpr.js"
-var editExpr = new Array();
+var editExpr = new Array( _GRAPH_NUM );
 
 #include "ListBox.js"
 var logExpr;
-var listTable = new Array();
+var listTable = new Array( _GRAPH_NUM );
 function ListTableItem( x, y1, y2 ){
 	this._x  = x;
 	this._y1 = y1;
@@ -382,11 +384,13 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	// 計算エラー情報管理クラス
 	procError = new _ProcError();
 
-	editExpr[0] = new Array();
-	editExpr[0][0] = new EditExpr( 1 );
-	editExpr[0][0].setDispLen( 26, 8 );
-	editExpr[0][1] = new EditExpr( 2 );
-	editExpr[0][1].setDispLen( 26, 8 );
+	for( i = 0; i < _GRAPH_NUM; i++ ){
+		editExpr[i] = new Array();
+		editExpr[i][0] = new EditExpr( 1 );
+		editExpr[i][0].setDispLen( 26, 8 );
+		editExpr[i][1] = new EditExpr( 2 );
+		editExpr[i][1].setDispLen( 26, 8 );
+	}
 	logExpr = new ListBox( logId );
 	logExpr.setLineNum( 12 );
 	_addGraphEventListener( logExpr.element(), "click", function( e ){
@@ -394,10 +398,12 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 			updateLogExpr();
 		}
 	});
-	listTable[0] = new ListBox( tableId );
-	listTable[0].setLineNum( 19 );
+	for( i = 0; i < _GRAPH_NUM; i++ ){
+		listTable[i] = new ListBox( tableId );
+		listTable[i].setLineNum( 19 );
+	}
 	_addGraphEventListener( listTable[0].element(), "click", function( e ){
-		if( listTable[0].click( e, 24, 20 ) ){
+		if( listTable[graphIndex()].click( e, 24, 20 ) ){
 			updateListTable( graphUI );
 		}
 	});
@@ -433,6 +439,11 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	// 乱数を初期化する
 	srand( time() );
 	rand();
+
+	for( i = 1; i < _GRAPH_NUM; i++ ){
+		procGraph().addGraph();
+	}
+	procGraph().selGraph( getProfileInt( "ENV_", "GraphIndex", 0 ) );
 
 	procGWorld().create( canvas.width(), canvas.height(), true );
 
@@ -485,6 +496,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	updateGraphRadioEnvType();
 
 	doButtonUIGraph();
+	initSelect( "graph_select_index", graphIndex() );
 	initSelect( "graph_select_mode", graphUI._mode );
 	initSelect( "graph_select_var", 0 );
 
@@ -535,6 +547,12 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	_addGraphEventListenerById( "button_add", event, doButtonAdd );
 	_addGraphEventListenerById( "button_sub", event, doButtonSub );
 	_addGraphEventListenerById( "button_unary_minus", event, doButtonUnaryMinus );
+
+	_addGraphEventListenerById( "button_deg", event, doButtonDeg );
+	_addGraphEventListenerById( "button_grad", event, doButtonGrad );
+	_addGraphEventListenerById( "button_rad", event, doButtonRad );
+
+	_addGraphEventListenerById( "button_factorial", event, doButtonFactorial );
 
 	_addGraphEventListenerById( "button_pow", event, doButtonPow );
 
@@ -1444,6 +1462,12 @@ function doButtonMod( e ){ insEditExpr( "%" ); }
 function doButtonAdd( e ){ insEditExpr( "+" ); }
 function doButtonSub( e ){ insEditExpr( "-" ); }
 function doButtonUnaryMinus( e ){ insEditExpr( "[-]" ); }
+
+function doButtonDeg( e ){ insEditExpr( "d" ); }
+function doButtonGrad( e ){ insEditExpr( "g" ); }
+function doButtonRad( e ){ insEditExpr( "r" ); }
+
+function doButtonFactorial( e ){ insEditExpr( "!" ); }
 
 function doButtonPow( e ){ insEditExpr( "^" ); }
 
@@ -2449,39 +2473,41 @@ function updateButtonColorText(){
 	document.getElementById( "color_text_15" ).disabled = (graphUI._colorText == 15);
 }
 function updateButtonColorGraph(){
-	document.getElementById( "color_graph_00" ).disabled = (graphUI._color ==  0);
-	document.getElementById( "color_graph_01" ).disabled = (graphUI._color ==  1);
-	document.getElementById( "color_graph_02" ).disabled = (graphUI._color ==  2);
-	document.getElementById( "color_graph_03" ).disabled = (graphUI._color ==  3);
-	document.getElementById( "color_graph_04" ).disabled = (graphUI._color ==  4);
-	document.getElementById( "color_graph_05" ).disabled = (graphUI._color ==  5);
-	document.getElementById( "color_graph_06" ).disabled = (graphUI._color ==  6);
-	document.getElementById( "color_graph_07" ).disabled = (graphUI._color ==  7);
-	document.getElementById( "color_graph_08" ).disabled = (graphUI._color ==  8);
-	document.getElementById( "color_graph_09" ).disabled = (graphUI._color ==  9);
-	document.getElementById( "color_graph_10" ).disabled = (graphUI._color == 10);
-	document.getElementById( "color_graph_11" ).disabled = (graphUI._color == 11);
-	document.getElementById( "color_graph_12" ).disabled = (graphUI._color == 12);
-	document.getElementById( "color_graph_13" ).disabled = (graphUI._color == 13);
-	document.getElementById( "color_graph_14" ).disabled = (graphUI._color == 14);
-	document.getElementById( "color_graph_15" ).disabled = (graphUI._color == 15);
+	document.getElementById( "color_graph_00" ).disabled = (graphUI._color[graphIndex()] ==  0);
+	document.getElementById( "color_graph_01" ).disabled = (graphUI._color[graphIndex()] ==  1);
+	document.getElementById( "color_graph_02" ).disabled = (graphUI._color[graphIndex()] ==  2);
+	document.getElementById( "color_graph_03" ).disabled = (graphUI._color[graphIndex()] ==  3);
+	document.getElementById( "color_graph_04" ).disabled = (graphUI._color[graphIndex()] ==  4);
+	document.getElementById( "color_graph_05" ).disabled = (graphUI._color[graphIndex()] ==  5);
+	document.getElementById( "color_graph_06" ).disabled = (graphUI._color[graphIndex()] ==  6);
+	document.getElementById( "color_graph_07" ).disabled = (graphUI._color[graphIndex()] ==  7);
+	document.getElementById( "color_graph_08" ).disabled = (graphUI._color[graphIndex()] ==  8);
+	document.getElementById( "color_graph_09" ).disabled = (graphUI._color[graphIndex()] ==  9);
+	document.getElementById( "color_graph_10" ).disabled = (graphUI._color[graphIndex()] == 10);
+	document.getElementById( "color_graph_11" ).disabled = (graphUI._color[graphIndex()] == 11);
+	document.getElementById( "color_graph_12" ).disabled = (graphUI._color[graphIndex()] == 12);
+	document.getElementById( "color_graph_13" ).disabled = (graphUI._color[graphIndex()] == 13);
+	document.getElementById( "color_graph_14" ).disabled = (graphUI._color[graphIndex()] == 14);
+	document.getElementById( "color_graph_15" ).disabled = (graphUI._color[graphIndex()] == 15);
 
-	document.getElementById( "color_graph2_00" ).disabled = (graphUI._color ==  0);
-	document.getElementById( "color_graph2_01" ).disabled = (graphUI._color ==  1);
-	document.getElementById( "color_graph2_02" ).disabled = (graphUI._color ==  2);
-	document.getElementById( "color_graph2_03" ).disabled = (graphUI._color ==  3);
-	document.getElementById( "color_graph2_04" ).disabled = (graphUI._color ==  4);
-	document.getElementById( "color_graph2_05" ).disabled = (graphUI._color ==  5);
-	document.getElementById( "color_graph2_06" ).disabled = (graphUI._color ==  6);
-	document.getElementById( "color_graph2_07" ).disabled = (graphUI._color ==  7);
-	document.getElementById( "color_graph2_08" ).disabled = (graphUI._color ==  8);
-	document.getElementById( "color_graph2_09" ).disabled = (graphUI._color ==  9);
-	document.getElementById( "color_graph2_10" ).disabled = (graphUI._color == 10);
-	document.getElementById( "color_graph2_11" ).disabled = (graphUI._color == 11);
-	document.getElementById( "color_graph2_12" ).disabled = (graphUI._color == 12);
-	document.getElementById( "color_graph2_13" ).disabled = (graphUI._color == 13);
-	document.getElementById( "color_graph2_14" ).disabled = (graphUI._color == 14);
-	document.getElementById( "color_graph2_15" ).disabled = (graphUI._color == 15);
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		document.getElementById( "color_graph" + (i + 1) + "_00" ).disabled = (graphUI._color[i] ==  0);
+		document.getElementById( "color_graph" + (i + 1) + "_01" ).disabled = (graphUI._color[i] ==  1);
+		document.getElementById( "color_graph" + (i + 1) + "_02" ).disabled = (graphUI._color[i] ==  2);
+		document.getElementById( "color_graph" + (i + 1) + "_03" ).disabled = (graphUI._color[i] ==  3);
+		document.getElementById( "color_graph" + (i + 1) + "_04" ).disabled = (graphUI._color[i] ==  4);
+		document.getElementById( "color_graph" + (i + 1) + "_05" ).disabled = (graphUI._color[i] ==  5);
+		document.getElementById( "color_graph" + (i + 1) + "_06" ).disabled = (graphUI._color[i] ==  6);
+		document.getElementById( "color_graph" + (i + 1) + "_07" ).disabled = (graphUI._color[i] ==  7);
+		document.getElementById( "color_graph" + (i + 1) + "_08" ).disabled = (graphUI._color[i] ==  8);
+		document.getElementById( "color_graph" + (i + 1) + "_09" ).disabled = (graphUI._color[i] ==  9);
+		document.getElementById( "color_graph" + (i + 1) + "_10" ).disabled = (graphUI._color[i] == 10);
+		document.getElementById( "color_graph" + (i + 1) + "_11" ).disabled = (graphUI._color[i] == 11);
+		document.getElementById( "color_graph" + (i + 1) + "_12" ).disabled = (graphUI._color[i] == 12);
+		document.getElementById( "color_graph" + (i + 1) + "_13" ).disabled = (graphUI._color[i] == 13);
+		document.getElementById( "color_graph" + (i + 1) + "_14" ).disabled = (graphUI._color[i] == 14);
+		document.getElementById( "color_graph" + (i + 1) + "_15" ).disabled = (graphUI._color[i] == 15);
+	}
 }
 function doButtonColorBack( color ){
 	graphUI._colorBack = color;
@@ -2518,10 +2544,32 @@ function doButtonColorText( color ){
 	writeProfileInt( "ENV_", "TextColor", graphUI._colorText );
 }
 function doButtonColorGraph( color ){
-	graphUI._color = color;
+	graphUI._color[graphIndex()] = color;
 	updateButtonColorGraph();
 
-	writeProfileInt( "ENV_", "GraphColor", graphUI._color );
+	if( graphIndex() == 0 ){
+		writeProfileInt( "ENV_", "GraphColor", graphUI._color[0] );
+	} else {
+		writeProfileInt( "ENV_", "GraphColor" + (graphIndex() + 1), graphUI._color[graphIndex()] );
+	}
+}
+function doButtonColorGraph1( color ){
+	graphUI._color[0] = color;
+	updateButtonColorGraph();
+
+	writeProfileInt( "ENV_", "GraphColor", graphUI._color[0] );
+}
+function doButtonColorGraph2( color ){
+	graphUI._color[1] = color;
+	updateButtonColorGraph();
+
+	writeProfileInt( "ENV_", "GraphColor2", graphUI._color[1] );
+}
+function doButtonColorGraph3( color ){
+	graphUI._color[2] = color;
+	updateButtonColorGraph();
+
+	writeProfileInt( "ENV_", "GraphColor3", graphUI._color[2] );
 }
 
 function changeExprVar(){
@@ -2615,6 +2663,24 @@ function doChangeMode( select ){
 	}
 
 	changeExprVar();
+}
+
+function doChangeIndex( select ){
+	procGraph().selGraph( select.selectedIndex );
+	updateButtonColorGraph();
+	updateEditExpr();
+	updateListTable( graphUI );
+
+	document.getElementById( "graph_edit_trace_x"  ).value = "";
+	document.getElementById( "graph_edit_trace_y1" ).value = "";
+	document.getElementById( "graph_edit_trace_y2" ).value = "";
+
+	updateInputExpr1();
+	updateInputExpr2();
+	graphUI._editExpr1 = document.getElementById( "graph_edit_expr1" ).value;
+	graphUI._editExpr2 = document.getElementById( "graph_edit_expr2" ).value;
+
+	writeProfileInt( "ENV_", "GraphIndex", graphIndex() );
 }
 
 function updateGraphEditScreen(){
@@ -2871,9 +2937,47 @@ function doGraphEditTop(){
 	}
 }
 
+function onGraphSetMode( _this, mode ){
+	var saveIndex = graphIndex();
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		_this._graph.selGraph( i );
+
+		_this._graph.setMode( mode );
+	}
+	_this._graph.selGraph( saveIndex );
+}
+function onGraphSetIndex( _this, index ){
+	var saveIndex = graphIndex();
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		_this._graph.selGraph( i );
+
+		_this._graph.setIndex( index );
+	}
+	_this._graph.selGraph( saveIndex );
+}
+function onGraphSetLogScaleX( _this, base ){
+	var saveIndex = graphIndex();
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		_this._graph.selGraph( i );
+
+		_this._graph.setLogScaleX( base );
+	}
+	_this._graph.selGraph( saveIndex );
+}
+function onGraphSetLogScaleY( _this, base ){
+	var saveIndex = graphIndex();
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		_this._graph.selGraph( i );
+
+		_this._graph.setLogScaleY( base );
+	}
+	_this._graph.selGraph( saveIndex );
+}
 function onGraphClearExpr( _this ){
-	editExpr[graphIndex()][0].delAll();
-	editExpr[graphIndex()][1].delAll();
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		editExpr[i][0].delAll();
+		editExpr[i][1].delAll();
+	}
 	writeProfileExpr();
 	updateEditExpr();
 
@@ -2881,7 +2985,9 @@ function onGraphClearExpr( _this ){
 	document.getElementById( "graph_edit_expr2" ).value = "";
 }
 function onGraphClearTable( _this ){
-	listTable[graphIndex()].delAll();
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		listTable[i].delAll();
+	}
 	updateListTable( _this );
 
 	writeProfileTable();
@@ -3821,6 +3927,11 @@ function updateLanguage(){
 
 	var select;
 
+	select = document.getElementById( "graph_select_index" );
+	select.options[0].innerHTML = englishFlag ? "Graph 1" : "ｸﾞﾗﾌ1";
+	select.options[1].innerHTML = englishFlag ? "Graph 2" : "ｸﾞﾗﾌ2";
+	select.options[2].innerHTML = englishFlag ? "Graph 3" : "ｸﾞﾗﾌ3";
+
 	select = document.getElementById( "graph_select_mode" );
 	select.options[0].innerHTML = englishFlag ? "Linear" : "線形座標";
 	select.options[1].innerHTML = englishFlag ? "X logarithm" : "X軸対数";
@@ -3834,7 +3945,6 @@ function updateLanguage(){
 	document.getElementById( "button_log_del" ).innerHTML = englishFlag ? "Del" : "消";
 	document.getElementById( "button_log_delall" ).innerHTML = englishFlag ? "Clear" : "クリアする";
 	document.getElementById( "button_console_clear" ).innerHTML = englishFlag ? "Clear" : "クリアする";
-	document.getElementById( "graph_static_color_graph" ).innerHTML = englishFlag ? "Graph:" : "ｸﾞﾗﾌ:";
 	document.getElementById( "button_env_cancel" ).innerHTML = englishFlag ? "Cancel" : "ｷｬﾝｾﾙ";
 	document.getElementById( "button_env_reset" ).innerHTML = englishFlag ? "&nbsp;&nbsp;Reset&nbsp;&nbsp;" : "初期化する";
 	document.getElementById( "graph_static_env_offset" ).innerHTML = englishFlag ? "Offset specification (pixels)" : "オフセット指定(pixels)";
@@ -3908,7 +4018,9 @@ function updateLanguage(){
 	document.getElementById( "graph_static_color_scale" ).innerHTML = englishFlag ? "Scale:" : "X/Y軸:";
 	document.getElementById( "graph_static_color_unit" ).innerHTML = englishFlag ? "Unit:" : "目盛り線:";
 	document.getElementById( "graph_static_color_text" ).innerHTML = englishFlag ? "Text:" : "文字:";
-	document.getElementById( "graph_static_color_graph2" ).innerHTML = englishFlag ? "Graph:" : "グラフ:";
+	document.getElementById( "graph_static_color_graph1" ).innerHTML = englishFlag ? "Graph 1:" : "グラフ1:";
+	document.getElementById( "graph_static_color_graph2" ).innerHTML = englishFlag ? "Graph 2:" : "グラフ2:";
+	document.getElementById( "graph_static_color_graph3" ).innerHTML = englishFlag ? "Graph 3:" : "グラフ3:";
 	document.getElementById( "button_return2" ).innerHTML = englishFlag ? "Return" : "戻る";
 	document.getElementById( "button_get_content" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
 	document.getElementById( "button_selectimage_del" ).innerHTML = englishFlag ? "Del" : "消";
@@ -4222,7 +4334,10 @@ function onGraphInitEnv( _this ){
 	_this._colorScale = getProfileInt( "ENV_", "ScaleColor", 12 );
 	_this._colorUnit  = getProfileInt( "ENV_", "UnitColor" , 14 );
 	_this._colorText  = getProfileInt( "ENV_", "TextColor" , 15 );
-	_this._color      = getProfileInt( "ENV_", "GraphColor",  4 );
+	_this._color[0]   = getProfileInt( "ENV_", "GraphColor",  4 );
+	for( var i = 1; i < _GRAPH_NUM; i++ ){
+		_this._color[i] = getProfileInt( "ENV_", "GraphColor" + (i + 1), 4 );
+	}
 	_this._proc.setAngType( getProfileInt( "ENV_", "Angle", _ANG_TYPE_RAD ), false );
 
 	var calculatorMode = getProfileInt( "ENV_", "Calculator", -1 );
@@ -4251,8 +4366,12 @@ function writeProfileVar( index ){
 
 function getProfileExpr(){
 	// 計算式
-	editExpr[graphIndex()][0].importLog( getProfileString( "EXPR_", "1", "" ) );
-	editExpr[graphIndex()][1].importLog( getProfileString( "EXPR_", "2", "" ) );
+	editExpr[0][0].importLog( getProfileString( "EXPR_", "1", "" ) );
+	editExpr[0][1].importLog( getProfileString( "EXPR_", "2", "" ) );
+	for( var i = 1; i < _GRAPH_NUM; i++ ){
+		editExpr[i][0].importLog( getProfileString( "EXPR" + (i + 1) + "_", "1", "" ) );
+		editExpr[i][1].importLog( getProfileString( "EXPR" + (i + 1) + "_", "2", "" ) );
+	}
 
 	var forward = new _String();
 	var after   = new _String();
@@ -4264,10 +4383,16 @@ function getProfileExpr(){
 function writeProfileExpr(){
 	// 計算式
 	var expr = new _String();
-	editExpr[graphIndex()][0].exportLog( expr );
+	editExpr[0][0].exportLog( expr );
 	writeProfileString( "EXPR_", "1", expr.str() );
-	editExpr[graphIndex()][1].exportLog( expr );
+	editExpr[0][1].exportLog( expr );
 	writeProfileString( "EXPR_", "2", expr.str() );
+	for( var i = 1; i < _GRAPH_NUM; i++ ){
+		editExpr[i][0].exportLog( expr );
+		writeProfileString( "EXPR" + (i + 1) + "_", "1", expr.str() );
+		editExpr[i][1].exportLog( expr );
+		writeProfileString( "EXPR" + (i + 1) + "_", "2", expr.str() );
+	}
 }
 function onEditExprUpdateSelAll( id, flag ){
 }
@@ -4307,19 +4432,42 @@ function getProfileTable(){
 		if( x.length == 0 ){
 			break;
 		}
-		listTable[graphIndex()].add( new ListTableItem( x, y1, y2 ) );
+		listTable[0].add( new ListTableItem( x, y1, y2 ) );
 	}
 	endGetProfile();
+	for( var i = 1; i < _GRAPH_NUM; i++ ){
+		beginGetProfile( "TABLE" + (i + 1) + "_" );
+		while( true ){
+			x  = getProfile();
+			y1 = getProfile();
+			y2 = getProfile();
+			if( x.length == 0 ){
+				break;
+			}
+			listTable[i].add( new ListTableItem( x, y1, y2 ) );
+		}
+		endGetProfile();
+	}
 }
 function writeProfileTable(){
 	// 数表
+	var i;
 	beginWriteProfile();
-	for( var i = 0; i < listTable[graphIndex()].num(); i++ ){
-		writeProfile( listTable[graphIndex()].obj( i )._x  );
-		writeProfile( listTable[graphIndex()].obj( i )._y1 );
-		writeProfile( listTable[graphIndex()].obj( i )._y2 );
+	for( i = 0; i < listTable[0].num(); i++ ){
+		writeProfile( listTable[0].obj( i )._x  );
+		writeProfile( listTable[0].obj( i )._y1 );
+		writeProfile( listTable[0].obj( i )._y2 );
 	}
 	endWriteProfile( "TABLE_" );
+	for( var j = 1; j < _GRAPH_NUM; j++ ){
+		beginWriteProfile();
+		for( i = 0; i < listTable[j].num(); i++ ){
+			writeProfile( listTable[j].obj( i )._x  );
+			writeProfile( listTable[j].obj( i )._y1 );
+			writeProfile( listTable[j].obj( i )._y2 );
+		}
+		endWriteProfile( "TABLE" + (j + 1) + "_" );
+	}
 }
 
 function writeProfileAngle(){
@@ -4580,6 +4728,12 @@ function onKeyDown( key ){
 		return false;
 	}
 
+	if( key == _KEY_SHIFT ){
+		keyShiftOnly = true;
+	} else {
+		keyShiftOnly = false;
+	}
+
 	switch( key ){
 	case _KEY_TAB:
 		if( (exprType == 0) && (graphUI._mode == _UI_GRAPH_MODE_PARAM) ){
@@ -4594,91 +4748,111 @@ function onKeyDown( key ){
 	case _KEY_LEFT : backwardEditExpr(); return true;
 	case _KEY_RIGHT: forwardEditExpr(); return true;
 
-	case _KEY_BACKSPACE: delEditExpr(); break;
-	case _KEY_DELETE   : delEditExpr(); break;
+	case _KEY_BACKSPACE: delEditExpr(); return true;
+	case _KEY_DELETE   : delEditExpr(); return true;
 
-	case _KEY_0    : doButton0(); break;
-	case _KEY_NUM_0: doButton0(); break;
-	case _KEY_1    : doButton1(); break;
-	case _KEY_NUM_1: doButton1(); break;
-	case _KEY_2    : doButton2(); break;
-	case _KEY_NUM_2: doButton2(); break;
-	case _KEY_3    : doButton3(); break;
-	case _KEY_NUM_3: doButton3(); break;
-	case _KEY_4    : doButton4(); break;
-	case _KEY_NUM_4: doButton4(); break;
-	case _KEY_5    : doButton5(); break;
-	case _KEY_NUM_5: doButton5(); break;
-	case _KEY_6    : doButton6(); break;
-	case _KEY_NUM_6: doButton6(); break;
-	case _KEY_7    : doButton7(); break;
-	case _KEY_NUM_7: doButton7(); break;
+	case _KEY_0    : doButton0(); return true;
+	case _KEY_NUM_0: doButton0(); return true;
+	case _KEY_1:
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButton1();
+		} else {
+			doButtonFactorial();
+		}
+		return true;
+	case _KEY_NUM_1: doButton1(); return true;
+	case _KEY_2    : doButton2(); return true;
+	case _KEY_NUM_2: doButton2(); return true;
+	case _KEY_3    : doButton3(); return true;
+	case _KEY_NUM_3: doButton3(); return true;
+	case _KEY_4    : doButton4(); return true;
+	case _KEY_NUM_4: doButton4(); return true;
+	case _KEY_5:
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButton5();
+		} else {
+			doButtonMod();
+		}
+		return true;
+	case _KEY_NUM_5: doButton5(); return true;
+	case _KEY_6    : doButton6(); return true;
+	case _KEY_NUM_6: doButton6(); return true;
+	case _KEY_7    : doButton7(); return true;
+	case _KEY_NUM_7: doButton7(); return true;
 	case _KEY_8:
-	if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
 			doButton8();
 		} else {
 			doButtonTop();
 		}
-		break;
-	case _KEY_NUM_8: doButton8(); break;
+		return true;
+	case _KEY_NUM_8: doButton8(); return true;
 	case _KEY_9:
-	if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
 			doButton9();
 		} else {
 			doButtonEnd();
 		}
-		break;
-	case _KEY_NUM_9: doButton9(); break;
+		return true;
+	case _KEY_NUM_9: doButton9(); return true;
 
-	case _KEY_NUM_POINT: doButtonPoint(); break;
-	case 190: doButtonPoint(); break;	// .>キー
+	case _KEY_NUM_POINT: doButtonPoint(); return true;
+	case 190: doButtonPoint(); return true;	// .>キー
+	case _KEY_D: doButtonDeg(); return true;
+	case _KEY_E:
+		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+			doButtonEPlus();
+		} else {
+			doButtonEMinus();
+		}
+		return true;
+	case _KEY_G: doButtonGrad(); return true;
+	case _KEY_I: doButtonI(); return true;
+	case _KEY_R: doButtonRad(); return true;
 	case 187:	// ;+キー
 		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
 			doButtonPlus();
 		} else {
 			doButtonAdd();
 		}
-		break;
+		return true;
 	case 189:	// -=キー
 		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
 			doButtonSub();
 		} else {
 			doButtonMinus();
 		}
-		break;
-	case _KEY_SPACE: doButtonSpace(); break;
+		return true;
 
-	case _KEY_I: doButtonI(); break;
-
-	case _KEY_NUM_MUL: doButtonMul(); break;
-	case 186: doButtonMul(); break;	// :*キー
-	case _KEY_NUM_DIV: doButtonDiv(); break;
-	case 191: doButtonDiv(); break;	// /?キー
 	case _KEY_NUM_ADD:
 		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
 			doButtonAdd();
 		} else {
 			doButtonPlus();
 		}
-		break;
+		return true;
 	case _KEY_NUM_SUB:
 		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
 			doButtonSub();
 		} else {
 			doButtonMinus();
 		}
-		break;
+		return true;
+	case _KEY_NUM_MUL: doButtonMul(); return true;
+	case 186: doButtonMul(); return true;	// :*キー
+	case _KEY_NUM_DIV: doButtonDiv(); return true;
+	case 191: doButtonDiv(); return true;	// /?キー
 
-	case _KEY_X: doButtonVar(); break;
-	case _KEY_T: doButtonVar(); break;
+	case 222:	// ^~キー
+		doButtonPow();
+		return true;
 
-	case _KEY_ENTER: doButtonEnter(); break;
-	}
+	case _KEY_X: doButtonVar(); return true;
+	case _KEY_T: doButtonVar(); return true;
 
-	if( key == _KEY_SHIFT ){
-		keyShiftOnly = true;
-	} else {
-		keyShiftOnly = false;
+	case _KEY_SPACE: doButtonSpace(); return true;
+
+	case _KEY_ENTER: doButtonEnter(); return true;
 	}
 
 	return false;
@@ -4686,6 +4860,7 @@ function onKeyDown( key ){
 function onKeyUp( key ){
 	if( (key == _KEY_SHIFT) && keyShiftOnly ){
 		doButtonSHIFT();
+		return true;
 	}
 
 	return false;

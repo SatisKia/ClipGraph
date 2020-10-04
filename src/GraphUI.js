@@ -43,11 +43,11 @@ function GraphUI( proc, param ){
 	this._polarPitch   = 1.0;
 
 	// 色
-	this._colorBack  = 11;	// 背景
-	this._colorScale = 12;	// X/Y軸
-	this._colorUnit  = 14;	// 目盛り線
-	this._colorText  = 15;	// 文字
-	this._color      =  4;	// グラフ
+	this._colorBack  = 11;		// 背景
+	this._colorScale = 12;		// X/Y軸
+	this._colorUnit  = 14;		// 目盛り線
+	this._colorText  = 15;		// 文字
+	this._color = new Array();	// グラフ
 
 	// 目盛り線
 	this._unitX = 1.0;	// X方向
@@ -286,8 +286,8 @@ GraphUI.prototype = {
 			);
 
 		// とりあえず既に計算された結果を表示
-		if( this.indexToColor( this._color ) != this._graph.color() ){
-			this._graph.setColor( this.indexToColor( this._color ) );
+		if( this.indexToColor( this._color[this._graph._curIndex] ) != this._graph.color() ){
+			this._graph.setColor( this.indexToColor( this._color[this._graph._curIndex] ) );
 		}
 _TRY
 		this._graph.rePlot();
@@ -638,8 +638,8 @@ _CATCH
 		}
 
 		// グラフ描画色が変更されているかどうか調べる
-		if( this.indexToColor( this._color ) != this._graph.color() ){
-			this._graph.setColor( this.indexToColor( this._color ) );
+		if( this.indexToColor( this._color[this._graph._curIndex] ) != this._graph.color() ){
+			this._graph.setColor( this.indexToColor( this._color[this._graph._curIndex] ) );
 		}
 
 _TRY
@@ -714,10 +714,10 @@ _CATCH
 		}
 
 		switch( this._mode ){
-		case _UI_GRAPH_MODE_LINEAR: newMode = _GRAPH_MODE_RECT ; this._graph.setLogScaleX(  0.0 ); this._graph.setLogScaleY(  0.0 ); break;
-		case _UI_GRAPH_MODE_LOG_X : newMode = _GRAPH_MODE_RECT ; this._graph.setLogScaleX( 10.0 ); this._graph.setLogScaleY(  0.0 ); break;
-		case _UI_GRAPH_MODE_LOG_Y : newMode = _GRAPH_MODE_RECT ; this._graph.setLogScaleX(  0.0 ); this._graph.setLogScaleY( 10.0 ); break;
-		case _UI_GRAPH_MODE_LOG_XY: newMode = _GRAPH_MODE_RECT ; this._graph.setLogScaleX( 10.0 ); this._graph.setLogScaleY( 10.0 ); break;
+		case _UI_GRAPH_MODE_LINEAR: newMode = _GRAPH_MODE_RECT ; onGraphSetLogScaleX( this,  0.0 ); onGraphSetLogScaleY( this,  0.0 ); break;
+		case _UI_GRAPH_MODE_LOG_X : newMode = _GRAPH_MODE_RECT ; onGraphSetLogScaleX( this, 10.0 ); onGraphSetLogScaleY( this,  0.0 ); break;
+		case _UI_GRAPH_MODE_LOG_Y : newMode = _GRAPH_MODE_RECT ; onGraphSetLogScaleX( this,  0.0 ); onGraphSetLogScaleY( this, 10.0 ); break;
+		case _UI_GRAPH_MODE_LOG_XY: newMode = _GRAPH_MODE_RECT ; onGraphSetLogScaleX( this, 10.0 ); onGraphSetLogScaleY( this, 10.0 ); break;
 		case _UI_GRAPH_MODE_PARAM : newMode = _GRAPH_MODE_PARAM; break;
 		case _UI_GRAPH_MODE_POLAR : newMode = _GRAPH_MODE_POLAR; break;
 		}
@@ -731,7 +731,7 @@ _CATCH
 			switch( newMode ){
 			case _GRAPH_MODE_RECT:
 				this._param._var._label.setLabel( _CHAR( 'x' ), "x", true );
-				this._graph.setIndex( _CHAR( 'x' ) );
+				onGraphSetIndex( this, _CHAR( 'x' ) );
 
 				this._staticExpr1 = "y=";
 				this._staticExpr2 = "";
@@ -747,7 +747,7 @@ _CATCH
 				break;
 			case _GRAPH_MODE_PARAM:
 				this._param._var._label.setLabel( _CHAR( 't' ), "t", true );
-				this._graph.setIndex( _CHAR( 't' ) );
+				onGraphSetIndex( this, _CHAR( 't' ) );
 
 				this._staticExpr1 = "x=";
 				this._staticExpr2 = "y=";
@@ -763,7 +763,7 @@ _CATCH
 				break;
 			case _GRAPH_MODE_POLAR:
 				this._param._var._label.setLabel( _CHAR( 't' ), "t", true );
-				this._graph.setIndex( _CHAR( 't' ) );
+				onGraphSetIndex( this, _CHAR( 't' ) );
 
 				this._staticExpr1 = "r=";
 				this._staticExpr2 = "";
@@ -783,7 +783,7 @@ _CATCH
 			// 数表のリセット
 			this.clearTable();
 
-			this._graph.setMode( newMode );
+			onGraphSetMode( this, newMode );
 
 			this.setMinMaxPitch();
 
@@ -1146,6 +1146,10 @@ function graphTouchY( index ){
 
 //function onGraphInitEnv( _this ){}
 
+//function onGraphSetMode( _this, mode ){}
+//function onGraphSetIndex( _this, index ){}
+//function onGraphSetLogScaleX( _this, base ){}
+//function onGraphSetLogScaleY( _this, base ){}
 //function onGraphClearExpr( _this ){}
 //function onGraphClearTable( _this ){}
 //function onGraphUpdateStatic( _this ){}
