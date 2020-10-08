@@ -981,6 +981,66 @@ Draw a crosshair on the graph screen with the selected calculation value.<br>
 ● When the <button>&lt;&lt;</button> button is pressed, edited contents are automatically saved.<br>
 <hr class="hr">
 ● Variable value (<span class="span_expr">@A</span> ~ <span class="span_expr">@Z</span>) can be referenced by using command &quot;<span class="span_expr">:parent</span>&quot; in the program. For example, when referring to the variable <span class="span_expr">@A</span>, write it like &quot;<span class="span_expr">:parent @A</span>&quot;.<br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;Example&nbsp;&nbsp;</span><br>
+<table>
+	<tr>
+		<td valign="middle">cos x = 1 - </td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			2!
+		</td>
+		<td valign="middle">x<span class="span_pow">2</span> + </td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			4!
+		</td>
+		<td valign="middle">x<span class="span_pow">4</span> - </td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			6!
+		</td>
+		<td valign="middle">x<span class="span_pow">6</span> + </td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			8!
+		</td>
+		<td valign="middle">x<span class="span_pow">8</span> - ...</td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	Set to "Linear" coordinate mode.<br>
+	Press <button><img src="icon7.png" width="20" height="20"></button> button.<br>
+	Select <button>a</button>, and input following program.<br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">:label x @0<br>
+:var y n<br>
+y = 1<br>
+for n = 2; n &lt;= 170; n += 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y -= (1 / fact n) * x ** n<br>
+next<br>
+for n = 4; n &lt;= 170; n += 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y += (1 / fact n) * x ** n<br>
+next<br>
+return y</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button>&lt;&lt;</button><button>x,t</button>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">!!a x</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_program.png"><br>
+</div>
 
 <a name="gijyutu"></a><br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">

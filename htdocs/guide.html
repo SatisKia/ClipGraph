@@ -981,6 +981,66 @@ y=2*sinθ-sin(2*θ)<br>
 ●<button>&lt;&lt;</button>ボタンが押されると、自動で編集内容が保存されます。<br>
 <hr class="hr">
 ●プログラム内で「<span class="span_expr">:parent</span>」コマンドを用いることで、変数値(<span class="span_expr">@A</span>～<span class="span_expr">@Z</span>)を参照することができます。例えば変数<span class="span_expr">@A</span>を参照する場合、「<span class="span_expr">:parent @A</span>」のように記述します。<br>
+<hr class="hr">
+<span class="span_example">&nbsp;&nbsp;例&nbsp;&nbsp;</span><br>
+<table>
+	<tr>
+		<td valign="middle">cos x = 1 - </td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			2!
+		</td>
+		<td valign="middle">x<span class="span_pow">2</span> + </td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			4!
+		</td>
+		<td valign="middle">x<span class="span_pow">4</span> - </td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			6!
+		</td>
+		<td valign="middle">x<span class="span_pow">6</span> + </td>
+		<td align="center">
+			1<br>
+			<hr class="hr_fract" style="width:20px">
+			8!
+		</td>
+		<td valign="middle">x<span class="span_pow">8</span> - ...</td>
+	<tr>
+</table>
+<hr class="hr">
+<div class="div_ex">
+	線形座標モードにする<br>
+	<button><img src="icon7.png" width="20" height="20"></button>ボタンを押す<br>
+	<button>a</button>を選択し、次のプログラムを入力<br>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">:label x @0<br>
+:var y n<br>
+y = 1<br>
+for n = 2; n &lt;= 170; n += 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y -= (1 / fact n) * x ** n<br>
+next<br>
+for n = 4; n &lt;= 170; n += 4<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y += (1 / fact n) * x ** n<br>
+next<br>
+return y</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button>&lt;&lt;</button><button>x,t</button>
+	<hr class="hr">
+	<table width="100%" border="0" cellspacing="0" cellpadding="0">
+		<tr><td width="30%"></td><td><div class="div_edit">!!a x</div></td></tr>
+	</table>
+	<hr class="hr">
+	<button><img src="draw.png" width="20" height="20"></button><br>
+	<hr class="hr">
+	<img src="guide_program.png"><br>
+</div>
 
 <a name="gijyutu"></a><br>
 <table width="100%" border="0" cellspacing="0" cellpadding="0">
