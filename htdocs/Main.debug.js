@@ -651,7 +651,7 @@ _StringUtil.prototype = {
   ret[j] = "";
   for( var i = 0; i < str.length; i++ ){
    ret[j] += str.charAt( i );
-   if( stringWidth( ret[j] ) > width ){
+   if( this.stringWidth( ret[j] ) > width ){
     if( ret[j].length > 1 ){
      ret[j] = ret[j].substring( 0, ret[j].length - 1 );
      i--;
@@ -1842,7 +1842,7 @@ _StringUtil.prototype = {
   ret[j] = "";
   for( var i = 0; i < str.length; i++ ){
    ret[j] += str.charAt( i );
-   if( stringWidth( ret[j] ) > width ){
+   if( this.stringWidth( ret[j] ) > width ){
     if( ret[j].length > 1 ){
      ret[j] = ret[j].substring( 0, ret[j].length - 1 );
      i--;

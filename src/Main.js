@@ -179,7 +179,7 @@ var common;
 #include "GraphUI.js"
 var graphUI;
 
-#include "NativeRequest.js"
+#include "_NativeRequest.js"
 var nativeRequest;
 
 #include "Profile.js"
@@ -1796,7 +1796,7 @@ function doCheckPrintUsage(){
 #include "_Cookie.js"
 #include "_Storage.js"
 #include "_Preference.js"
-#include "HttpRequest.js"
+#include "_HttpRequest.js"
 var loadNum = 0;
 var loading = false;
 function doLoadExtFuncFile(){
