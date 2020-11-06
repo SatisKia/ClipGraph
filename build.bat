@@ -1,25 +1,25 @@
 @echo off
 
-set CPP=C:\MinGW\bin\gcc -E -P -x c
-set COMMON_PATH=C:\HTML5\common
-set CALC_PATH=..\..\ClipCalc
-set CLIP_PATH=C:\HTML5\clip
+rem set SKCOMMONPATH=C:\git\SatisKia\common
+rem set CLIPPATH=C:\git\SatisKia\clip
+set CPP=gcc -E -P -x c -I. -I%SKCOMMONPATH% -I..\..\ClipCalc\src -I%CLIPPATH%\core\extras
+rem set AJAXMINPATH=C:\Microsoft Ajax Minifier
 
 md tmp
 
 cd src
-%CPP% -I. -I%COMMON_PATH% -I%CALC_PATH%\src -I%CLIP_PATH%\core\extras -I%CLIP_PATH%\core -DDEBUG Main.js > ..\htdocs\All.debug.js
-%CPP% -I. -I%COMMON_PATH% -I%CALC_PATH%\src -I%CLIP_PATH%\core\extras -DUSE_CLIP_LIB     -DDEBUG Main.js > ..\htdocs\Main.debug.js
-%CPP% -I. -I%COMMON_PATH% -I%CALC_PATH%\src -I%CLIP_PATH%\core\extras -DUSE_CLIP_LIB             Main.js > ..\tmp\Main.js
+%CPP% -I%CLIPPATH%\core -DDEBUG Main.js > ..\htdocs\All.debug.js
+%CPP% -DUSE_CLIP_LIB    -DDEBUG Main.js > ..\htdocs\Main.debug.js
+%CPP% -DUSE_CLIP_LIB            Main.js > ..\tmp\Main.js
 cd ..
 
-call "C:\HTML5\Microsoft Ajax Minifier\AjaxMinCommandPromptVars"
+call "%AJAXMINPATH%\AjaxMinCommandPromptVars"
 cd htdocs
 del Main.js
 AjaxMin -enc:in UTF-8 ..\tmp\Main.js -out Main.js
 cd ..
 
-copy %CLIP_PATH%\core\clip.debug.js htdocs
-copy %CLIP_PATH%\core\clip.js       htdocs
+copy %CLIPPATH%\core\clip.debug.js htdocs
+copy %CLIPPATH%\core\clip.js       htdocs
 
 call cef

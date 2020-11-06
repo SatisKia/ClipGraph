@@ -1,12 +1,13 @@
-set EXTFUNC_PATH=C:\HTML5\clip\extfunc
+rem set CLIPPATH=C:\git\SatisKia\clip
+set CLIPEXTFUNCPATH=%CLIPPATH%\extfunc
 
-copy %EXTFUNC_PATH%\pi.cef    htdocs
-copy %EXTFUNC_PATH%\e.cef     htdocs
-copy %EXTFUNC_PATH%\cbrt.cef  htdocs
-copy %EXTFUNC_PATH%\log2.cef  htdocs
-copy %EXTFUNC_PATH%\logn.cef  htdocs
-copy %EXTFUNC_PATH%\log1p.cef htdocs
-copy %EXTFUNC_PATH%\expm1.cef htdocs
-copy %EXTFUNC_PATH%\trunc.cef htdocs
+copy %CLIPEXTFUNCPATH%\pi.cef    htdocs
+copy %CLIPEXTFUNCPATH%\e.cef     htdocs
+copy %CLIPEXTFUNCPATH%\cbrt.cef  htdocs
+copy %CLIPEXTFUNCPATH%\log2.cef  htdocs
+copy %CLIPEXTFUNCPATH%\logn.cef  htdocs
+copy %CLIPEXTFUNCPATH%\log1p.cef htdocs
+copy %CLIPEXTFUNCPATH%\expm1.cef htdocs
+copy %CLIPEXTFUNCPATH%\trunc.cef htdocs
 
 pause

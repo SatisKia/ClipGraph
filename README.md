@@ -1,13 +1,17 @@
 # ClipGraph
 
-�֐��O���t�\���c�[���ł��BCLIP�p�̓����֐��A�O���֐������s���A�O���t�\���ł��܂��B
+関数グラフ表示ツールです。CLIP言語で記述されたプログラムを実行し、グラフ表示できます。
 
-�r���h�ɂ͕ʓr�A���̃c�[�����K�v�ł��B
+## ビルド方法
+
+事前に環境変数"SKCOMMONPATH"、"CLIPPATH"、"AJAXMINPATH"の設定を行ってください。
+
+ビルドには別途、次のツールが必要です。
 
 ### MinGW
 
-UTF-8�Ή�C�v���v���Z�b�T�Ƃ��Ďg�p���܂��B
+UTF-8対応Cプリプロセッサとして使用します。
 
 ### Microsoft Ajax Minifier
 
-JavaScript�R�[�h�̈��k�E��ǉ��c�[���ł��B
+JavaScriptコードの圧縮・難読化ツールです。
