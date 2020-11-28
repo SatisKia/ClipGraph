@@ -1,5 +1,7 @@
 # ClipGraph
 
+[English version is here](./README_E.md)
+
 関数グラフ表示ツールです。CLIP言語で記述されたプログラムを実行し、グラフ表示できます。
 
 ## ビルド方法
