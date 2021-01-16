@@ -1023,10 +1023,10 @@ Draw a crosshair on the graph screen with the selected calculation value.<br>
 :var y n<br>
 y = 1<br>
 for n = 2; n &lt;= 170; n += 4<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y -= (1 / fact n) * x ** n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y -= 1 / n! * x ** n<br>
 next<br>
 for n = 4; n &lt;= 170; n += 4<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y += (1 / fact n) * x ** n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y += 1 / n! * x ** n<br>
 next<br>
 return y</div></td></tr>
 	</table>
@@ -1123,7 +1123,7 @@ exp log sqrt x → exp(log(sqrt x))<br>
 <hr class="hr">
 <table width="100%" border="1" cellspacing="1" cellpadding="1">
 <tr><td>
-<button>0</button> ~ <button>9</button><button>.</button><button>e+</button><button>e-</button><button>i</button><button>\+</button><button>\-</button><button>d</button><button>g</button><button>r</button><button>!</button><br>
+<button>0</button> ~ <button>9</button><button>.</button><button>e+</button><button>e-</button><button>i</button><button>\+</button><button>\-</button><button>d</button><button>g</button><button>r</button><br>
 <hr class="hr">
 <b>Numeric button</b><br>
 Press to enter numeric values.<br>
@@ -1145,6 +1145,12 @@ Press to enter the operator.<br>
 <hr class="hr">
 <b>Power button</b><br>
 Press to calculate <i>x</i> to the <i>y</i>th power.<br>
+</td></tr>
+<tr><td>
+<i>x</i><button>!</button><br>
+<hr class="hr">
+<b>Factorial button</b><br>
+Press to calculate factorial of <i>x</i>.<br>
 </td></tr>
 <tr><td>
 <button>(</button><button>)</button><br>

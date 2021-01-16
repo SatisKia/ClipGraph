@@ -2098,10 +2098,9 @@ function printUsage( token, proc, param, isEnglish, divId ){
  if( token == "_" ){ usage = isEnglish ? "fraction" : "分数"; }
  if( token == "i" ){ usage = isEnglish ? "imaginary part of complex number" : "複素数の虚数部"; }
  if( token == ":" ){ usage = isEnglish ? "time" : "時間"; }
- if( token == "\\b" ){ usage = isEnglish ? "in binary notation" : "2進表記"; }
- if( token == "\\0" ){ usage = isEnglish ? "octal notation" : "8進表記"; }
- if( token == "\\" ){ usage = isEnglish ? "decimal notation" : "10進表記"; }
- if( token == "\\x" ){ usage = isEnglish ? "hexadecimal notation" : "16進表記"; }
+ if( token == "\\" ){ usage = isEnglish ? "n-ary notation" : "n進表記"; }
+ if( token == "b" ){ usage = isEnglish ? "in binary notation" : "2進表記"; }
+ if( token == "x" ){ usage = isEnglish ? "hexadecimal notation" : "16進表記"; }
  if( token == "\\-" ){ usage = isEnglish ? "unary minus (for constant)" : "単項マイナス(定数用)"; }
  if( token == "\\+" ){ usage = isEnglish ? "unary plus (for constant)" : "単項プラス(定数用)"; }
  if( token == "[-]" ){ usage = isEnglish ? "unary minus" : "単項マイナス"; }
@@ -3796,8 +3795,9 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   }
  });
  setDefineValue();
+ newProcMultiPrec();
  setProcEnv( new _ProcEnv() );
- topProc = new _Proc( _PROC_DEF_PARENT_MODE, _PROC_DEF_PRINT_ASSERT, _PROC_DEF_PRINT_WARN, _PROC_DEF_GUPDATE_FLAG );
+ topProc = new _Proc( _PROC_DEF_PARENT_MODE, _PROC_DEF_PARENT_MP_PREC, _PROC_DEF_PARENT_MP_ROUND, _PROC_DEF_PRINT_ASSERT, _PROC_DEF_PRINT_WARN, _PROC_DEF_GUPDATE_FLAG );
  topProc._printAns = true;
  setProcWarnFlowFlag( false );
  setProcLoopMax( loopMax );
@@ -5623,7 +5623,7 @@ function doCommandGUpdate( gWorld ){
  canvasSetColor( COLOR_WIN[gWorld._color] );
 }
 function doCommandPlot( parentProc, parentParam, graph, start, end, step ){
- var childProc = new _Proc( parentParam._mode, parentProc._printAssert, parentProc._printWarn, false );
+ var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, parentProc._printAssert, parentProc._printWarn, false );
  var childParam = new _Param( parentProc._curLine._num, parentParam, true );
  childParam._enableCommand = false;
  childParam._enableOpPow = true;
@@ -5636,7 +5636,7 @@ try {
  childProc.end();
 }
 function doCommandRePlot( parentProc, parentParam, graph, start, end, step ){
- var childProc = new _Proc( parentParam._mode, parentProc._printAssert, parentProc._printWarn, false );
+ var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, parentProc._printAssert, parentProc._printWarn, false );
  var childParam = new _Param( parentProc._curLine._num, parentParam, true );
  childParam._enableCommand = false;
  childParam._enableOpPow = true;

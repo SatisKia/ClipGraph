@@ -1023,10 +1023,10 @@ y=2*sinθ-sin(2*θ)<br>
 :var y n<br>
 y = 1<br>
 for n = 2; n &lt;= 170; n += 4<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y -= (1 / fact n) * x ** n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y -= 1 / n! * x ** n<br>
 next<br>
 for n = 4; n &lt;= 170; n += 4<br>
-&nbsp;&nbsp;&nbsp;&nbsp;y += (1 / fact n) * x ** n<br>
+&nbsp;&nbsp;&nbsp;&nbsp;y += 1 / n! * x ** n<br>
 next<br>
 return y</div></td></tr>
 	</table>
@@ -1123,7 +1123,7 @@ exp log sqrt x → exp(log(sqrt x))<br>
 <hr class="hr">
 <table width="100%" border="1" cellspacing="1" cellpadding="1">
 <tr><td>
-<button>0</button>～<button>9</button><button>.</button><button>e+</button><button>e-</button><button>i</button><button>\+</button><button>\-</button><button>d</button><button>g</button><button>r</button><button>!</button><br>
+<button>0</button>～<button>9</button><button>.</button><button>e+</button><button>e-</button><button>i</button><button>\+</button><button>\-</button><button>d</button><button>g</button><button>r</button><br>
 <hr class="hr">
 <b>置数ボタン</b><br>
 数値を入力するときに押します。<br>
@@ -1145,6 +1145,12 @@ exp log sqrt x → exp(log(sqrt x))<br>
 <hr class="hr">
 <b>累乗ボタン</b><br>
 <i>x</i>の<i>y</i>乗を計算するときに押します。<br>
+</td></tr>
+<tr><td>
+<i>x</i><button>!</button><br>
+<hr class="hr">
+<b>階乗ボタン</b><br>
+<i>x</i>の階乗を計算するときに押します。<br>
 </td></tr>
 <tr><td>
 <button>(</button><button>)</button><br>

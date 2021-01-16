@@ -1,6 +1,6 @@
 cd htdocs
 
-call electron-packager . ClipGraph --electron-version=2.0.0 --platform=win32 --arch=x64 --app-copyright="Copyright (C) SatisKia" --app-version=4.0 --icon=./favicon.ico --overwrite
+call electron-packager . ClipGraph --electron-version=2.0.0 --platform=win32 --arch=x64 --app-copyright="Copyright (C) SatisKia" --app-version=4.1 --icon=./favicon.ico --overwrite
 
 cd ..
 

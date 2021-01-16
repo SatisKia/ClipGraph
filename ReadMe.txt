@@ -1,4 +1,4 @@
-ClipGraph Version 4.0
+ClipGraph Version 4.1
 
 ‚Í‚¶‚ß‚É
 
