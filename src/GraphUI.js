@@ -196,8 +196,6 @@ GraphUI.prototype = {
 	},
 
 	getMinMaxPitch : function(){
-		var _token = new _Token();
-
 		var ret = false;
 		var oldMin;
 		var oldMax;
@@ -211,9 +209,9 @@ GraphUI.prototype = {
 			oldMin   = this._paramMin;
 			oldMax   = this._paramMax;
 			oldPitch = this._paramPitch;
-			_token.stringToValue( this._param, this._editMin  , x ); this._paramMin   = x.toFloat();
-			_token.stringToValue( this._param, this._editMax  , x ); this._paramMax   = x.toFloat();
-			_token.stringToValue( this._param, this._editPitch, x ); this._paramPitch = x.toFloat();
+			procToken().stringToValue( this._param, this._editMin  , x ); this._paramMin   = x.toFloat();
+			procToken().stringToValue( this._param, this._editMax  , x ); this._paramMax   = x.toFloat();
+			procToken().stringToValue( this._param, this._editPitch, x ); this._paramPitch = x.toFloat();
 			if(
 				(this._paramMin   != oldMin  ) ||
 				(this._paramMax   != oldMax  ) ||
@@ -230,9 +228,9 @@ GraphUI.prototype = {
 			var updateFlag = new _Boolean();
 			this._proc.getAngType( type, updateFlag );
 			var tmpValue = newValueArray( 3 );
-			_token.stringToValue( this._param, this._editMin  , x ); tmpValue[0].ass( x.toFloat() );
-			_token.stringToValue( this._param, this._editMax  , x ); tmpValue[1].ass( x.toFloat() );
-			_token.stringToValue( this._param, this._editPitch, x ); tmpValue[2].ass( x.toFloat() );
+			procToken().stringToValue( this._param, this._editMin  , x ); tmpValue[0].ass( x.toFloat() );
+			procToken().stringToValue( this._param, this._editMax  , x ); tmpValue[1].ass( x.toFloat() );
+			procToken().stringToValue( this._param, this._editPitch, x ); tmpValue[2].ass( x.toFloat() );
 			tmpValue[0].angToAng( type._val, _ANG_TYPE_DEG ); this._polarMin   = tmpValue[0].toFloat();
 			tmpValue[1].angToAng( type._val, _ANG_TYPE_DEG ); this._polarMax   = tmpValue[1].toFloat();
 			tmpValue[2].angToAng( type._val, _ANG_TYPE_DEG ); this._polarPitch = tmpValue[2].toFloat();

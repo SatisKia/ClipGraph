@@ -1135,6 +1135,10 @@ function getProcErrorDefString( err, token, isCalculator, isEnglish ){
   if( isEnglish ) error = "You can only specify up to 10 arguments for the command \"" + token.slice( 1 ) + "\".";
   else error = "コマンド" + token.slice( 1 ) + "の引数は10個までしか指定できません";
   break;
+ case _CLIP_PROC_ERR_COMMAND_RADIX:
+  if( isEnglish ) error = "Command \"" + token.slice( 1 ) + "\" is invalid.";
+  else error = "コマンド" + token.slice( 1 ) + "は無効です";
+  break;
  case _CLIP_PROC_ERR_FUNC_OPEN:
   if( isEnglish ) error = "The external function \"" + token.slice( 1 ) + "\" can not be opened.";
   else error = "外部関数" + token.slice( 1 ) + "がオープンできません";
@@ -2445,7 +2449,6 @@ GraphUI.prototype = {
   this._graph.mark( x, y1, y2 );
  },
  getMinMaxPitch : function(){
-  var _token = new _Token();
   var ret = false;
   var oldMin;
   var oldMax;
@@ -2458,9 +2461,9 @@ GraphUI.prototype = {
    oldMin = this._paramMin;
    oldMax = this._paramMax;
    oldPitch = this._paramPitch;
-   _token.stringToValue( this._param, this._editMin , x ); this._paramMin = x.toFloat();
-   _token.stringToValue( this._param, this._editMax , x ); this._paramMax = x.toFloat();
-   _token.stringToValue( this._param, this._editPitch, x ); this._paramPitch = x.toFloat();
+   procToken().stringToValue( this._param, this._editMin , x ); this._paramMin = x.toFloat();
+   procToken().stringToValue( this._param, this._editMax , x ); this._paramMax = x.toFloat();
+   procToken().stringToValue( this._param, this._editPitch, x ); this._paramPitch = x.toFloat();
    if(
     (this._paramMin != oldMin ) ||
     (this._paramMax != oldMax ) ||
@@ -2477,9 +2480,9 @@ GraphUI.prototype = {
    var updateFlag = new _Boolean();
    this._proc.getAngType( type, updateFlag );
    var tmpValue = newValueArray( 3 );
-   _token.stringToValue( this._param, this._editMin , x ); tmpValue[0].ass( x.toFloat() );
-   _token.stringToValue( this._param, this._editMax , x ); tmpValue[1].ass( x.toFloat() );
-   _token.stringToValue( this._param, this._editPitch, x ); tmpValue[2].ass( x.toFloat() );
+   procToken().stringToValue( this._param, this._editMin , x ); tmpValue[0].ass( x.toFloat() );
+   procToken().stringToValue( this._param, this._editMax , x ); tmpValue[1].ass( x.toFloat() );
+   procToken().stringToValue( this._param, this._editPitch, x ); tmpValue[2].ass( x.toFloat() );
    tmpValue[0].angToAng( type._val, _ANG_TYPE_DEG ); this._polarMin = tmpValue[0].toFloat();
    tmpValue[1].angToAng( type._val, _ANG_TYPE_DEG ); this._polarMax = tmpValue[1].toFloat();
    tmpValue[2].angToAng( type._val, _ANG_TYPE_DEG ); this._polarPitch = tmpValue[2].toFloat();
@@ -3795,10 +3798,8 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   }
  });
  setDefineValue();
- newProcMultiPrec();
  setProcEnv( new _ProcEnv() );
- topProc = new _Proc( _PROC_DEF_PARENT_MODE, _PROC_DEF_PARENT_MP_PREC, _PROC_DEF_PARENT_MP_ROUND, _PROC_DEF_PRINT_ASSERT, _PROC_DEF_PRINT_WARN, _PROC_DEF_GUPDATE_FLAG );
- topProc._printAns = true;
+ topProc = new _Proc( _PROC_DEF_PARENT_MODE, _PROC_DEF_PARENT_MP_PREC, _PROC_DEF_PARENT_MP_ROUND, true, _PROC_DEF_PRINT_ASSERT, _PROC_DEF_PRINT_WARN, _PROC_DEF_GUPDATE_FLAG );
  setProcWarnFlowFlag( false );
  setProcLoopMax( loopMax );
  topParam = new _Param();
@@ -3808,6 +3809,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  topParam._enableOpPow = true;
  topParam._enableStat = false;
  setGlobalParam( topParam );
+ initProc();
  srand( time() );
  rand();
  for( i = 1; i < 3; i++ ){
@@ -4760,7 +4762,7 @@ function updateSelectVar(){
   } else {
    var real = new _String();
    var imag = new _String();
-   (new _Token()).valueToString( topParam, topParam.val( index ), real, imag );
+   procToken().valueToString( topParam, topParam.val( index ), real, imag );
    select.options[i].innerHTML = "@" + String.fromCharCode( index ) + "&nbsp;=&nbsp;" + real.str() + imag.str();
   }
  }
@@ -5623,7 +5625,7 @@ function doCommandGUpdate( gWorld ){
  canvasSetColor( COLOR_WIN[gWorld._color] );
 }
 function doCommandPlot( parentProc, parentParam, graph, start, end, step ){
- var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, parentProc._printAssert, parentProc._printWarn, false );
+ var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, false, parentProc._printAssert, parentProc._printWarn, false );
  var childParam = new _Param( parentProc._curLine._num, parentParam, true );
  childParam._enableCommand = false;
  childParam._enableOpPow = true;
@@ -5636,7 +5638,7 @@ try {
  childProc.end();
 }
 function doCommandRePlot( parentProc, parentParam, graph, start, end, step ){
- var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, parentProc._printAssert, parentProc._printWarn, false );
+ var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, false, parentProc._printAssert, parentProc._printWarn, false );
  var childParam = new _Param( parentProc._curLine._num, parentParam, true );
  childParam._enableCommand = false;
  childParam._enableOpPow = true;

@@ -424,13 +424,9 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	// 定義定数の値
 	setDefineValue();
 
-	// 多倍長演算サポート
-	newProcMultiPrec();
-
 	// 計算処理メイン・クラスを生成する
 	setProcEnv( new _ProcEnv() );
-	topProc = new _Proc( _PROC_DEF_PARENT_MODE, _PROC_DEF_PARENT_MP_PREC, _PROC_DEF_PARENT_MP_ROUND, _PROC_DEF_PRINT_ASSERT, _PROC_DEF_PRINT_WARN, _PROC_DEF_GUPDATE_FLAG );
-	topProc._printAns = true;
+	topProc = new _Proc( _PROC_DEF_PARENT_MODE, _PROC_DEF_PARENT_MP_PREC, _PROC_DEF_PARENT_MP_ROUND, true, _PROC_DEF_PRINT_ASSERT, _PROC_DEF_PRINT_WARN, _PROC_DEF_GUPDATE_FLAG );
 	setProcWarnFlowFlag( false );
 	setProcLoopMax( loopMax );
 
@@ -442,6 +438,8 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	topParam._enableOpPow = true;
 	topParam._enableStat = false;
 	setGlobalParam( topParam );
+
+	initProc();	// setProcEnvより後に実行
 
 	// 乱数を初期化する
 	srand( time() );
@@ -1632,7 +1630,7 @@ function updateSelectVar(){
 		} else {
 			var real = new _String();
 			var imag = new _String();
-			(new _Token()).valueToString( topParam, topParam.val( index ), real, imag );
+			procToken().valueToString( topParam, topParam.val( index ), real, imag );
 			select.options[i].innerHTML = "@" + String.fromCharCode( index ) + "&nbsp;=&nbsp;" + real.str() + imag.str();
 		}
 	}
@@ -2216,7 +2214,7 @@ function doCommandGUpdate( gWorld ){
 }
 function doCommandPlot( parentProc, parentParam, graph, start, end, step ){
 	// 親プロセスの環境を受け継いで、子プロセスを実行する
-	var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, parentProc._printAssert, parentProc._printWarn, false/*グラフィック画面更新OFF*/ );
+	var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, false, parentProc._printAssert, parentProc._printWarn, false/*グラフィック画面更新OFF*/ );
 	var childParam = new _Param( parentProc._curLine._num, parentParam, true );
 	childParam._enableCommand = false;
 	childParam._enableOpPow = true;
@@ -2230,7 +2228,7 @@ _CATCH
 }
 function doCommandRePlot( parentProc, parentParam, graph, start, end, step ){
 	// 親プロセスの環境を受け継いで、子プロセスを実行する
-	var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, parentProc._printAssert, parentProc._printWarn, false/*グラフィック画面更新OFF*/ );
+	var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, false, parentProc._printAssert, parentProc._printWarn, false/*グラフィック画面更新OFF*/ );
 	var childParam = new _Param( parentProc._curLine._num, parentParam, true );
 	childParam._enableCommand = false;
 	childParam._enableOpPow = true;
