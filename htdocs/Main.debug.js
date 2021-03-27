@@ -737,34 +737,34 @@ var _input_file_num;
 function canUseFile(){
  return (window.FileReader && window.FileList && window.File);
 }
-function _InputFile( id ){
+function _InputFile( id, mode ){
  if( window.onInputFileLoadImage == undefined ) window.onInputFileLoadImage = function( name, image ){};
  if( window.onInputFileLoad == undefined ) window.onInputFileLoad = function( func, data ){};
  if( window.onInputFileLoadEnd == undefined ) window.onInputFileLoadEnd = function( num ){};
  this._input = document.getElementById( id );
- this._input.addEventListener( "change", _onInputFileChange, false );
+ if( mode == undefined ){
+  mode = 0;
+ }
+ switch( mode ){
+ case 0:
+  this._input.addEventListener( "change", _onInputFileChange, false );
+  break;
+ case 1:
+  this._input.addEventListener( "change", _onInputFileChangeExtfunc, false );
+  break;
+ case 2:
+  this._input.addEventListener( "change", _onInputFileChangeImage, false );
+  break;
+ }
 }
 _InputFile.prototype = {
  element : function(){
   return this._input;
  }
 };
-function _onInputFileChange( e ){
+function _onInputFileChangeExtfunc( e ){
  var files = e.target.files;
  if( files.length == 0 ){
-  return;
- }
- if( files[0].type.indexOf( "image/" ) == 0 ){
-  var name = files[0].name;
-  var reader = new FileReader();
-  reader.onload = function(){
-   var image = new Image();
-   image.onload = function(){
-    onInputFileLoadImage( name, image );
-   };
-   image.src = reader.result;
-  };
-  reader.readAsDataURL( files[0] );
   return;
  }
  _input_file_cnt = 0;
@@ -820,6 +820,32 @@ function _onInputFileChange( e ){
   })( file );
   reader.readAsText( file );
  }
+}
+function _onInputFileChangeImage( e ){
+ var files = e.target.files;
+ if( files.length == 0 ){
+  return true;
+ }
+ if( files[0].type.indexOf( "image/" ) == 0 ){
+  var name = files[0].name;
+  var reader = new FileReader();
+  reader.onload = function(){
+   var image = new Image();
+   image.onload = function(){
+    onInputFileLoadImage( name, image );
+   };
+   image.src = reader.result;
+  };
+  reader.readAsDataURL( files[0] );
+  return true;
+ }
+ return false;
+}
+function _onInputFileChange( e ){
+ if( _onInputFileChangeImage( e ) ){
+  return;
+ }
+ _onInputFileChangeExtfunc( e );
 }
 var inputFile;
 function __ProcError(){
@@ -1230,9 +1256,39 @@ EditExpr.prototype = {
  },
  _lastChar : function( str ){
   if( str.length == 0 ){
-   return 0;
+   return '';
   }
   return str.charAt( str.length - 1 );
+ },
+ lastChar : function(){
+  if( !this._searchList( this._cursor - 1 ) ){
+   return '';
+  }
+  return this._lastChar( this._cur._token );
+ },
+ lastCharNumber : function(){
+  var chr = this.lastChar();
+  chr = (chr.length == 0) ? 0 : chr.charCodeAt( 0 );
+  if( (chr >= _CHAR_CODE_0) && (chr <= _CHAR_CODE_9) ){
+   return true;
+  }
+  return false;
+ },
+ lastCharLower : function(){
+  var chr = this.lastChar();
+  chr = (chr.length == 0) ? 0 : chr.charCodeAt( 0 );
+  if( (chr >= _CHAR_CODE_LA) && (chr <= _CHAR_CODE_LZ) ){
+   return true;
+  }
+  return false;
+ },
+ lastCharUpper : function(){
+  var chr = this.lastChar();
+  chr = (chr.length == 0) ? 0 : chr.charCodeAt( 0 );
+  if( (chr >= _CHAR_CODE_UA) && (chr <= _CHAR_CODE_UZ) ){
+   return true;
+  }
+  return false;
  },
  add : function( token ){
   if( this._selAll ){
@@ -3767,7 +3823,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  su.setFont( 10, "Helvetica" );
  inputFile = new Array();
  for( i = 0; i < inputFileIds.length; i++ ){
-  inputFile[i] = new _InputFile( inputFileIds[i] );
+  inputFile[i] = new _InputFile( inputFileIds[i][0], inputFileIds[i][1] );
  }
  procError = new _ProcError();
  for( i = 0; i < 3; i++ ){
@@ -3989,7 +4045,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   }
  }
  if( common.isApp() ){
-  cssSetStyleDisplayById( "button_get_content", true );
+  cssSetStyleDisplayById( "button_getcontent", true );
+ }
+ if( common.isPC() ){
+  cssSetStyleDisplayById( "graph_input_loadimage", true );
  }
  if( getUrlParameter( "menu" ) == "option" ){
   doButtonUIOption();
@@ -4028,14 +4087,14 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  for( i = 0; i < extFuncFile.length; i++ ){
   var name = extFuncName( extFuncFile[i] );
   if( name.length > 0 ){
-   regExtFuncButton( name );
+   regExtFuncButton( name.toLowerCase() );
   }
  }
  loadExtFuncFile2();
  for( i = 0; i < extFuncFile2.length; i++ ){
   var name = extFuncName( extFuncFile2[i] );
   if( name.length > 0 ){
-   regExtFuncButton( name );
+   regExtFuncButton( name.toLowerCase() );
   }
  }
  editor = new _Editor( editorId );
@@ -4084,7 +4143,7 @@ function setDeviceWidth( width ){
  }
 }
 function defHeight( mainFlag ){
- var height = (isAndroidTablet() || isIPad()) ? 471 : 510;
+ var height = (isAndroidTablet() || isIPad()) ? 471 : 506;
  if( mainFlag && !usageFlag ){
   height -= 51;
  }
@@ -4573,6 +4632,18 @@ function updateEditExpr(){
  }
 }
 function insEditExpr( token ){
+ if( token.length == 1 ){
+  var chr = token.charCodeAt( 0 );
+  if( (chr >= _CHAR_CODE_LA) && (chr <= _CHAR_CODE_LZ) ){
+   if( (editExpr[graphIndex()][exprType].lastChar() == '@') || editExpr[graphIndex()][exprType].lastCharUpper() ){
+    token = token.toUpperCase();
+   }
+  } else if( (chr >= _CHAR_CODE_UA) && (chr <= _CHAR_CODE_UZ) ){
+   if( editExpr[graphIndex()][exprType].lastCharLower() ){
+    token = token.toLowerCase();
+   }
+  }
+ }
  if( usageFlag ){
   printUsage( token, topProc, topParam, englishFlag, "graph_usage" );
  }
@@ -5347,18 +5418,20 @@ function loadExtFuncFile2(){
 }
 function onInputFileLoad( func, data ){
  var i;
+ func = func.toLowerCase();
  topProc.clearFuncCache( func );
  var name = "/" + func + ".cef";
  var index = extFuncFile2.length;
  for( i = 0; i < extFuncFile2.length; i++ ){
-  if( extFuncFile2[i] == name ){
+  if( extFuncFile2[i].toLowerCase() == name ){
+   name = extFuncFile2[i];
    index = i;
    break;
   }
  }
  extFuncFile2[index] = name;
  extFuncData2[index] = splitData( data );
- regExtFuncButton( extFuncName( extFuncFile2[index] ) );
+ regExtFuncButton( extFuncName( extFuncFile2[index] ).toLowerCase() );
  data = "";
  for( i = 0; i < extFuncData2[index].length; i++ ){
   if( i != 0 ) data += "\n";
@@ -5406,14 +5479,14 @@ function getExtFuncDataDirect( func ){
 }
 function getExtFuncDataNameSpace( func ){
  for( var i = 0; i < extFuncFile.length; i++ ){
-  if( extFuncName( extFuncFile[i] ) == func ){
+  if( extFuncName( extFuncFile[i] ).toLowerCase() == func.toLowerCase() ){
    if( i < extFuncData.length ){
     return extFuncData[i];
    }
   }
  }
  for( var i = 0; i < extFuncFile2.length; i++ ){
-  if( extFuncName( extFuncFile2[i] ) == func ){
+  if( extFuncName( extFuncFile2[i] ).toLowerCase() == func.toLowerCase() ){
    if( i < extFuncData2.length ){
     return extFuncData2[i];
    }
@@ -7232,7 +7305,8 @@ function updateLanguage(){
  document.getElementById( "graph_static_color_graph2" ).innerHTML = englishFlag ? "Graph 2:" : "グラフ2:";
  document.getElementById( "graph_static_color_graph3" ).innerHTML = englishFlag ? "Graph 3:" : "グラフ3:";
  document.getElementById( "button_return2" ).innerHTML = englishFlag ? "Return" : "戻る";
- document.getElementById( "button_get_content" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
+ document.getElementById( "button_getcontent" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
+ document.getElementById( "button_loadimage" ).innerHTML = englishFlag ? "Image file..." : "画像ファイル...";
  document.getElementById( "button_selectimage_del" ).innerHTML = englishFlag ? "Del" : "消";
  document.getElementById( "button_return3" ).innerHTML = englishFlag ? "Return" : "戻る";
  document.getElementById( "button_profile_import2" ).innerHTML = englishFlag ? "Import" : "ｲﾝﾎﾟｰﾄする";
@@ -7848,11 +7922,33 @@ function getContent(){
  }
 }
 function onContentBase64( data ){
- skinImage = data;
- document.getElementById( "graph_edit_skin_image" ).value = skinImage;
- updateSkin();
- writeProfileString( "ENV_", "SkinImage", skinImage );
- addListImage();
+ var canvas = document.createElement( "canvas" );
+ var context = canvas.getContext( "2d" );
+ var image = new Image();
+ image.onload = function(){
+  var dstHeight = common.isPC() ? defHeight( false ) : bodyHeight;
+  var dstWidth = this.width * dstHeight / this.height;
+  if( dstWidth < 322 ){
+   dstWidth = 322;
+   dstHeight = this.height * 322 / this.width;
+  }
+  canvas.width = dstWidth;
+  canvas.height = dstHeight;
+  context.drawImage( this, 0, 0, this.width, this.height, 0, 0, dstWidth, dstHeight );
+  var quality = 1.0;
+  do {
+   skinImage = canvas.toDataURL( "image/jpeg", quality );
+   quality -= 0.1;
+  } while( skinImage.length <= 102400 );
+  document.getElementById( "graph_edit_skin_image" ).value = skinImage;
+  updateSkin();
+  writeProfileString( "ENV_", "SkinImage", skinImage );
+  addListImage();
+ };
+ image.src = data;
+}
+function onInputFileLoadImage( name, image ){
+ onContentBase64( image.src );
 }
 function onKeyDown( key ){
  if( menu != 2 ){
@@ -7928,19 +8024,46 @@ function onKeyDown( key ){
   }
   return true;
  case 105: doButton9(); return true;
- case 110: doButtonPoint(); return true;
- case 190: doButtonPoint(); return true;
- case 68: doButtonDeg(); return true;
+ case 65: insEditExpr( "a" ); return true;
+ case 66: insEditExpr( "b" ); return true;
+ case 67: insEditExpr( "c" ); return true;
+ case 68: insEditExpr( "d" ); return true;
  case 69:
-  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
-   doButtonEPlus();
+  if( editExpr[graphIndex()][exprType].lastChar() == '@' ){
+   insEditExpr( "E" );
+  } else if( editExpr[graphIndex()][exprType].lastCharNumber() ){
+   if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+    doButtonEPlus();
+   } else {
+    doButtonEMinus();
+   }
   } else {
-   doButtonEMinus();
+   insEditExpr( "e" );
   }
   return true;
- case 71: doButtonGrad(); return true;
- case 73: doButtonI(); return true;
- case 82: doButtonRad(); return true;
+ case 70: insEditExpr( "f" ); return true;
+ case 71: insEditExpr( "g" ); return true;
+ case 72: insEditExpr( "h" ); return true;
+ case 73: insEditExpr( "i" ); return true;
+ case 74: insEditExpr( "j" ); return true;
+ case 75: insEditExpr( "k" ); return true;
+ case 76: insEditExpr( "l" ); return true;
+ case 77: insEditExpr( "m" ); return true;
+ case 78: insEditExpr( "n" ); return true;
+ case 79: insEditExpr( "o" ); return true;
+ case 80: insEditExpr( "p" ); return true;
+ case 81: insEditExpr( "q" ); return true;
+ case 82: insEditExpr( "r" ); return true;
+ case 83: insEditExpr( "s" ); return true;
+ case 84: insEditExpr( "t" ); return true;
+ case 85: insEditExpr( "u" ); return true;
+ case 86: insEditExpr( "v" ); return true;
+ case 87: insEditExpr( "w" ); return true;
+ case 88: insEditExpr( "x" ); return true;
+ case 89: insEditExpr( "y" ); return true;
+ case 90: insEditExpr( "z" ); return true;
+ case 110: doButtonPoint(); return true;
+ case 190: doButtonPoint(); return true;
  case 187:
   if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
    doButtonPlus();
@@ -7976,8 +8099,9 @@ function onKeyDown( key ){
  case 222:
   doButtonPow();
   return true;
- case 88: doButtonVar(); return true;
- case 84: doButtonVar(); return true;
+ case 192:
+  insEditExpr( "@" );
+  return true;
  case 32: doButtonSpace(); return true;
  case 13: doButtonEnter(); return true;
  }

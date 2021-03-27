@@ -35,6 +35,33 @@ var extFuncData2 = new Array();
 #include "math\_Time.js"
 #include "math\_Value.js"
 
+#include "mp\_MultiPrec.js"
+#include "mp\_abs.js"
+#include "mp\_add.js"
+#include "mp\_cmp.js"
+#include "mp\_div.js"
+#include "mp\_fadd.js"
+#include "mp\_fcmp.js"
+#include "mp\_fdigit.js"
+#include "mp\_fdiv.js"
+#include "mp\_fdiv2.js"
+#include "mp\_fmul.js"
+#include "mp\_fnum2str.js"
+#include "mp\_fround.js"
+#include "mp\_fsqrt.js"
+#include "mp\_fsqrt2.js"
+#include "mp\_fsqrt3.js"
+#include "mp\_fstr2num.js"
+#include "mp\_fsub.js"
+#include "mp\_ftrunc.js"
+#include "mp\_mul.js"
+#include "mp\_neg.js"
+#include "mp\_num2str.js"
+#include "mp\_set.js"
+#include "mp\_sqrt.js"
+#include "mp\_str2num.js"
+#include "mp\_sub.js"
+
 #include "param\_Boolean.js"
 #include "param\_Float.js"
 #include "param\_Integer.js"
@@ -382,7 +409,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	// ファイル選択コントロール
 	inputFile = new Array();
 	for( i = 0; i < inputFileIds.length; i++ ){
-		inputFile[i] = new _InputFile( inputFileIds[i] );
+		inputFile[i] = new _InputFile( inputFileIds[i][0], inputFileIds[i][1] );
 	}
 
 	// 計算エラー情報管理クラス
@@ -656,7 +683,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	}
 
 	if( common.isApp() ){
-		cssSetStyleDisplayById( "button_get_content", true );
+		cssSetStyleDisplayById( "button_getcontent", true );
+	}
+	if( common.isPC() ){
+		cssSetStyleDisplayById( "graph_input_loadimage", true );
 	}
 
 	if( getUrlParameter( "menu" ) == "option" ){
@@ -698,7 +728,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	for( i = 0; i < extFuncFile.length; i++ ){
 		var name = extFuncName( extFuncFile[i] );
 		if( name.length > 0 ){
-			regExtFuncButton( name );
+			regExtFuncButton( name.toLowerCase() );
 		}
 	}
 
@@ -706,7 +736,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	for( i = 0; i < extFuncFile2.length; i++ ){
 		var name = extFuncName( extFuncFile2[i] );
 		if( name.length > 0 ){
-			regExtFuncButton( name );
+			regExtFuncButton( name.toLowerCase() );
 		}
 	}
 
@@ -776,7 +806,7 @@ function setDeviceWidth( width ){
 }
 
 function defHeight( mainFlag ){
-	var height = (isAndroidTablet() || isIPad()) ? 471 : 510;
+	var height = (isAndroidTablet() || isIPad()) ? 471 : 506;
 	if( mainFlag && !usageFlag ){
 		height -= 51;
 	}
@@ -1404,6 +1434,19 @@ function updateEditExpr(){
 }
 
 function insEditExpr( token ){
+	if( token.length == 1 ){
+		var chr = token.charCodeAt( 0 );
+		if( (chr >= _CHAR_CODE_LA) && (chr <= _CHAR_CODE_LZ) ){
+			if( (editExpr[graphIndex()][exprType].lastChar() == '@') || editExpr[graphIndex()][exprType].lastCharUpper() ){
+				token = token.toUpperCase();
+			}
+		} else if( (chr >= _CHAR_CODE_UA) && (chr <= _CHAR_CODE_UZ) ){
+			if( editExpr[graphIndex()][exprType].lastCharLower() ){
+				token = token.toLowerCase();
+			}
+		}
+	}
+
 	if( usageFlag ){
 		printUsage( token, topProc, topParam, englishFlag, "graph_usage" );
 	}
@@ -1907,6 +1950,8 @@ function loadExtFuncFile2(){
 function onInputFileLoad( func, data ){
 	var i;
 
+	func = func.toLowerCase();
+
 	// 外部関数キャッシュのクリア
 	topProc.clearFuncCache( func );
 
@@ -1914,7 +1959,8 @@ function onInputFileLoad( func, data ){
 
 	var index = extFuncFile2.length;
 	for( i = 0; i < extFuncFile2.length; i++ ){
-		if( extFuncFile2[i] == name ){
+		if( extFuncFile2[i].toLowerCase() == name ){
+			name = extFuncFile2[i];
 			index = i;
 			break;
 		}
@@ -1922,7 +1968,7 @@ function onInputFileLoad( func, data ){
 	extFuncFile2[index] = name;
 	extFuncData2[index] = splitData( data );
 
-	regExtFuncButton( extFuncName( extFuncFile2[index] ) );
+	regExtFuncButton( extFuncName( extFuncFile2[index] ).toLowerCase() );
 
 	data = "";
 	for( i = 0; i < extFuncData2[index].length; i++ ){
@@ -1975,14 +2021,14 @@ function getExtFuncDataDirect( func ){
 }
 function getExtFuncDataNameSpace( func ){
 	for( var i = 0; i < extFuncFile.length; i++ ){
-		if( extFuncName( extFuncFile[i] ) == func ){
+		if( extFuncName( extFuncFile[i] ).toLowerCase() == func.toLowerCase() ){
 			if( i < extFuncData.length ){
 				return extFuncData[i];
 			}
 		}
 	}
 	for( var i = 0; i < extFuncFile2.length; i++ ){
-		if( extFuncName( extFuncFile2[i] ) == func ){
+		if( extFuncName( extFuncFile2[i] ).toLowerCase() == func.toLowerCase() ){
 			if( i < extFuncData2.length ){
 				return extFuncData2[i];
 			}
@@ -4027,7 +4073,8 @@ function updateLanguage(){
 	document.getElementById( "graph_static_color_graph2" ).innerHTML = englishFlag ? "Graph 2:" : "グラフ2:";
 	document.getElementById( "graph_static_color_graph3" ).innerHTML = englishFlag ? "Graph 3:" : "グラフ3:";
 	document.getElementById( "button_return2" ).innerHTML = englishFlag ? "Return" : "戻る";
-	document.getElementById( "button_get_content" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
+	document.getElementById( "button_getcontent" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
+	document.getElementById( "button_loadimage" ).innerHTML = englishFlag ? "Image file..." : "画像ファイル...";
 	document.getElementById( "button_selectimage_del" ).innerHTML = englishFlag ? "Del" : "消";
 	document.getElementById( "button_return3" ).innerHTML = englishFlag ? "Return" : "戻る";
 	document.getElementById( "button_profile_import2" ).innerHTML = englishFlag ? "Import" : "ｲﾝﾎﾟｰﾄする";
@@ -4710,13 +4757,38 @@ function getContent(){
 	}
 }
 function onContentBase64( data ){
-	skinImage = data;
-	document.getElementById( "graph_edit_skin_image" ).value = skinImage;
-	updateSkin();
+	var canvas = document.createElement( "canvas" );
+	var context = canvas.getContext( "2d" );
+	var image = new Image();
+	image.onload = function(){
+		var dstHeight = common.isPC() ? defHeight( false ) : bodyHeight;
+		var dstWidth  = this.width * dstHeight / this.height;
+		if( dstWidth < 322 ){
+			dstWidth  = 322;
+			dstHeight = this.height * 322 / this.width;
+		}
+		canvas.width  = dstWidth;
+		canvas.height = dstHeight;
+		context.drawImage( this, 0, 0, this.width, this.height, 0, 0, dstWidth, dstHeight );
 
-	writeProfileString( "ENV_", "SkinImage", skinImage );
+		var quality = 1.0;
+		do {
+			skinImage = canvas.toDataURL( "image/jpeg", quality );
+			quality -= 0.1;
+		} while( skinImage.length <= 102400 );
 
-	addListImage();
+		document.getElementById( "graph_edit_skin_image" ).value = skinImage;
+		updateSkin();
+
+		writeProfileString( "ENV_", "SkinImage", skinImage );
+
+		addListImage();
+	};
+	image.src = data;
+}
+
+function onInputFileLoadImage( name, image ){
+	onContentBase64( image.src );
 }
 
 // キー関連
@@ -4801,19 +4873,47 @@ function onKeyDown( key ){
 		return true;
 	case _KEY_NUM_9: doButton9(); return true;
 
-	case _KEY_NUM_POINT: doButtonPoint(); return true;
-	case 190: doButtonPoint(); return true;	// .>キー
-	case _KEY_D: doButtonDeg(); return true;
+	case _KEY_A: insEditExpr( "a" ); return true;
+	case _KEY_B: insEditExpr( "b" ); return true;
+	case _KEY_C: insEditExpr( "c" ); return true;
+	case _KEY_D: insEditExpr( "d" ); return true;
 	case _KEY_E:
-		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
-			doButtonEPlus();
+		if( editExpr[graphIndex()][exprType].lastChar() == '@' ){
+			insEditExpr( "E" );
+		} else if( editExpr[graphIndex()][exprType].lastCharNumber() ){
+			if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
+				doButtonEPlus();
+			} else {
+				doButtonEMinus();
+			}
 		} else {
-			doButtonEMinus();
+			insEditExpr( "e" );
 		}
 		return true;
-	case _KEY_G: doButtonGrad(); return true;
-	case _KEY_I: doButtonI(); return true;
-	case _KEY_R: doButtonRad(); return true;
+	case _KEY_F: insEditExpr( "f" ); return true;
+	case _KEY_G: insEditExpr( "g" ); return true;
+	case _KEY_H: insEditExpr( "h" ); return true;
+	case _KEY_I: insEditExpr( "i" ); return true;
+	case _KEY_J: insEditExpr( "j" ); return true;
+	case _KEY_K: insEditExpr( "k" ); return true;
+	case _KEY_L: insEditExpr( "l" ); return true;
+	case _KEY_M: insEditExpr( "m" ); return true;
+	case _KEY_N: insEditExpr( "n" ); return true;
+	case _KEY_O: insEditExpr( "o" ); return true;
+	case _KEY_P: insEditExpr( "p" ); return true;
+	case _KEY_Q: insEditExpr( "q" ); return true;
+	case _KEY_R: insEditExpr( "r" ); return true;
+	case _KEY_S: insEditExpr( "s" ); return true;
+	case _KEY_T: insEditExpr( "t" ); return true;
+	case _KEY_U: insEditExpr( "u" ); return true;
+	case _KEY_V: insEditExpr( "v" ); return true;
+	case _KEY_W: insEditExpr( "w" ); return true;
+	case _KEY_X: insEditExpr( "x" ); return true;
+	case _KEY_Y: insEditExpr( "y" ); return true;
+	case _KEY_Z: insEditExpr( "z" ); return true;
+
+	case _KEY_NUM_POINT: doButtonPoint(); return true;
+	case 190: doButtonPoint(); return true;	// .>キー
 	case 187:	// ;+キー
 		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
 			doButtonPlus();
@@ -4828,7 +4928,6 @@ function onKeyDown( key ){
 			doButtonMinus();
 		}
 		return true;
-
 	case _KEY_NUM_ADD:
 		if( _AND( _key_state, keyBit( _KEY_SHIFT ) ) == 0 ){
 			doButtonAdd();
@@ -4847,16 +4946,13 @@ function onKeyDown( key ){
 	case 186: doButtonMul(); return true;	// :*キー
 	case _KEY_NUM_DIV: doButtonDiv(); return true;
 	case 191: doButtonDiv(); return true;	// /?キー
-
 	case 222:	// ^~キー
 		doButtonPow();
 		return true;
-
-	case _KEY_X: doButtonVar(); return true;
-	case _KEY_T: doButtonVar(); return true;
-
+	case 192:	// @`キー
+		insEditExpr( "@" );
+		return true;
 	case _KEY_SPACE: doButtonSpace(); return true;
-
 	case _KEY_ENTER: doButtonEnter(); return true;
 	}
 

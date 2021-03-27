@@ -3184,6 +3184,1074 @@ function newValueArray( len ){
  }
  return a;
 }
+var _MP_DIGIT = 4;
+var _MP_ELEMENT = _POW( 10, _MP_DIGIT );
+var _MP_PREC_MASK = 0xFFFFFFFF;
+var _MP_LEN_COEF = _MP_PREC_MASK + 1;
+function _MultiPrec(){
+ this._I = new Array();
+ this._F = new Array();
+ this.fabs = this.abs;
+ this.fneg = this.neg;
+ this.fset = this.set;
+}
+_MultiPrec.prototype.I = function( str ){
+ if( this._I["_" + str] == undefined ){
+  this._I["_" + str] = new Array();
+  this.str2num( this._I["_" + str], str );
+ }
+ return this._I["_" + str];
+};
+_MultiPrec.prototype.F = function( str ){
+ if( this._F["_" + str] == undefined ){
+  this._F["_" + str] = new Array();
+  this.fstr2num( this._F["_" + str], str );
+ }
+ return this._F["_" + str];
+};
+_MultiPrec.prototype.getLen = function( a ){
+ return _INT( _ABS( a[0] / _MP_LEN_COEF ) );
+};
+_MultiPrec.prototype._setLen = function( a , len ){
+ var p = _AND( _ABS( a[0] ), _MP_PREC_MASK );
+ if( len == 0 ){
+  a[0] = _MP_LEN_COEF + p; a[1] = 0;
+ } else {
+  a[0] = (_ABS( len ) * _MP_LEN_COEF + p) * (len < 0 ? -1 : 1);
+ }
+};
+_MultiPrec.prototype.getPrec = function( a ){
+ return _AND( _ABS( a[0] ), _MP_PREC_MASK );
+};
+_MultiPrec.prototype._setPrec = function( a , prec ){
+ var l = _INT( _ABS( a[0] / _MP_LEN_COEF ) );
+ if( l == 0 ){
+  a[0] = _MP_LEN_COEF + prec; a[1] = 0;
+ } else {
+  a[0] = (l * _MP_LEN_COEF + prec) * (a[0] < 0 ? -1 : 1);
+ }
+};
+_MultiPrec.prototype._fmul = function( a , prec ){
+ var n = _INT( prec / _MP_DIGIT );
+ if( n > 0 ){
+  var l = _INT( _ABS( a[0] / _MP_LEN_COEF ) );
+  this._copy( a, 1, a, n + 1, l );
+  this._fill( 0, a, 1, n );
+  var p = _AND( _ABS( a[0] ), _MP_PREC_MASK );
+  a[0] = ((l + n) * _MP_LEN_COEF + p) * (a[0] < 0 ? -1 : 1);
+ }
+ return prec - n * _MP_DIGIT;
+};
+_MultiPrec.prototype._fdiv = function( a , len ){
+ var l = _INT( _ABS( a[0] / _MP_LEN_COEF ) );
+ this._copy( a, len + 1, a, 1, l - len );
+ l -= len
+ var p = _AND( _ABS( a[0] ), _MP_PREC_MASK );
+ if( l == 0 ){
+  a[0] = _MP_LEN_COEF + p; a[1] = 0;
+ } else {
+  a[0] = (l * _MP_LEN_COEF + p) * (a[0] < 0 ? -1 : 1);
+ }
+};
+_MultiPrec.prototype._fcoef = function( k , prec ){
+ var n = _DIV( prec, _MP_DIGIT ) + 1;
+ k[n] = _POW( 10, _MOD( prec, _MP_DIGIT ) );
+ this._fill( 0, k, 1, n - 1 );
+ k[0] = n * _MP_LEN_COEF;
+};
+_MultiPrec.prototype._matchPrec = function( a , b ){
+ var aa = this.getPrec( a );
+ var bb = this.getPrec( b );
+ var p = aa, t;
+ if( aa < bb ){
+  if( (t = this._fmul( a, bb - aa )) > 0 ){
+   var k = new Array();
+   this._fcoef( k, t ); this.mul( a, a, k );
+  }
+  this._setPrec( a, bb );
+  p = bb;
+ } else if( bb < aa ){
+  if( (t = this._fmul( b, aa - bb )) > 0 ){
+   var k = new Array();
+   this._fcoef( k, t ); this.mul( b, b, k );
+  }
+  this._setPrec( b, aa );
+ }
+ return p;
+};
+_MultiPrec.prototype.clone = function( a ){
+ if( a.length == 0 ){
+  return [ _MP_LEN_COEF, 0 ];
+ }
+ return Array.from( a );
+};
+_MultiPrec.prototype._copy = function( src, src_pos, dst, dst_pos, len ){
+ src = this.clone( src );
+ for( var i = 0; i < len; i++ ){
+  dst[dst_pos + i] = src[src_pos + i];
+ }
+};
+_MultiPrec.prototype._fill = function( value, array, pos, len ){
+ for( var i = 0; i < len; i++ ){
+  array[pos + i] = value;
+ }
+};
+_MultiPrec.prototype._strlen = function( array ){
+ var len;
+ for( len = 0; ; len++ ){
+  if( array[len] == 0 ){
+   break;
+  }
+ }
+ return len;
+};
+_MultiPrec.prototype._j2cstr = function( str ){
+ var array = new Array();
+ var i;
+ for( i = 0; i < str.length; i++ ){
+  array[i] = str.charCodeAt( i );
+ }
+ array[i] = 0;
+ return array;
+};
+_MultiPrec.prototype._c2jstr = function( array ){
+ var str = new String();
+ for( var i = 0; ; i++ ){
+  if( array[i] == 0 ){
+   break;
+  }
+  str += String.fromCharCode( array[i] );
+ }
+ return str;
+};
+_MultiPrec.prototype.abs = function( rop , op ){
+ if( op == undefined ){
+  rop[0] = _ABS( rop[0] );
+  return;
+ }
+ this._copy( op, 1, rop, 1, this.getLen( op ) );
+ rop[0] = _ABS( op[0] );
+};
+_MultiPrec.prototype.add = function( ret , a , b ){
+ a = this.clone( a );
+ b = this.clone( b );
+ if( a[0] < 0 && b[0] >= 0 ){
+  a[0] = -a[0];
+  this.sub( ret, b, a );
+  return;
+ } else if( a[0] >= 0 && b[0] < 0 ){
+  b[0] = -b[0];
+  this.sub( ret, a, b );
+  return;
+ }
+ var k = (a[0] < 0 && b[0] < 0) ? -1 : 1;
+ var la = this.getLen( a );
+ var lb = this.getLen( b );
+ var lr = (la >= lb) ? la : lb;
+ ret[lr + 1] = 0;
+ var r = 0, aa = 0, bb = 0, x = 0;
+ for( var i = 1; i <= lr; i++ ){
+  if( i <= la ){ x += a[++aa]; }
+  if( i <= lb ){ x += b[++bb]; }
+  if( x < _MP_ELEMENT ){
+   ret[++r] = x;
+   x = 0;
+  } else {
+   ret[++r] = x - _MP_ELEMENT;
+   x = 1;
+  }
+ }
+ if( x != 0 ){
+  ret[++r] = x;
+  lr++;
+ }
+ this._setLen( ret, lr * k );
+};
+_MultiPrec.prototype.cmp = function( a , b ){
+ if( a[0] < 0 && b[0] >= 0 ){ return -1; }
+ if( b[0] < 0 && a[0] >= 0 ){ return 1; }
+ var k = (a[0] < 0 && b[0] < 0) ? -1 : 1;
+ var la = this.getLen( a );
+ var lb = this.getLen( b );
+ var aa, bb;
+ for( var i = (la > lb) ? la : lb; i > 0; i-- ){
+  aa = (i <= la) ? a[i] : 0;
+  bb = (i <= lb) ? b[i] : 0;
+  if( aa != bb ){ return (aa - bb) * k; }
+ }
+ return 0;
+};
+_MultiPrec.prototype._mul1 = function( q , a , b ){
+ q[a[0] + 1] = 0;
+ var c, aa, qq, i, x;
+ for( c = 0, aa = 0, qq = 0, i = 0; i < a[0]; i++ ){
+  x = a[++aa] * b + c;
+  q[++qq] = _MOD( x, _MP_ELEMENT ); c = _DIV( x, _MP_ELEMENT );
+ }
+ q[++qq] = c;
+ q[0] = i; if( c > 0 ){ q[0]++; }
+};
+_MultiPrec.prototype._div1 = function( q , a , b ){
+ q[0] = a[0];
+ var c, aa, qq, i, x;
+ for( c = 0, aa = a[0], qq = q[0], i = a[0]; i > 0; i-- ){
+  x = _MP_ELEMENT * c + a[aa--];
+  q[qq--] = _DIV( x, b ); c = _MOD( x, b );
+ }
+ if( q[q[0]] == 0 ){ q[0]--; }
+ return c;
+};
+_MultiPrec.prototype._sub1 = function( a , b , aa, bb ){
+ var c, t;
+ for( c = 0, t = bb, bb = 0; bb < t; ){
+  a[++aa] -= b[++bb] + c;
+  c = 0;
+  if( a[aa] < 0 ){ a[aa] += _MP_ELEMENT; c = 1; }
+ }
+ while( a[aa] == 0 ){ aa--; }
+ a[0] = aa;
+};
+_MultiPrec.prototype.div = function( q , a , b , r ){
+ a = this.clone( a );
+ b = this.clone( b );
+ if( r == undefined ){
+  r = new Array();
+ }
+ var k = 1;
+ if( a[0] < 0 && b[0] >= 0 ){ k = -1; }
+ if( b[0] < 0 && a[0] >= 0 ){ k = -1; }
+ var l = (a[0] < 0) ? -1 : 1;
+ a[0] = this.getLen( a );
+ b[0] = this.getLen( b );
+ q[0] = 0; r[0] = 0;
+ var lq, lr;
+ var K;
+ var Q;
+ if( b[0] == 0 || (b[0] == 1 && b[1] == 0) ){ return true ; }
+ if( a[0] == 0 || (a[0] == 1 && a[1] == 0) ){ return false; }
+ if( a[0] < b[0] ){
+  this._copy( a, 0, r, 0, a[0] + 1 );
+  lr = r[0]; r[0] = 0; this._setLen( r, lr * l );
+  return false;
+ }
+ if( b[0] == 1 ){
+  var rr = 0;
+  var c = this._div1( q, a, b[1] );
+  if( c > 0 ){
+   r[rr++] = 1;
+   r[rr] = c;
+  } else {
+   r[rr] = 0;
+  }
+  lq = q[0]; q[0] = 0; this._setLen( q, lq * k );
+  lr = r[0]; r[0] = 0; this._setLen( r, lr * l );
+  return false;
+ }
+ if( (K = _DIV( _MP_ELEMENT, b[b[0]] + 1 )) > 1 ){
+  this._mul1( a, this.clone( a ), K );
+  this._mul1( b, this.clone( b ), K );
+ }
+ q[0] = a[0] - b[0] + 1;
+ for( var i = q[0]; i > 0; i-- ){ q[i] = 0; }
+ var n = b[0];
+ var m;
+ var aa, bb, rr;
+ while( (m = a[0]) >= n ){
+  if( a[a[0]] >= b[b[0]] ){
+   for( aa = a[0], bb = b[0]; bb > 0; aa--, bb-- ){
+    if( a[aa] != b[bb] ){ break; }
+   }
+   if( bb == 0 ){
+    a[0] -= b[0];
+    q[m - n + 1]++;
+    continue;
+   } else if( a[aa] > b[bb] ){
+    this._sub1( a, b, m - n, bb );
+    q[m - n + 1]++;
+    continue;
+   }
+   Q = _MP_ELEMENT - 1;
+  } else {
+   Q = _DIV( _MP_ELEMENT * a[a[0]] + a[a[0] - 1], b[b[0]] );
+  }
+  if( m == n ){ break; }
+  while( true ){
+   if( Q == 1 ){
+    b[b[0] + 1] = 0;
+    this._sub1( a, b, a[0] - b[0] - 1, b[0] );
+    break;
+   }
+   this._mul1( r, b, Q );
+   for( aa = a[0], rr = r[0]; rr > 0; aa--, rr-- ){
+    if( a[aa] != r[rr] ){ break; }
+   }
+   if( rr == 0 ){
+    a[0] -= r[0];
+    break;
+   } else if( a[aa] > r[rr] ){
+    this._sub1( a, r, a[0] - r[0], rr );
+    break;
+   } else {
+    Q--;
+   }
+  }
+  q[m - n] = Q;
+ }
+ if( q[q[0]] == 0 ){ q[0]--; }
+ if( K > 1 ){
+  this._div1( r, a, K );
+ } else {
+  this._copy( a, 0, r, 0, a[0] + 1 );
+ }
+ lq = q[0]; q[0] = 0; this._setLen( q, lq * k );
+ lr = r[0]; r[0] = 0; this._setLen( r, lr * l );
+ return false;
+};
+_MultiPrec.prototype.fadd = function( ret , a , b ){
+ a = this.clone( a );
+ b = this.clone( b );
+ var p = this._matchPrec( a, b );
+ this.add( ret, a, b );
+ this._setPrec( ret, p );
+};
+_MultiPrec.prototype.fcmp = function( a , b ){
+ a = this.clone( a );
+ b = this.clone( b );
+ this._matchPrec( a, b );
+ return this.cmp( a, b );
+};
+_MultiPrec.prototype.fdigit = function( a ){
+ var l = this.getLen( a );
+ if( l == 0 ){
+  return 0;
+ }
+ var k = 10;
+ var i;
+ for( i = 1; i <= _MP_DIGIT; i++ ){
+  if( a[l] < k ){ break; }
+  k *= 10;
+ }
+ var d = (l - 1) * _MP_DIGIT + i;
+ return d - this.getPrec( a );
+};
+_MultiPrec.prototype.fdiv = function( ret , a , b , prec ){
+ a = this.clone( a );
+ b = this.clone( b );
+ var p = this._matchPrec( a, b );
+ var k = b[0] < 0 ? -1 : 1;
+ var l = this.getLen( b );
+ var i;
+ for( i = l; i > 0; i-- ){
+  if( b[i] != 0 ){ break; }
+ }
+ if( i == 0 ){ return true; }
+ if( i != l ){
+  p -= (l - i) * _MP_DIGIT;
+  this._setPrec( a, p );
+  this._setPrec( b, p );
+  this._setLen( b, i * k );
+ }
+ var q = new Array();
+ var r = new Array();
+ this.div( q, a, b, r );
+ var t = this._fmul( q, prec );
+ this._fmul( r, prec );
+ if( t > 0 ){
+  var k = new Array();
+  this._fcoef( k, t );
+  this.mul( q, q, k );
+  this.mul( r, r, k );
+ }
+ this.div( r, r, b );
+ this.add( ret, q, r );
+ this._setPrec( ret, prec );
+ return false;
+};
+_MultiPrec.prototype.fdiv2 = function( ret , a , b , prec, digit ){
+ a = this.clone( a );
+ b = this.clone( b );
+ if( digit == undefined ){
+  digit = new _Integer();
+ }
+ var P = this.getPrec( a );
+ var l = this.getLen( a );
+ var k = 10;
+ var i;
+ for( i = 1; i <= _MP_DIGIT; i++ ){
+  if( a[l] < k ){ break; }
+  k *= 10;
+ }
+ digit.set( ((l - 1) * _MP_DIGIT + i) - P );
+ if( prec < digit.val() ){
+  prec = digit.val();
+ }
+ var bb = new Array();
+ var aa = new Array();
+ this._setLen( aa, 1 ); aa[1] = 1;
+ var p = this._matchPrec( aa, b );
+ var k = b[0] < 0 ? -1 : 1;
+ var l = this.getLen( b );
+ var i;
+ for( i = l; i > 0; i-- ){
+  if( b[i] != 0 ){ break; }
+ }
+ if( i == 0 ){ return true; }
+ if( i != l ){
+  p -= (l - i) * _MP_DIGIT;
+  this._setPrec( aa, p );
+  this._setPrec( b, p );
+  this._setLen( b, i * k );
+ }
+ var q = new Array();
+ var r = new Array();
+ this.div( q, aa, b, r );
+ p = prec * 2 + 1;
+ var t = this._fmul( q, p );
+ this._fmul( r, p );
+ if( t > 0 ){
+  var k = new Array();
+  this._fcoef( k, t );
+  this.mul( q, q, k );
+  this.mul( r, r, k );
+ }
+ this.div( r, r, b );
+ if( this.getLen( a ) == 1 && a[1] == 1 ){
+  this.add( ret, q, r );
+  if( a[0] < 0 ){ ret[0] = -ret[0]; }
+  this._setPrec( ret, p );
+  return false;
+ } else {
+  this.add( bb, q, r );
+  this._setPrec( bb, p );
+ }
+ this.mul( ret, a, bb );
+ p += P;
+ var n = _INT( (p - (prec + _MP_DIGIT)) / _MP_DIGIT );
+ if( n > 0 ){
+  p -= n * _MP_DIGIT;
+  this._fdiv( ret, n );
+ }
+ this._setPrec( ret, p );
+ return false;
+};
+_MultiPrec.prototype.fmul = function( ret , a , b , prec ){
+ a = this.clone( a );
+ b = this.clone( b );
+ this.mul( ret, a, b );
+ var p = this.getPrec( a ) + this.getPrec( b );
+ var n = _INT( (p - (prec + _MP_DIGIT)) / _MP_DIGIT );
+ if( n > 0 ){
+  p -= n * _MP_DIGIT;
+  this._fdiv( ret, n );
+ }
+ this._setPrec( ret, p );
+};
+_MultiPrec.prototype._fnum2str = function( s , n , prec ){
+ n = this.clone( n );
+ var p = this.getPrec( n );
+ var ss = new Array();
+ this._num2str( ss, n );
+ var l = this._strlen( ss );
+ var i;
+ for( i = l - 1; i > 0; i-- ){
+  if( ss[i] != _CHAR_CODE_0 ){
+   break;
+  }
+ }
+ p -= l - (i + 1);
+ if( p < 0 ){
+  i -= p; p = 0;
+ }
+ l = i + 1;
+ var j = 0, k = 0;
+ var pp = false;
+ if( ss[0] == _CHAR( '-' ) ){
+  s[j++] = ss[k++];
+  l--;
+ }
+ if( l <= p ){
+  s[j++] = _CHAR_CODE_0;
+ }
+ if( l < p ){
+  s[j++] = _CHAR( '.' );
+  pp = true;
+  for( i = 0; i < p - l; i++ ){
+   prec--;
+   if( prec < 0 ){
+    break;
+   }
+   s[j++] = _CHAR_CODE_0;
+  }
+ }
+ for( i = 0; i < l; i++ ){
+  if( i == l - p ){
+   s[j++] = _CHAR( '.' );
+   pp = true;
+  }
+  if( pp ){
+   prec--;
+   if( prec < 0 ){
+    break;
+   }
+  }
+  s[j++] = ss[k++];
+ }
+ s[j] = 0;
+};
+_MultiPrec.prototype.fnum2str = function( n , prec ){
+ var array = new Array();
+ this._fnum2str( array, n, prec );
+ return this._c2jstr( array );
+};
+_MultiPrec.prototype._froundGet = function( a , n ){
+ var l = this.getLen( a );
+ var nn = 1 + _DIV( n, _MP_DIGIT );
+ if( nn > l ){
+  return 0;
+ }
+ return _MOD( _DIV( a[nn], _POW( 10, _MOD( n, _MP_DIGIT ) ) ), 10 );
+};
+_MultiPrec.prototype._froundSet = function( a , n, val ){
+ var nn = 1 + _DIV( n, _MP_DIGIT );
+ var aa = a[nn]; var b = 0; var k = 1;
+ n = _MOD( n, _MP_DIGIT );
+ for( var i = 0; i < _MP_DIGIT; i++ ){
+  if( i == n ){
+   b += val * k;
+  } else if( i > n ){
+   b += _MOD( aa, 10 ) * k;
+  }
+  aa = _DIV( aa, 10 ); k *= 10;
+ }
+ a[nn] = b;
+};
+_MultiPrec.prototype._froundZero = function( a , n ){
+ this._fill( 0, a, 1, _DIV( n, _MP_DIGIT ) );
+};
+_MultiPrec.prototype._froundUp = function( a , n ){
+ var l = this.getLen( a );
+ var aa;
+ while( true ){
+  aa = this._froundGet( a, n ) + 1;
+  this._froundSet( a, n, _MOD( aa, 10 ) );
+  if( aa < 10 ){
+   break;
+  }
+  n++;
+  if( (1 + _DIV( n, _MP_DIGIT )) > l ){
+   l++;
+   this._setLen( a, l * (a[0] < 0 ? -1 : 1) );
+   a[l] = 0;
+  }
+ }
+};
+_MultiPrec.prototype._froundIsNotZero = function( a , n ){
+ var nn = 1 + _DIV( n, _MP_DIGIT );
+ if( _MOD( a[nn], _POW( 10, _MOD( n, _MP_DIGIT ) ) ) != 0 ){
+  return true;
+ } else {
+  for( nn--; nn > 0; nn-- ){
+   if( a[nn] != 0 ){ return true; }
+  }
+ }
+ return false;
+};
+_MultiPrec.prototype.fround = function( a , prec, mode ){
+ var n = this.getPrec( a ) - prec;
+ if( n < 1 ){
+  return;
+ }
+ var aa = this._froundGet( a, n - 1 );
+ var u = false;
+ var uu = false;
+ if( mode == undefined ){
+  mode = 6;
+ }
+ switch( mode ){
+ case 0:
+  uu = true;
+  break;
+ case 1:
+  break;
+ case 2:
+  if( a[0] > 0 ){ uu = true; }
+  break;
+ case 3:
+  if( a[0] < 0 ){ uu = true; }
+  break;
+ case 4:
+  if( aa > 4 ){ u = true; }
+  break;
+ case 5:
+  if( aa > 5 ){ u = true; }
+  break;
+ case 6:
+  if( _MOD( this._froundGet( a, n ), 2 ) == 1 ){
+   if( aa > 4 ){ u = true; }
+  } else {
+   if( aa > 5 ){ u = true; }
+  }
+  break;
+ case 8:
+  if( mode == 8 && _MOD( this._froundGet( a, n ), 2 ) == 1 && aa > 4 ){
+   u = true;
+   break;
+  }
+ case 7:
+  if( aa > 5 ){
+   u = true;
+  } else if( aa == 5 && n > 1 ){
+   u = this._froundIsNotZero( a, n - 2 );
+  }
+  break;
+ }
+ if( uu ){
+  if( aa > 0 ){
+   u = true;
+  } else if( n > 1 ){
+   u = this._froundIsNotZero( a, n - 2 );
+  }
+ }
+ if( u ){
+  this._froundZero( a, n );
+  this._froundUp( a, n );
+ } else {
+  this._froundZero( a, n - 1 );
+  this._froundSet( a, n - 1, 0 );
+ }
+};
+_MultiPrec.prototype.fsqrt = function( ret , a , prec ){
+ a = this.clone( a );
+ if( this.fcmp( a, this.F( "0" ) ) > 0 ){
+  var l = new Array();
+  var s = new Array();
+  var t = new Array();
+  if( this.fcmp( a, this.F( "1" ) ) > 0 ){
+   this.set( s, a );
+  } else {
+   this.set( s, this.F( "1" ) );
+  }
+  do {
+   this.set( l, s );
+   this.fdiv2( t, a, s, prec );
+   this.fadd( t, t, s );
+   this.fmul( t, t, this.F( "0.5" ), prec );
+   this.set( s, t );
+  } while( this.fcmp( s, l ) < 0 );
+  this.set( ret, l );
+  return false;
+ }
+ this.set( ret, this.F( "0" ) );
+ return (this.fcmp( a, this.F( "0" ) ) != 0);
+};
+_MultiPrec.prototype.fsqrt2 = function( ret , a , prec, order ){
+ a = this.clone( a );
+ if( this.fcmp( a, this.F( "0" ) ) > 0 ){
+  var g = new Array();
+  var h = new Array();
+  var m = new Array();
+  var n = new Array();
+  var o = new Array();
+  var p = new Array();
+  var q = new Array();
+  var r = new Array();
+  var s = new Array();
+  var t = new Array();
+  var x = new Array();
+  if( this.fcmp( a, this.F( "1" ) ) > 0 ){
+   this.fdiv( t, this.F( "1" ), a, prec );
+   this.set( x, t );
+  } else {
+   this.set( x, this.F( "1" ) );
+  }
+  this.fmul( t, x, x, prec );
+  this.fmul( t, a, t, prec );
+  this.fsub( h, this.F( "1" ), t );
+  this.set( g, this.F( "1" ) );
+  this.fdiv( m, this.F( "1" ), this.F( "2" ), prec );
+  if( order >= 3 ){ this.fdiv( n, this.F( "3" ), this.F( "8" ), prec ); }
+  if( order >= 4 ){ this.fdiv( o, this.F( "5" ), this.F( "16" ), prec ); }
+  if( order >= 5 ){ this.fdiv( p, this.F( "35" ), this.F( "128" ), prec ); }
+  if( order == 6 ){ this.fdiv( q, this.F( "63" ), this.F( "256" ), prec ); }
+  do {
+   switch( order ){
+   case 6 : this.set( t, q ); break;
+   case 5 : this.set( t, p ); break;
+   case 4 : this.set( t, o ); break;
+   case 3 : this.set( t, n ); break;
+   default: this.set( t, m ); break;
+   }
+   switch( order ){
+   case 6:
+    this.fmul( t, h, t, prec );
+    this.fadd( t, p, t );
+   case 5:
+    this.fmul( t, h, t, prec );
+    this.fadd( t, o, t );
+   case 4:
+    this.fmul( t, h, t, prec );
+    this.fadd( t, n, t );
+   case 3:
+    this.fmul( t, h, t, prec );
+    this.fadd( t, m, t );
+   }
+   this.fmul( t, h, t, prec );
+   this.fmul( t, x, t, prec );
+   this.fadd( x, x, t );
+   this.set( g, h );
+   this.fmul( t, x, x, prec );
+   this.fmul( t, a, t, prec );
+   this.fsub( h, this.F( "1" ), t );
+   this.abs( r, h );
+   this.abs( s, g );
+  } while( this.fcmp( r, s ) < 0 );
+  this.fmul( ret, a, x, prec );
+  return false;
+ }
+ this.set( ret, this.F( "0" ) );
+ return (this.fcmp( a, this.F( "0" ) ) != 0);
+};
+_MultiPrec.prototype.fsqrt3 = function( ret , a , prec ){
+ a = this.clone( a );
+ var t = prec * 2 - this.getPrec( a );
+ var u;
+ if( t > 0 ){
+  if( (u = this._fmul( a, t )) > 0 ){
+   var k = new Array();
+   this._fcoef( k, u ); this.mul( a, a, k );
+  }
+ } else if( t < 0 ){
+  u = _ABS( t );
+  var n;
+  if( (n = _DIV( u, _MP_DIGIT )) > 0 ){
+   u -= n * _MP_DIGIT;
+   this._fdiv( a, n );
+  }
+  var k = new Array();
+  this._fcoef( k, u ); this.div( a, a, k );
+ }
+ if( a[this.getLen( a )] == 0 ){
+  this._setLen( a, this.getLen( a ) - 1 );
+ }
+ var r = this.sqrt( ret, a );
+ this._setPrec( ret, prec );
+ return r;
+};
+_MultiPrec.prototype.fstr2num = function( n , s ){
+ s = this._j2cstr( s );
+ var l = this._strlen( s );
+ var i, j = 0;
+ var p = 0;
+ var m = false;
+ var ss = new Array();
+ for( i = 0; i < l; i++ ){
+  if( (s[i] == _CHAR( 'e' )) || (s[i] == _CHAR( 'E' )) ){
+   if( p != 0 ){
+    p -= l - i;
+   }
+   i++;
+   if( s[i] == _CHAR( '-' ) ){
+    m = true;
+    i++;
+   } else {
+    m = false;
+    if( s[i] == _CHAR( '+' ) ){
+     i++;
+    }
+   }
+   break;
+  } else if( s[i] == _CHAR( '.' ) ){
+   p = l - (i + 1);
+  } else {
+   ss[j++] = s[i];
+  }
+ }
+ ss[j] = 0;
+ if( !this._str2num( n, ss ) ){
+  return false;
+ }
+ var e = 0;
+ for( ; i < l; i++ ){
+  if( s[i] >= _CHAR_CODE_0 && s[i] <= _CHAR_CODE_9 ){
+   e = e * 10 + (s[i] - _CHAR_CODE_0);
+  } else {
+   return false;
+  }
+ }
+ if( m ){
+  p += e; e = 0;
+ } else if( p >= e ){
+  p -= e; e = 0;
+ } else {
+  e -= p; p = 0;
+ }
+ this._setPrec( n, p );
+ if( e > 0 ){
+  var k = new Array();
+  this._fcoef( k, e );
+  this.fmul( n, n, k, p );
+ }
+ return true;
+};
+_MultiPrec.prototype.fsub = function( ret , a , b ){
+ a = this.clone( a );
+ b = this.clone( b );
+ var p = this._matchPrec( a, b );
+ this.sub( ret, a, b );
+ this._setPrec( ret, p );
+};
+_MultiPrec.prototype.ftrunc = function( rop , op ){
+ op = this.clone( op );
+ var p = this.getPrec( op );
+ var n = _INT( p / _MP_DIGIT );
+ if( n > 0 ){
+  p -= n * _MP_DIGIT;
+  this._fdiv( op, n );
+ }
+ var k = new Array();
+ this._fcoef( k, p );
+ this.div( rop, op, k );
+};
+_MultiPrec.prototype._mul1n = function( ret , a , b, n ){
+ ret[n + 1] = 0;
+ var c, aa, r, i, x;
+ for( c = 0, aa = 0, r = 0, i = 0; i < n; i++ ){
+  x = a[++aa] * b + c;
+  ret[++r] = _MOD( x, _MP_ELEMENT ); c = _DIV( x, _MP_ELEMENT );
+ }
+ ret[++r] = c;
+ return c;
+};
+_MultiPrec.prototype.mul = function( ret , a , b ){
+ a = this.clone( a );
+ b = this.clone( b );
+ var k = 1;
+ if( a[0] < 0 && b[0] >= 0 ){ k = -1; }
+ if( b[0] < 0 && a[0] >= 0 ){ k = -1; }
+ var la = this.getLen( a );
+ var lb = this.getLen( b );
+ if( la == 0 || lb == 0 ){
+  ret[0] = 0;
+  return;
+ }
+ var c;
+ if( la == 1 ){
+  c = this._mul1n( ret, b, a[1], lb );
+ } else if( lb == 1 ){
+  c = this._mul1n( ret, a, b[1], la );
+ } else {
+  this._fill( 0, ret, 1, la + lb );
+  var aa, bb = 0;
+  var i, j, x;
+  for( j = 1; j <= lb; j++ ){
+   c = 0;
+   bb++;
+   for( i = 1, aa = 0; i <= la; i++ ){
+    x = a[++aa] * b[bb] + ret[i + j - 1] + c;
+    ret[i + j - 1] = _MOD( x, _MP_ELEMENT );
+    c = _DIV( x, _MP_ELEMENT );
+   }
+   ret[i + j - 1] = c;
+  }
+ }
+ this._setLen( ret, (c != 0 ? la + lb : la + lb - 1) * k );
+};
+_MultiPrec.prototype.neg = function( rop , op ){
+ if( op == undefined ){
+  rop[0] = -rop[0];
+  return;
+ }
+ this._copy( op, 1, rop, 1, this.getLen( op ) );
+ rop[0] = -op[0];
+};
+_MultiPrec.prototype._num2str = function( s , n ){
+ n = this.clone( n );
+ var m = (n[0] < 0);
+ var n0 = n[0];
+ n[0] = this.getLen( n );
+ if( n[0] == 0 ){
+  s[0] = _CHAR_CODE_0;
+  s[1] = 0;
+  n[0] = n0;
+  return
+ }
+ var ss = -1; var nn = 0;
+ var i, j, x;
+ for( i = n[0]; i > 0; i-- ){
+  x = n[++nn];
+  for( j = 0; j < _MP_DIGIT; j++ ){
+   s[++ss] = _MOD( x, 10 ) + _CHAR_CODE_0; x = _DIV( x, 10 );
+  }
+ }
+ while( s[ss] == _CHAR_CODE_0 ){
+  if( --ss < 0 ){
+   ss = 0;
+   break;
+  }
+ }
+ if( m ){ s[++ss] = _CHAR( '-' ); }
+ s[ss + 1] = 0;
+ var t = 0;
+ while( t < ss ){
+  x = s[t]; s[t++] = s[ss]; s[ss--] = x;
+ }
+ n[0] = n0;
+};
+_MultiPrec.prototype.num2str = function( n ){
+ var array = new Array();
+ this._num2str( array, n );
+ return this._c2jstr( array );
+};
+_MultiPrec.prototype.set = function( rop , op ){
+ this._copy( op, 0, rop, 0, this.getLen( op ) + 1 );
+};
+_MultiPrec.prototype.sqrt = function( x , a ){
+ a = this.clone( a );
+ this._setLen( x, 0 );
+ if( a[0] < 0 ){ return true; }
+ var la = this.getLen( a );
+ if( la == 0 ){ return false; }
+ if( la == 1 ){
+  this._setLen( x, 1 );
+  x[1] = _INT( _SQRT( a[1] ) );
+  return false;
+ }
+ if( la == 2 ){
+  this._setLen( x, 1 );
+  x[1] = _INT( _SQRT( a[2] * _MP_ELEMENT + a[1] ) );
+  return false;
+ }
+ var l = _DIV( la + 1, 2 );
+ var b = new Array();
+ b[l + 1] = 0;
+ this._fill( 0, x, 1, l );
+ this._fill( 0, b, 1, l );
+ this._setLen( x, l );
+ this._setLen( b, l );
+ var i = (l - 1) * 2 + 1;
+ var aa = a[i];
+ if( _MOD( la, 2 ) == 0 ){
+  aa += a[i + 1] * _MP_ELEMENT;
+ }
+ x[l] = _INT( _SQRT( aa ) );
+ b[l] = x[l] + x[l];
+ if( b[l] >= _MP_ELEMENT ){
+  b[l] -= _MP_ELEMENT;
+  b[l + 1] = 1;
+  this._setLen( b, l + 1 );
+ }
+ var w = new Array();
+ this.mul( w, x, x );
+ this.sub( a, a, w );
+ l--;
+ var q = new Array();
+ var r = new Array();
+ while( true ){
+  this.div( q, a, b, r );
+  if( l > 1 ){
+   this._fill( 0, q, 1, l - 1 );
+  }
+  if( this.getLen( q ) > l ){
+   q[l] = _MP_ELEMENT - 1;
+   this._setLen( q, l );
+  }
+  while( true ){
+   this.add( r, b, q );
+   this.mul( w, r, q );
+   if( this.cmp( w, a ) <= 0 ){
+    break;
+   }
+   q[l]--;
+  }
+  x[l] = q[l];
+  if( l == 1 ){
+   break;
+  }
+  this.add( b, r, q );
+  this.sub( a, a, w );
+  l--;
+ }
+ return false;
+};
+_MultiPrec.prototype._str2num = function( n , s ){
+ var m = (s[0] == _CHAR( '-' )) ? 1 : 0;
+ var ss = m;
+ while( s[ss] >= _CHAR_CODE_0 && s[ss] <= _CHAR_CODE_9 ){ ss++; }
+ if( s[ss] != 0 ){
+  return false;
+ }
+ if( ss == 0 ){
+  n[0] = 0;
+  return true;
+ }
+ var x = 0; k = 1;
+ var nn = 0;
+ do {
+  x += (s[--ss] - _CHAR_CODE_0) * k; k *= 10;
+  if( k == _MP_ELEMENT ){
+   n[++nn] = x;
+   x = 0; k = 1;
+  }
+ } while( ss > m );
+ if( k > 1 ){
+  n[++nn] = x;
+ }
+ this._setLen( n, (m == 1) ? -nn : nn );
+ return true;
+};
+_MultiPrec.prototype.str2num = function( n , s ){
+ return this._str2num( n, this._j2cstr( s ) );
+}
+_MultiPrec.prototype._sub = function( ret , a , b ){
+ var la = this.getLen( a );
+ var lb = this.getLen( b );
+ ret[la] = 0;
+ var r = 0, aa = 0, bb = 0, x = 0;
+ var i;
+ for( i = 1; i <= la; i++ ){
+  x += a[++aa];
+  if( i <= lb ){
+   x -= b[++bb];
+  }
+  if( x >= 0 ){
+   ret[++r] = x;
+   x = 0;
+  } else {
+   ret[++r] = x + _MP_ELEMENT;
+   x = -1;
+  }
+ }
+ while( --i > 0 ){
+  if( ret[r--] != 0 ){
+   break;
+  }
+ }
+ this._setLen( ret, i );
+};
+_MultiPrec.prototype.sub = function( ret , a , b ){
+ a = this.clone( a );
+ b = this.clone( b );
+ if( a[0] < 0 && b[0] >= 0 ){
+  b[0] = -b[0];
+  this.add( ret, a, b );
+  return;
+ } else if( a[0] >= 0 && b[0] < 0 ){
+  b[0] = -b[0];
+  this.add( ret, a, b );
+  return;
+ } else if( a[0] < 0 && b[0] < 0 ){
+  a[0] = -a[0];
+  b[0] = -b[0];
+  this.sub( ret, b, a );
+  return;
+ }
+ if( this.cmp( a, b ) < 0 ){
+  this._sub( ret, b, a );
+  ret[0] = -ret[0];
+ } else {
+  this._sub( ret, a, b );
+ }
+};
 function _Boolean( val ){
  this._val = (val == undefined) ? false : (val == true);
 }
@@ -3907,7 +4975,7 @@ _Func.prototype = {
   }
   var cur = this._top;
   while( cur != null ){
-   if( name == cur._info._name ){
+   if( name.toLowerCase() == cur._info._name.toLowerCase() ){
     if( updateCnt ){
      cur._info._cnt++;
     }
@@ -16413,7 +17481,7 @@ _Token.prototype = {
     }
    } else if( tmp.charAt( 0 ) == '!' ){
     cur._code = 14;
-    cur._token = tmp.substring( 1, len );
+    cur._token = tmp.substring( 1, len ).toLowerCase();
    } else if( tmp.charAt( 0 ) == '"' ){
     cur._code = 20;
     cur._token = new String();
@@ -16439,7 +17507,7 @@ _Token.prototype = {
       cur._token += tmp.charAt( i );
      }
     }
-   } else if( this.checkFunc( tmp, code ) ){
+   } else if( this.checkFunc( tmp.toLowerCase(), code ) ){
     cur._code = 13;
     cur._token = code._val;
    } else if( this.checkStat( tmp, code ) ){
@@ -18358,34 +19426,34 @@ var _input_file_num;
 function canUseFile(){
  return (window.FileReader && window.FileList && window.File);
 }
-function _InputFile( id ){
+function _InputFile( id, mode ){
  if( window.onInputFileLoadImage == undefined ) window.onInputFileLoadImage = function( name, image ){};
  if( window.onInputFileLoad == undefined ) window.onInputFileLoad = function( func, data ){};
  if( window.onInputFileLoadEnd == undefined ) window.onInputFileLoadEnd = function( num ){};
  this._input = document.getElementById( id );
- this._input.addEventListener( "change", _onInputFileChange, false );
+ if( mode == undefined ){
+  mode = 0;
+ }
+ switch( mode ){
+ case 0:
+  this._input.addEventListener( "change", _onInputFileChange, false );
+  break;
+ case 1:
+  this._input.addEventListener( "change", _onInputFileChangeExtfunc, false );
+  break;
+ case 2:
+  this._input.addEventListener( "change", _onInputFileChangeImage, false );
+  break;
+ }
 }
 _InputFile.prototype = {
  element : function(){
   return this._input;
  }
 };
-function _onInputFileChange( e ){
+function _onInputFileChangeExtfunc( e ){
  var files = e.target.files;
  if( files.length == 0 ){
-  return;
- }
- if( files[0].type.indexOf( "image/" ) == 0 ){
-  var name = files[0].name;
-  var reader = new FileReader();
-  reader.onload = function(){
-   var image = new Image();
-   image.onload = function(){
-    onInputFileLoadImage( name, image );
-   };
-   image.src = reader.result;
-  };
-  reader.readAsDataURL( files[0] );
   return;
  }
  _input_file_cnt = 0;
@@ -18441,6 +19509,32 @@ function _onInputFileChange( e ){
   })( file );
   reader.readAsText( file );
  }
+}
+function _onInputFileChangeImage( e ){
+ var files = e.target.files;
+ if( files.length == 0 ){
+  return true;
+ }
+ if( files[0].type.indexOf( "image/" ) == 0 ){
+  var name = files[0].name;
+  var reader = new FileReader();
+  reader.onload = function(){
+   var image = new Image();
+   image.onload = function(){
+    onInputFileLoadImage( name, image );
+   };
+   image.src = reader.result;
+  };
+  reader.readAsDataURL( files[0] );
+  return true;
+ }
+ return false;
+}
+function _onInputFileChange( e ){
+ if( _onInputFileChangeImage( e ) ){
+  return;
+ }
+ _onInputFileChangeExtfunc( e );
 }
 var inputFile;
 function __ProcError(){
@@ -18851,9 +19945,39 @@ EditExpr.prototype = {
  },
  _lastChar : function( str ){
   if( str.length == 0 ){
-   return 0;
+   return '';
   }
   return str.charAt( str.length - 1 );
+ },
+ lastChar : function(){
+  if( !this._searchList( this._cursor - 1 ) ){
+   return '';
+  }
+  return this._lastChar( this._cur._token );
+ },
+ lastCharNumber : function(){
+  var chr = this.lastChar();
+  chr = (chr.length == 0) ? 0 : chr.charCodeAt( 0 );
+  if( (chr >= _CHAR_CODE_0) && (chr <= _CHAR_CODE_9) ){
+   return true;
+  }
+  return false;
+ },
+ lastCharLower : function(){
+  var chr = this.lastChar();
+  chr = (chr.length == 0) ? 0 : chr.charCodeAt( 0 );
+  if( (chr >= _CHAR_CODE_LA) && (chr <= _CHAR_CODE_LZ) ){
+   return true;
+  }
+  return false;
+ },
+ lastCharUpper : function(){
+  var chr = this.lastChar();
+  chr = (chr.length == 0) ? 0 : chr.charCodeAt( 0 );
+  if( (chr >= _CHAR_CODE_UA) && (chr <= _CHAR_CODE_UZ) ){
+   return true;
+  }
+  return false;
  },
  add : function( token ){
   if( this._selAll ){
@@ -21388,7 +22512,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  su.setFont( 10, "Helvetica" );
  inputFile = new Array();
  for( i = 0; i < inputFileIds.length; i++ ){
-  inputFile[i] = new _InputFile( inputFileIds[i] );
+  inputFile[i] = new _InputFile( inputFileIds[i][0], inputFileIds[i][1] );
  }
  procError = new _ProcError();
  for( i = 0; i < 3; i++ ){
@@ -21610,7 +22734,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   }
  }
  if( common.isApp() ){
-  cssSetStyleDisplayById( "button_get_content", true );
+  cssSetStyleDisplayById( "button_getcontent", true );
+ }
+ if( common.isPC() ){
+  cssSetStyleDisplayById( "graph_input_loadimage", true );
  }
  if( getUrlParameter( "menu" ) == "option" ){
   doButtonUIOption();
@@ -21649,14 +22776,14 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  for( i = 0; i < extFuncFile.length; i++ ){
   var name = extFuncName( extFuncFile[i] );
   if( name.length > 0 ){
-   regExtFuncButton( name );
+   regExtFuncButton( name.toLowerCase() );
   }
  }
  loadExtFuncFile2();
  for( i = 0; i < extFuncFile2.length; i++ ){
   var name = extFuncName( extFuncFile2[i] );
   if( name.length > 0 ){
-   regExtFuncButton( name );
+   regExtFuncButton( name.toLowerCase() );
   }
  }
  editor = new _Editor( editorId );
@@ -21705,7 +22832,7 @@ function setDeviceWidth( width ){
  }
 }
 function defHeight( mainFlag ){
- var height = (isAndroidTablet() || isIPad()) ? 471 : 510;
+ var height = (isAndroidTablet() || isIPad()) ? 471 : 506;
  if( mainFlag && !usageFlag ){
   height -= 51;
  }
@@ -22194,6 +23321,18 @@ function updateEditExpr(){
  }
 }
 function insEditExpr( token ){
+ if( token.length == 1 ){
+  var chr = token.charCodeAt( 0 );
+  if( (chr >= _CHAR_CODE_LA) && (chr <= _CHAR_CODE_LZ) ){
+   if( (editExpr[graphIndex()][exprType].lastChar() == '@') || editExpr[graphIndex()][exprType].lastCharUpper() ){
+    token = token.toUpperCase();
+   }
+  } else if( (chr >= _CHAR_CODE_UA) && (chr <= _CHAR_CODE_UZ) ){
+   if( editExpr[graphIndex()][exprType].lastCharLower() ){
+    token = token.toLowerCase();
+   }
+  }
+ }
  if( usageFlag ){
   printUsage( token, topProc, topParam, englishFlag, "graph_usage" );
  }
@@ -22968,18 +24107,20 @@ function loadExtFuncFile2(){
 }
 function onInputFileLoad( func, data ){
  var i;
+ func = func.toLowerCase();
  topProc.clearFuncCache( func );
  var name = "/" + func + ".cef";
  var index = extFuncFile2.length;
  for( i = 0; i < extFuncFile2.length; i++ ){
-  if( extFuncFile2[i] == name ){
+  if( extFuncFile2[i].toLowerCase() == name ){
+   name = extFuncFile2[i];
    index = i;
    break;
   }
  }
  extFuncFile2[index] = name;
  extFuncData2[index] = splitData( data );
- regExtFuncButton( extFuncName( extFuncFile2[index] ) );
+ regExtFuncButton( extFuncName( extFuncFile2[index] ).toLowerCase() );
  data = "";
  for( i = 0; i < extFuncData2[index].length; i++ ){
   if( i != 0 ) data += "\n";
@@ -23027,14 +24168,14 @@ function getExtFuncDataDirect( func ){
 }
 function getExtFuncDataNameSpace( func ){
  for( var i = 0; i < extFuncFile.length; i++ ){
-  if( extFuncName( extFuncFile[i] ) == func ){
+  if( extFuncName( extFuncFile[i] ).toLowerCase() == func.toLowerCase() ){
    if( i < extFuncData.length ){
     return extFuncData[i];
    }
   }
  }
  for( var i = 0; i < extFuncFile2.length; i++ ){
-  if( extFuncName( extFuncFile2[i] ) == func ){
+  if( extFuncName( extFuncFile2[i] ).toLowerCase() == func.toLowerCase() ){
    if( i < extFuncData2.length ){
     return extFuncData2[i];
    }
@@ -24853,7 +25994,8 @@ function updateLanguage(){
  document.getElementById( "graph_static_color_graph2" ).innerHTML = englishFlag ? "Graph 2:" : "グラフ2:";
  document.getElementById( "graph_static_color_graph3" ).innerHTML = englishFlag ? "Graph 3:" : "グラフ3:";
  document.getElementById( "button_return2" ).innerHTML = englishFlag ? "Return" : "戻る";
- document.getElementById( "button_get_content" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
+ document.getElementById( "button_getcontent" ).innerHTML = englishFlag ? "Album..." : "アルバム...";
+ document.getElementById( "button_loadimage" ).innerHTML = englishFlag ? "Image file..." : "画像ファイル...";
  document.getElementById( "button_selectimage_del" ).innerHTML = englishFlag ? "Del" : "消";
  document.getElementById( "button_return3" ).innerHTML = englishFlag ? "Return" : "戻る";
  document.getElementById( "button_profile_import2" ).innerHTML = englishFlag ? "Import" : "ｲﾝﾎﾟｰﾄする";
@@ -25469,11 +26611,33 @@ function getContent(){
  }
 }
 function onContentBase64( data ){
- skinImage = data;
- document.getElementById( "graph_edit_skin_image" ).value = skinImage;
- updateSkin();
- writeProfileString( "ENV_", "SkinImage", skinImage );
- addListImage();
+ var canvas = document.createElement( "canvas" );
+ var context = canvas.getContext( "2d" );
+ var image = new Image();
+ image.onload = function(){
+  var dstHeight = common.isPC() ? defHeight( false ) : bodyHeight;
+  var dstWidth = this.width * dstHeight / this.height;
+  if( dstWidth < 322 ){
+   dstWidth = 322;
+   dstHeight = this.height * 322 / this.width;
+  }
+  canvas.width = dstWidth;
+  canvas.height = dstHeight;
+  context.drawImage( this, 0, 0, this.width, this.height, 0, 0, dstWidth, dstHeight );
+  var quality = 1.0;
+  do {
+   skinImage = canvas.toDataURL( "image/jpeg", quality );
+   quality -= 0.1;
+  } while( skinImage.length <= 102400 );
+  document.getElementById( "graph_edit_skin_image" ).value = skinImage;
+  updateSkin();
+  writeProfileString( "ENV_", "SkinImage", skinImage );
+  addListImage();
+ };
+ image.src = data;
+}
+function onInputFileLoadImage( name, image ){
+ onContentBase64( image.src );
 }
 function onKeyDown( key ){
  if( menu != 2 ){
@@ -25549,19 +26713,46 @@ function onKeyDown( key ){
   }
   return true;
  case 105: doButton9(); return true;
- case 110: doButtonPoint(); return true;
- case 190: doButtonPoint(); return true;
- case 68: doButtonDeg(); return true;
+ case 65: insEditExpr( "a" ); return true;
+ case 66: insEditExpr( "b" ); return true;
+ case 67: insEditExpr( "c" ); return true;
+ case 68: insEditExpr( "d" ); return true;
  case 69:
-  if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
-   doButtonEPlus();
+  if( editExpr[graphIndex()][exprType].lastChar() == '@' ){
+   insEditExpr( "E" );
+  } else if( editExpr[graphIndex()][exprType].lastCharNumber() ){
+   if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
+    doButtonEPlus();
+   } else {
+    doButtonEMinus();
+   }
   } else {
-   doButtonEMinus();
+   insEditExpr( "e" );
   }
   return true;
- case 71: doButtonGrad(); return true;
- case 73: doButtonI(); return true;
- case 82: doButtonRad(); return true;
+ case 70: insEditExpr( "f" ); return true;
+ case 71: insEditExpr( "g" ); return true;
+ case 72: insEditExpr( "h" ); return true;
+ case 73: insEditExpr( "i" ); return true;
+ case 74: insEditExpr( "j" ); return true;
+ case 75: insEditExpr( "k" ); return true;
+ case 76: insEditExpr( "l" ); return true;
+ case 77: insEditExpr( "m" ); return true;
+ case 78: insEditExpr( "n" ); return true;
+ case 79: insEditExpr( "o" ); return true;
+ case 80: insEditExpr( "p" ); return true;
+ case 81: insEditExpr( "q" ); return true;
+ case 82: insEditExpr( "r" ); return true;
+ case 83: insEditExpr( "s" ); return true;
+ case 84: insEditExpr( "t" ); return true;
+ case 85: insEditExpr( "u" ); return true;
+ case 86: insEditExpr( "v" ); return true;
+ case 87: insEditExpr( "w" ); return true;
+ case 88: insEditExpr( "x" ); return true;
+ case 89: insEditExpr( "y" ); return true;
+ case 90: insEditExpr( "z" ); return true;
+ case 110: doButtonPoint(); return true;
+ case 190: doButtonPoint(); return true;
  case 187:
   if( _AND( _key_state, keyBit( 16 ) ) == 0 ){
    doButtonPlus();
@@ -25597,8 +26788,9 @@ function onKeyDown( key ){
  case 222:
   doButtonPow();
   return true;
- case 88: doButtonVar(); return true;
- case 84: doButtonVar(); return true;
+ case 192:
+  insEditExpr( "@" );
+  return true;
  case 32: doButtonSpace(); return true;
  case 13: doButtonEnter(); return true;
  }
