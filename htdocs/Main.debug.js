@@ -5701,31 +5701,19 @@ function doCommandGUpdate( gWorld ){
  }
  canvasSetColor( COLOR_WIN[gWorld._color] );
 }
-function doCommandPlot( parentProc, parentParam, graph, start, end, step ){
- var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, false, parentProc._printAssert, parentProc._printWarn, false );
- var childParam = new _Param( parentProc._curLine._num, parentParam, true );
- childParam._enableCommand = false;
+function doCommandPlot( parentProc, childProc, childParam, graph, start, end, step ){
  childParam._enableOpPow = true;
- childParam._enableStat = false;
 try {
  initProcLoopCount();
  parentProc.doCommandPlot( childProc, childParam, graph, start, end, step );
 } catch( e ){ catchError( e ); }
- childParam.end();
- childProc.end();
 }
-function doCommandRePlot( parentProc, parentParam, graph, start, end, step ){
- var childProc = new _Proc( parentParam._mode, parentParam._mpPrec, parentParam._mpRound, false, parentProc._printAssert, parentProc._printWarn, false );
- var childParam = new _Param( parentProc._curLine._num, parentParam, true );
- childParam._enableCommand = false;
+function doCommandRePlot( parentProc, childProc, childParam, graph, start, end, step ){
  childParam._enableOpPow = true;
- childParam._enableStat = false;
 try {
  initProcLoopCount();
  parentProc.doCommandRePlot( childProc, childParam, graph, start, end, step );
 } catch( e ){ catchError( e ); }
- childParam.end();
- childProc.end();
 }
 function doCommandUsage( topUsage ){
  common.setFont( 16, "Helvetica" );
