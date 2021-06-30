@@ -5420,6 +5420,12 @@ function onInputFileLoad( func, data ){
  var i;
  func = func.toLowerCase();
  topProc.clearFuncCache( func );
+ var saveIndex = graphIndex();
+ for( var i = 0; i < 3; i++ ){
+  procGraph().selGraph( i );
+  procGraph().checkExpr( func );
+ }
+ procGraph().selGraph( saveIndex );
  var name = "/" + func + ".cef";
  var index = extFuncFile2.length;
  for( i = 0; i < extFuncFile2.length; i++ ){
@@ -7827,6 +7833,12 @@ function getFunc( chr ){
 function setFunc( chr, text ){
  writeProfileString( "FUNC_", "" + chr, text );
  topProc.clearFuncCache( "!" + chr );
+ var saveIndex = graphIndex();
+ for( var i = 0; i < 3; i++ ){
+  procGraph().selGraph( i );
+  procGraph().checkExpr( "!" + chr );
+ }
+ procGraph().selGraph( saveIndex );
 }
 function loadFunc(){
  editor.setText( getFunc( String.fromCharCode( curFunc ) ) );

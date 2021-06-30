@@ -5133,6 +5133,29 @@ _Graph.prototype = {
  expr2 : function(){
   return this._info[this._curIndex]._expr2;
  },
+ _checkExpr : function( expr, func ){
+  var pos = expr.toLowerCase().indexOf( func.toLowerCase() );
+  if( pos >= 0 ){
+   if( expr.length > pos + func.length ){
+    var chr = expr.toLowerCase().charAt( pos + func.length );
+    var chrs = "0123456789_abcdefghijklmnopqrstuvwxyz";
+    if( chrs.indexOf( chr ) < 0 ){
+     return true;
+    }
+   } else {
+    return true;
+   }
+  }
+  return false;
+ },
+ checkExpr : function( func ){
+  if(
+   this._checkExpr( this._info[this._curIndex]._expr1, func ) ||
+   this._checkExpr( this._info[this._curIndex]._expr2, func )
+  ){
+   this.delAns();
+  }
+ },
  setIndex : function( index ){
   this._info[this._curIndex]._index = index;
  },
@@ -10519,6 +10542,9 @@ _Proc.prototype = {
    this._curLine._token.unlock( lock );
    return null;
   }
+  if( index._index < 0 ){
+   return null;
+  }
   return index;
  },
  _funcDefined : function( _this, param, code, token, value, seFlag ){
@@ -15499,6 +15525,8 @@ _Proc.prototype = {
   var saveCurLine = _this._curLine;
   var saveProcLine = _this._procLine;
   var saveFuncName = param._funcName;
+  var saveDefNameSpace = param._defNameSpace;
+  var saveNameSpace = param._nameSpace;
   var newToken;
   if( _this._curLine._token.getToken() ){
    newToken = _get_token;
@@ -15531,6 +15559,8 @@ _Proc.prototype = {
   _this._curLine = saveCurLine;
   _this._procLine = saveProcLine;
   param._funcName = saveFuncName;
+  param._defNameSpace = saveDefNameSpace;
+  param._nameSpace = saveNameSpace;
   return (ret == 0x00) ? 0x03 : ret;
  },
  _commandBase : function( _this, param, code, token ){
@@ -16746,13 +16776,14 @@ var _custom_command = new Array();
 var _custom_command_num = 0;
 function __CustomCommand(){
  this._name = new String();
- this._id = -1;
 }
-function regCustomCommand( name, id ){
+function regCustomCommand( name ){
  _custom_command[_custom_command_num] = new __CustomCommand();
  _custom_command[_custom_command_num]._name = name;
- _custom_command[_custom_command_num]._id = id;
  _custom_command_num++;
+}
+function customCommandName( token ){
+ return _custom_command[token - 103]._name;
 }
 function _Token(){
  this._top = null;
@@ -16854,7 +16885,7 @@ _Token.prototype = {
   }
   for( var i = 0; i < _custom_command_num; i++ ){
    if( string == _custom_command[i]._name ){
-    command.set( _custom_command[i]._id );
+    command.set( 103 + i );
     return true;
    }
   }
@@ -18607,11 +18638,7 @@ _Token.prototype = {
     if( token - 1 < _TOKEN_COMMAND.length ){
      string += _TOKEN_COMMAND[token - 1];
     } else {
-     for( var i = 0; i < _custom_command_num; i++ ){
-      if( token == _custom_command[i]._id ){
-       string += _custom_command[i]._name;
-      }
-     }
+     string += customCommandName( token );
     }
    }
    break;
@@ -24197,6 +24224,12 @@ function onInputFileLoad( func, data ){
  var i;
  func = func.toLowerCase();
  topProc.clearFuncCache( func );
+ var saveIndex = graphIndex();
+ for( var i = 0; i < 3; i++ ){
+  procGraph().selGraph( i );
+  procGraph().checkExpr( func );
+ }
+ procGraph().selGraph( saveIndex );
  var name = "/" + func + ".cef";
  var index = extFuncFile2.length;
  for( i = 0; i < extFuncFile2.length; i++ ){
@@ -26604,6 +26637,12 @@ function getFunc( chr ){
 function setFunc( chr, text ){
  writeProfileString( "FUNC_", "" + chr, text );
  topProc.clearFuncCache( "!" + chr );
+ var saveIndex = graphIndex();
+ for( var i = 0; i < 3; i++ ){
+  procGraph().selGraph( i );
+  procGraph().checkExpr( "!" + chr );
+ }
+ procGraph().selGraph( saveIndex );
 }
 function loadFunc(){
  editor.setText( getFunc( String.fromCharCode( curFunc ) ) );

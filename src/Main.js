@@ -1955,6 +1955,15 @@ function onInputFileLoad( func, data ){
 	// 外部関数キャッシュのクリア
 	topProc.clearFuncCache( func );
 
+	// 計算式をチェック
+	var saveIndex = graphIndex();
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		procGraph().selGraph( i );
+
+		procGraph().checkExpr( func );
+	}
+	procGraph().selGraph( saveIndex );
+
 	var name = "/" + func + ".cef";
 
 	var index = extFuncFile2.length;
@@ -4646,6 +4655,15 @@ function setFunc( chr, text ){
 
 	// 外部関数キャッシュのクリア
 	topProc.clearFuncCache( "!" + chr );
+
+	// 計算式をチェック
+	var saveIndex = graphIndex();
+	for( var i = 0; i < _GRAPH_NUM; i++ ){
+		procGraph().selGraph( i );
+
+		procGraph().checkExpr( "!" + chr );
+	}
+	procGraph().selGraph( saveIndex );
 }
 function loadFunc(){
 	editor.setText( getFunc( String.fromCharCode( curFunc ) ) );
