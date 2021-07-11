@@ -284,25 +284,8 @@ function isIPad(){
 	return (iPadTest || common.isIPad());
 }
 
-function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFileIds, editorId ){
-	var i;
-
-	defGWorldFunction();
-	defProcFunction();
-
-	// コンソール
-	con = new _Console( conId );
-	con.setMaxLen( conMaxLen );
-
-	try {
-		electron = new Electron( require( "electron" ).remote.require( "./electron" ) );
-	} catch( e ){
-		electron = null;
-	}
-
-	common = new Common();
-
-	con.println( "ClipGraph" + consoleBreak() + "Copyright (C) SatisKia" );
+function printAppVersion( version ){
+	con.println( "ClipGraph" + version + consoleBreak() + "Copyright (C) SatisKia" );
 	con.setColor( "0000ff" );
 	if( dispUserAgent ){
 		con.setBold( true );
@@ -322,6 +305,37 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 		con.println( common.isApp() ? "true" : "false" );
 	}
 	con.setColor();
+}
+
+function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFileIds, editorId ){
+	var i;
+
+	defGWorldFunction();
+	defProcFunction();
+
+	// コンソール
+	con = new _Console( conId );
+	con.setMaxLen( conMaxLen );
+
+	try {
+		electron = new Electron( require( "electron" ).remote.require( "./electron" ) );
+	} catch( e ){
+		electron = null;
+	}
+
+	common = new Common();
+
+	if( !common.isPC() ){
+		nativeRequest = new NativeRequest();
+		nativeRequest.setScheme( "native" );
+		nativeRequest.send( "get_app_version" );
+	} else {
+		var version = "";
+		if( electron != null ){
+			version = " " + electron.version();
+		}
+		printAppVersion( version );
+	}
 
 	if( common.isIPhone() || common.isIPad() ){
 		// iOS10で複数指で拡大縮小が出来てしまうのを防ぐ
@@ -773,9 +787,8 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 
 	started = true;
 
-	if( !common.isPC() ){
-		nativeRequest = new NativeRequest();
-		nativeRequest.setScheme( "native" );
+	// 外部関数読み込み開始
+	if( nativeRequest ){
 		nativeRequest.send( "start_load_extfunc/" + extFuncFile[loadNum] );
 	}
 
@@ -845,13 +858,13 @@ function setHeight( height ){
 
 	var editorHeight = 0;
 	if( isAndroidTablet() ){
-		editorHeight = bodyHeight - 227;	// IMEのサイズ：357x227
+		editorHeight = bodyHeight - 227;		// IMEのサイズ：357x227
 	} else if( !androidTabletTest && common.isAndroidMobile() ){
 		editorHeight = bodyHeight - 255 - 39;	// IMEのサイズ：322x255
 	} else if( isIPad() ){
-		editorHeight = bodyHeight - 145;	// IMEのサイズ：357x145
+		editorHeight = bodyHeight - 145;		// IMEのサイズ：357x145
 	} else if( !iPadTest && common.isIPhone() ){
-		editorHeight = bodyHeight - 261;	// IMEのサイズ：322x261
+		editorHeight = bodyHeight - 261;		// IMEのサイズ：322x261
 	}
 	if( editorHeight > 0 ){
 		cssSetPropertyValue( ".textarea_func", "height", "" + editorHeight + "px" );

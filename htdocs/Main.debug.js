@@ -3622,6 +3622,9 @@ function Electron( main ){
  this._extfunc_str = "";
 }
 Electron.prototype = {
+ version : function(){
+  return this._main.version;
+ },
  isEnglish : function(){
   return this._main.isEnglish;
  },
@@ -3686,6 +3689,15 @@ Electron.prototype = {
    this._extfunc_update = false;
    this._main.fs.writeFileSync( this._main.extFuncCachePath, JSON.stringify( this._extfunc ) );
   }
+ },
+ clipboardRead : function(){
+  return this._main.clipboard.readText();
+ },
+ clipboardWrite : function( text ){
+  this._main.clipboard.writeText( text );
+ },
+ beep : function(){
+  this._main.shell.beep();
  }
 };
 var electron = null;
@@ -3724,19 +3736,8 @@ function isAndroidTablet(){
 function isIPad(){
  return (iPadTest || common.isIPad());
 }
-function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFileIds, editorId ){
- var i;
- defGWorldFunction();
- defProcFunction();
- con = new _Console( conId );
- con.setMaxLen( conMaxLen );
- try {
-  electron = new Electron( require( "electron" ).remote.require( "./electron" ) );
- } catch( e ){
-  electron = null;
- }
- common = new Common();
- con.println( "ClipGraph" + consoleBreak() + "Copyright (C) SatisKia" );
+function printAppVersion( version ){
+ con.println( "ClipGraph" + version + consoleBreak() + "Copyright (C) SatisKia" );
  con.setColor( "0000ff" );
  if( dispUserAgent ){
   con.setBold( true );
@@ -3756,6 +3757,30 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   con.println( common.isApp() ? "true" : "false" );
  }
  con.setColor();
+}
+function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFileIds, editorId ){
+ var i;
+ defGWorldFunction();
+ defProcFunction();
+ con = new _Console( conId );
+ con.setMaxLen( conMaxLen );
+ try {
+  electron = new Electron( require( "electron" ).remote.require( "./electron" ) );
+ } catch( e ){
+  electron = null;
+ }
+ common = new Common();
+ if( !common.isPC() ){
+  nativeRequest = new NativeRequest();
+  nativeRequest.setScheme( "native" );
+  nativeRequest.send( "get_app_version" );
+ } else {
+  var version = "";
+  if( electron != null ){
+   version = " " + electron.version();
+  }
+  printAppVersion( version );
+ }
  if( common.isIPhone() || common.isIPad() ){
   document.documentElement.addEventListener( "touchstart", function( e ){
    if( e.touches.length > 1 ){
@@ -4118,9 +4143,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   writeProfileInt( "ENV_", "Calculator", topParam._calculator ? 1 : 0 );
  }
  started = true;
- if( !common.isPC() ){
-  nativeRequest = new NativeRequest();
-  nativeRequest.setScheme( "native" );
+ if( nativeRequest ){
   nativeRequest.send( "start_load_extfunc/" + extFuncFile[loadNum] );
  }
  _addGraphEventListener( document, "keydown", keyDown );
