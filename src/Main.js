@@ -285,6 +285,8 @@ function isIPad(){
 }
 
 function printAppVersion( version ){
+	var saveStarted = started;
+	started = false;
 	con.println( "ClipGraph" + version + consoleBreak() + "Copyright (C) SatisKia" );
 	con.setColor( "0000ff" );
 	if( dispUserAgent ){
@@ -305,6 +307,7 @@ function printAppVersion( version ){
 		con.println( common.isApp() ? "true" : "false" );
 	}
 	con.setColor();
+	started = saveStarted;
 }
 
 function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFileIds, editorId ){
@@ -324,18 +327,6 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	}
 
 	common = new Common();
-
-	if( !common.isPC() ){
-		nativeRequest = new NativeRequest();
-		nativeRequest.setScheme( "native" );
-		nativeRequest.send( "get_app_version" );
-	} else {
-		var version = "";
-		if( electron != null ){
-			version = " " + electron.version();
-		}
-		printAppVersion( version );
-	}
 
 	if( common.isIPhone() || common.isIPad() ){
 		// iOS10で複数指で拡大縮小が出来てしまうのを防ぐ
@@ -787,6 +778,18 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 
 	started = true;
 
+	if( !common.isPC() ){
+		nativeRequest = new NativeRequest();
+		nativeRequest.setScheme( "native" );
+		nativeRequest.send( "started" );
+	} else {
+		var version = "";
+		if( electron != null ){
+			version = " " + electron.version();
+		}
+		printAppVersion( version );
+	}
+
 	// 外部関数読み込み開始
 	if( nativeRequest ){
 		nativeRequest.send( "start_load_extfunc/" + extFuncFile[loadNum] );
@@ -835,6 +838,7 @@ function updateButtonHeight(){
 function setHeight( height ){
 	bodyHeight = height;
 
+	var saveStarted = started;
 	started = false;
 	con.setColor( "0000ff" );
 	con.setBold( true );
@@ -842,7 +846,7 @@ function setHeight( height ){
 	con.setBold( false );
 	con.println( "" + bodyHeight );
 	con.setColor();
-	started = true;
+	started = saveStarted;
 
 	if( bodyHeight > defHeight( false ) ){
 		cssSetPropertyValue( ".div_body", "height", "" + bodyHeight + "px" );
