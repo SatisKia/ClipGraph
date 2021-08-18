@@ -1,4 +1,4 @@
-ClipGraph Version 4.2.2
+ClipGraph Version 4.2.3
 
 はじめに
 
@@ -23,6 +23,12 @@ ClipGraph Version 4.2.2
 「ClipGraph」の実行
 
     "ClipGraph-win32-x64"フォルダ内の"ClipGraph.exe"を実行してください。
+
+環境設定ファイルについて
+
+    「ClipGraph」終了時、
+        C:\Users\<ユーザー名>\ClipGraph.env
+    に環境設定が書き出され、起動時に読み込まれます。
 
 問い合わせ先
 

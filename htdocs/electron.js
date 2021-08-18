@@ -12,6 +12,7 @@ const path = require( "path" );
 
 const boundsInfoPath   = path.join( app.getPath( "userData" ), "bounds-info.json" );
 const extFuncCachePath = path.join( app.getPath( "userData" ), "extfunc-cache.json" );
+const profilePath      = path.join( app.getPath( "home" ), "ClipGraph.env" );
 
 let mainWindow = null;
 let trayIcon;
@@ -98,6 +99,7 @@ app.on( "activate", () => {
 } );
 
 exports.extFuncCachePath = extFuncCachePath;
+exports.profilePath = profilePath;
 exports.fs = fs;
 exports.isEnglish = false;
 exports.platform = process.platform;

@@ -9,16 +9,16 @@
 <title></title>
 
 <!--リリース用-->
-<script type="text/javascript" src="clip.js?v=210728"></script>
-<script type="text/javascript" src="Main.js?v=210728"></script>
+<script type="text/javascript" src="clip.js?v=210818"></script>
+<script type="text/javascript" src="Main.js?v=210818"></script>
 
 <!--デバッグ用
-<script type="text/javascript" src="clip.debug.js?v=210728"></script>
-<script type="text/javascript" src="Main.debug.js?v=210728"></script>
+<script type="text/javascript" src="clip.debug.js?v=210818"></script>
+<script type="text/javascript" src="Main.debug.js?v=210818"></script>
 -->
 
 <!--ライブラリ未使用版デバッグ用
-<script type="text/javascript" src="All.debug.js?v=210728"></script>
+<script type="text/javascript" src="All.debug.js?v=210818"></script>
 -->
 
 <script type="text/javascript">
@@ -2139,18 +2139,6 @@ input[type="number"]::-webkit-inner-spin-button {
 				<tr>
 					<td width="5"></td>
 					<td>
-						<form action="javascript:doExportProfile( 'profile' )">
-							<button type="submit" id="button_profile_export" class="button_common" style="width:95px; height:50px">環境設定<br>ｴｸｽﾎﾟｰﾄ</button>
-						</form>
-					</td>
-					<td width="11"></td>
-					<td>
-						<form action="javascript:doButtonUIProfile( false )">
-							<button type="submit" id="button_profile_import" class="button_common" style="width:95px; height:50px">環境設定<br>ｲﾝﾎﾟｰﾄ</button>
-						</form>
-					</td>
-					<td width="11"></td>
-					<td>
 						<form action="javascript:doClearStorage( 'button_storage_clear' )">
 							<button type="submit" id="button_storage_clear" class="button_common" style="width:95px; height:50px; display:none">ストレージ<br>クリア</button>
 						</form>
@@ -2158,6 +2146,16 @@ input[type="number"]::-webkit-inner-spin-button {
 					<td>
 						<form action="javascript:doClearCookie( 'button_cookie_clear' )">
 							<button type="submit" id="button_cookie_clear" class="button_common" style="width:95px; height:50px; display:none">Cookie<br>クリア</button>
+						</form>
+					</td>
+					<td>
+						<form action="javascript:doExportProfile( 'profile' )">
+							<button type="submit" id="button_profile_export" class="button_common" style="width:95px; height:50px; display:none">環境設定<br>ｴｸｽﾎﾟｰﾄ</button>
+						</form>
+					</td>
+					<td>
+						<form action="javascript:doButtonUIProfile( false )">
+							<button type="submit" id="button_profile_import" class="button_common" style="width:95px; height:50px; display:none">環境設定<br>ｲﾝﾎﾟｰﾄ</button>
 						</form>
 					</td>
 				</tr>

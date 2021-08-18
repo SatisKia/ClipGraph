@@ -7169,6 +7169,12 @@ var _loopSub = [
  _Loop.prototype._loopFunc,
  _Loop.prototype._loopEndFunc
 ];
+function __Replace( descCode, descToken, realCode, realToken ){
+ this._descCode = descCode;
+ this._descToken = descToken;
+ this._realCode = realCode;
+ this._realToken = realToken;
+}
 function _Param( num, parentParam, inherit ){
  var i;
  this._parentNum = (parentParam == undefined) ? 0 : (
@@ -7225,6 +7231,17 @@ function _Param( num, parentParam, inherit ){
  this._seFlag = false;
  this._seToken = 0;
  this._mpFlag = false;
+ this._replace = new Array();
+ if( parentParam != undefined ){
+  for( i = 0; i < parentParam._replace.length; i++ ){
+   this._replace[this._replace.length] = new __Replace(
+    parentParam._replace[i]._descCode,
+    parentParam._replace[i]._descToken,
+    parentParam._replace[i]._realCode,
+    parentParam._replace[i]._realToken
+    );
+  }
+ }
 }
 _Param.prototype = {
  end : function(){
@@ -7455,6 +7472,41 @@ _Param.prototype = {
  },
  resetNameSpace : function(){
   this._nameSpace = this._defNameSpace;
+ },
+ setReplace : function( descCode, descToken, realCode, realToken ){
+  var i;
+  var tmp;
+  for( i = 0; i < this._replace.length; i++ ){
+   tmp = this._replace[i];
+   if( descCode == tmp._descCode && descToken == tmp._descToken ){
+    tmp._realCode = realCode;
+    tmp._realToken = realToken;
+    return;
+   }
+  }
+  this._replace[i] = new __Replace( descCode, descToken, realCode, realToken );
+ },
+ delReplace : function( descCode, descToken ){
+  var replace = new Array();
+  var tmp;
+  for( var i = 0; i < this._replace.length; i++ ){
+   tmp = this._replace[i];
+   if( descCode != tmp._descCode || descToken != tmp._descToken ){
+    replace[replace.length] = tmp;
+   }
+  }
+  this._replace = replace;
+ },
+ replace : function( cur ){
+  var tmp;
+  for( var i = 0; i < this._replace.length; i++ ){
+   tmp = this._replace[i];
+   if( cur._code == tmp._descCode && cur._token == tmp._descToken ){
+    cur._code = tmp._realCode;
+    cur._token = tmp._realToken;
+    break;
+   }
+  }
  }
 };
 var _MIN_VALUE = [ -128, 0 , -32768, 0 , -2147483648, 0 ];
@@ -8816,6 +8868,21 @@ _Proc.prototype = {
   var line;
   if( (line = this._procLine.getLine()) == null ){
    return false;
+  }
+  var cur = line._token._top;
+  if( cur != null ){
+   if( (cur._code != 10) || ((cur._token != 101) && (cur._token != 102)) ){
+    while( cur != null ){
+     switch( cur._code ){
+     case 9:
+     case 13:
+     case 14:
+      param.replace( cur );
+      break;
+     }
+     cur = cur._next;
+    }
+   }
   }
   if( !this._regProcess( line, err ) ){
    return false;
@@ -14619,7 +14686,7 @@ _Proc.prototype = {
   case 61:
   case 62:
    break;
-  case 102:
+  case 104:
    if( skipCommandLog() ){
     while( true ){
      if( !(_this._curLine._token.getTokenParam( param )) ){
@@ -14692,7 +14759,7 @@ _Proc.prototype = {
    case 62:
     doCommandPrint( topPrint, true );
     break;
-   case 102:
+   case 104:
     doCommandLog( topPrint );
     break;
    }
@@ -15665,6 +15732,60 @@ _Proc.prototype = {
   param.resetNameSpace();
   return 0x03;
  },
+ _commandUse : function( _this, param, code, token ){
+  var descCode;
+  var descToken;
+  var realCode;
+  var realToken;
+  if( _this._curLine._token.getToken() ){
+   descCode = _get_code;
+   descToken = _get_token;
+   switch( descCode ){
+   case 9:
+   case 13:
+   case 14:
+    break;
+   default:
+    return _this._retError( 0x2141, code, token );
+   }
+   if( _this._curLine._token.getToken() ){
+    realCode = _get_code;
+    realToken = _get_token;
+    switch( realCode ){
+    case 9:
+    case 13:
+    case 14:
+     break;
+    default:
+     return _this._retError( 0x2141, code, token );
+    }
+   } else {
+    return _this._retError( 0x2141, code, token );
+   }
+  } else {
+   return _this._retError( 0x2141, code, token );
+  }
+  param.setReplace( descCode, descToken, realCode, realToken );
+  return 0x03;
+ },
+ _commandUnuse : function( _this, param, code, token ){
+  var descCode;
+  var descToken;
+  if( _this._curLine._token.getToken() ){
+   descCode = _get_code;
+   descToken = _get_token;
+   switch( descCode ){
+   case 9:
+   case 13:
+   case 14:
+    break;
+   default:
+    return _this._retError( 0x2141, code, token );
+   }
+  }
+  param.delReplace( descCode, descToken );
+  return 0x03;
+ },
  _commandDump : function( _this, param, code, token ){
   var newCode;
   var newToken;
@@ -16301,6 +16422,8 @@ var _procSubCommand = [
  _Proc.prototype._commandInclude,
  _Proc.prototype._commandBase,
  _Proc.prototype._commandNameSpace,
+ _Proc.prototype._commandUse,
+ _Proc.prototype._commandUnuse,
  _Proc.prototype._commandDump,
  _Proc.prototype._commandPrint
 ];
@@ -16737,6 +16860,8 @@ var _tokenCommand = [
  "include",
  "base",
  "namespace",
+ "use",
+ "unuse",
  "dump",
  "log"
 ];
@@ -22290,7 +22415,7 @@ function profileNum(){
 function getProfileKey( index ){
  return _preference.getKey( index );
 }
-function doExportProfile( textarea ){
+function exportProfile(){
  var i, j;
  var tmp = new Array();
  var num2 = 0;
@@ -22324,7 +22449,10 @@ function doExportProfile( textarea ){
  for( i = 0; i < num2; i++ ){
   text += tmp[i] + "\n";
  }
- document.getElementById( textarea ).value = text;
+ return text;
+}
+function doExportProfile( textarea ){
+ document.getElementById( textarea ).value = exportProfile();
  doButtonUIProfile( true );
 }
 function splitData( data ){
@@ -22354,16 +22482,8 @@ function splitData( data ){
  }
  return data3;
 }
-function doImportProfile( textarea ){
- var i, j, k, l;
- var offset;
- for( offset = 0; ; offset++ ){
-  var tmp = getProfileString( "IMAGE_PATH_", "" + (offset + 1), "" );
-  if( tmp.length == 0 ){
-   break;
-  }
- }
- var text = document.getElementById( textarea ).value;
+function importProfile( text ){
+ var i, j;
  var profile = splitData( text );
  for( i = 0; i < profile.length; i++ ){
   j = profile[i].indexOf( "=" );
@@ -22386,43 +22506,13 @@ function doImportProfile( textarea ){
     tmpValue.replace( "\\n", "\n" );
     tmpValue.replace( "¥" , "\\" );
     value = tmpValue.str();
-   } else if( key == "IMAGE_" ){
-    var value2 = new String();
-    for( k = 0; k < value.length; k++ ){
-     var tmp = "" + value.charAt( k );
-     if( (tmp == "%") && (k <= value.length - 3) ){
-      if( (value.charAt( k + 1 ) == '7') && (value.charAt( k + 2 ) == 'B') ){
-       for( l = k + 3; l < value.length; l++ ){
-        if( value.charAt( l ) == '%' ){
-         break;
-        }
-       }
-       if( l - (k + 3) > 0 ){
-        var num = "" + (parseInt( value.substring( k + 3, l ) ) + offset);
-        tmp = "%7B" + num;
-        k += 2 + num.length;
-       }
-      }
-     }
-     value2 += tmp;
-    }
-    var oldValue = getProfileString( key, "", "" );
-    if( value2.length == 0 ){
-     value2 = oldValue;
-    } else if( oldValue.length > 0 ){
-     value2 = oldValue + "&" + value2;
-    }
-    value = value2;
-   } else if( key.indexOf( "IMAGE_PATH_" ) == 0 ){
-    var num = "" + (parseInt( key.slice( 11 ) ) + offset);
-    key = "IMAGE_PATH_" + num;
-   } else if( key.indexOf( "IMAGE_" ) == 0 ){
-    var num = "" + (parseInt( key.slice( 6 ) ) + offset);
-    key = "IMAGE_" + num;
    }
    writeProfileString( key, "", value );
   }
  }
+}
+function doImportProfile( textarea ){
+ importProfile( document.getElementById( textarea ).value );
  location.replace( "index.html?menu=option" );
 }
 function doClearStorage( button ){
@@ -22562,7 +22652,9 @@ Electron.prototype = {
  applyExtFunc : function(){
   if( this._extfunc_update ){
    this._extfunc_update = false;
-   this._main.fs.writeFileSync( this._main.extFuncCachePath, JSON.stringify( this._extfunc ) );
+   try {
+    this._main.fs.writeFileSync( this._main.extFuncCachePath, JSON.stringify( this._extfunc ) );
+   } catch( e ){}
   }
  },
  clipboardRead : function(){
@@ -22573,6 +22665,18 @@ Electron.prototype = {
  },
  beep : function(){
   this._main.shell.beep();
+ },
+ readProfile : function(){
+  try {
+   return this._main.fs.readFileSync( this._main.profilePath, "utf8" );
+  } catch( e ){
+  }
+  return "";
+ },
+ writeProfile : function( text ){
+  try {
+   this._main.fs.writeFileSync( this._main.profilePath, text );
+  } catch( e ){}
  }
 };
 var electron = null;
@@ -22644,6 +22748,9 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  con.setMaxLen( conMaxLen );
  try {
   electron = new Electron( require( "electron" ).remote.require( "./electron" ) );
+  window.onbeforeunload = function(){
+   electron.writeProfile( exportProfile() );
+  };
  } catch( e ){
   electron = null;
  }
@@ -22667,6 +22774,14 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  }
  initProfile( useStorage );
  setProfilePrefix( "_CLIPGRAPH_" );
+ if( electron != null ){
+  var text = electron.readProfile();
+  if( text.length > 0 ){
+   setEnableWriteProfile( true );
+   importProfile( text );
+   setEnableWriteProfile( false );
+  }
+ }
  if( isAndroidTablet() || isIPad() ){
   cssSetPropertyValue( ".div_body" , "width" , "357px" );
   cssSetPropertyValue( ".div_body" , "height", "471px" );
@@ -22935,6 +23050,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   } else if( canUseCookie() ){
    cssSetStyleDisplayById( "button_cookie_clear", true );
   }
+ }
+ if( !common.isPC() ){
+  cssSetStyleDisplayById( "button_profile_export", true );
+  cssSetStyleDisplayById( "button_profile_import", true );
  }
  if( common.isApp() ){
   cssSetStyleDisplayById( "button_getcontent", true );
@@ -25908,7 +26027,11 @@ function doButtonUIProfile( readOnly ){
  cssSetStyleDisplayById( "button_profile_import2", readOnly ? false : true );
  document.getElementById( "profile" ).readOnly = readOnly;
  if( !readOnly ){
-  document.getElementById( "profile" ).value = "";
+  if( electron != null ){
+   document.getElementById( "profile" ).value = electron.readProfile();
+  } else {
+   document.getElementById( "profile" ).value = "";
+  }
  }
  document.getElementById( "button_ui_main" ).disabled = false;
  document.getElementById( "button_ui_func" ).disabled = false;

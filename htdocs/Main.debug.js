@@ -3415,7 +3415,7 @@ function profileNum(){
 function getProfileKey( index ){
  return _preference.getKey( index );
 }
-function doExportProfile( textarea ){
+function exportProfile(){
  var i, j;
  var tmp = new Array();
  var num2 = 0;
@@ -3449,7 +3449,10 @@ function doExportProfile( textarea ){
  for( i = 0; i < num2; i++ ){
   text += tmp[i] + "\n";
  }
- document.getElementById( textarea ).value = text;
+ return text;
+}
+function doExportProfile( textarea ){
+ document.getElementById( textarea ).value = exportProfile();
  doButtonUIProfile( true );
 }
 function splitData( data ){
@@ -3479,16 +3482,8 @@ function splitData( data ){
  }
  return data3;
 }
-function doImportProfile( textarea ){
- var i, j, k, l;
- var offset;
- for( offset = 0; ; offset++ ){
-  var tmp = getProfileString( "IMAGE_PATH_", "" + (offset + 1), "" );
-  if( tmp.length == 0 ){
-   break;
-  }
- }
- var text = document.getElementById( textarea ).value;
+function importProfile( text ){
+ var i, j;
  var profile = splitData( text );
  for( i = 0; i < profile.length; i++ ){
   j = profile[i].indexOf( "=" );
@@ -3511,43 +3506,13 @@ function doImportProfile( textarea ){
     tmpValue.replace( "\\n", "\n" );
     tmpValue.replace( "¥" , "\\" );
     value = tmpValue.str();
-   } else if( key == "IMAGE_" ){
-    var value2 = new String();
-    for( k = 0; k < value.length; k++ ){
-     var tmp = "" + value.charAt( k );
-     if( (tmp == "%") && (k <= value.length - 3) ){
-      if( (value.charAt( k + 1 ) == '7') && (value.charAt( k + 2 ) == 'B') ){
-       for( l = k + 3; l < value.length; l++ ){
-        if( value.charAt( l ) == '%' ){
-         break;
-        }
-       }
-       if( l - (k + 3) > 0 ){
-        var num = "" + (parseInt( value.substring( k + 3, l ) ) + offset);
-        tmp = "%7B" + num;
-        k += 2 + num.length;
-       }
-      }
-     }
-     value2 += tmp;
-    }
-    var oldValue = getProfileString( key, "", "" );
-    if( value2.length == 0 ){
-     value2 = oldValue;
-    } else if( oldValue.length > 0 ){
-     value2 = oldValue + "&" + value2;
-    }
-    value = value2;
-   } else if( key.indexOf( "IMAGE_PATH_" ) == 0 ){
-    var num = "" + (parseInt( key.slice( 11 ) ) + offset);
-    key = "IMAGE_PATH_" + num;
-   } else if( key.indexOf( "IMAGE_" ) == 0 ){
-    var num = "" + (parseInt( key.slice( 6 ) ) + offset);
-    key = "IMAGE_" + num;
    }
    writeProfileString( key, "", value );
   }
  }
+}
+function doImportProfile( textarea ){
+ importProfile( document.getElementById( textarea ).value );
  location.replace( "index.html?menu=option" );
 }
 function doClearStorage( button ){
@@ -3687,7 +3652,9 @@ Electron.prototype = {
  applyExtFunc : function(){
   if( this._extfunc_update ){
    this._extfunc_update = false;
-   this._main.fs.writeFileSync( this._main.extFuncCachePath, JSON.stringify( this._extfunc ) );
+   try {
+    this._main.fs.writeFileSync( this._main.extFuncCachePath, JSON.stringify( this._extfunc ) );
+   } catch( e ){}
   }
  },
  clipboardRead : function(){
@@ -3698,6 +3665,18 @@ Electron.prototype = {
  },
  beep : function(){
   this._main.shell.beep();
+ },
+ readProfile : function(){
+  try {
+   return this._main.fs.readFileSync( this._main.profilePath, "utf8" );
+  } catch( e ){
+  }
+  return "";
+ },
+ writeProfile : function( text ){
+  try {
+   this._main.fs.writeFileSync( this._main.profilePath, text );
+  } catch( e ){}
  }
 };
 var electron = null;
@@ -3769,6 +3748,9 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  con.setMaxLen( conMaxLen );
  try {
   electron = new Electron( require( "electron" ).remote.require( "./electron" ) );
+  window.onbeforeunload = function(){
+   electron.writeProfile( exportProfile() );
+  };
  } catch( e ){
   electron = null;
  }
@@ -3792,6 +3774,14 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  }
  initProfile( useStorage );
  setProfilePrefix( "_CLIPGRAPH_" );
+ if( electron != null ){
+  var text = electron.readProfile();
+  if( text.length > 0 ){
+   setEnableWriteProfile( true );
+   importProfile( text );
+   setEnableWriteProfile( false );
+  }
+ }
  if( isAndroidTablet() || isIPad() ){
   cssSetPropertyValue( ".div_body" , "width" , "357px" );
   cssSetPropertyValue( ".div_body" , "height", "471px" );
@@ -4060,6 +4050,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
   } else if( canUseCookie() ){
    cssSetStyleDisplayById( "button_cookie_clear", true );
   }
+ }
+ if( !common.isPC() ){
+  cssSetStyleDisplayById( "button_profile_export", true );
+  cssSetStyleDisplayById( "button_profile_import", true );
  }
  if( common.isApp() ){
   cssSetStyleDisplayById( "button_getcontent", true );
@@ -7033,7 +7027,11 @@ function doButtonUIProfile( readOnly ){
  cssSetStyleDisplayById( "button_profile_import2", readOnly ? false : true );
  document.getElementById( "profile" ).readOnly = readOnly;
  if( !readOnly ){
-  document.getElementById( "profile" ).value = "";
+  if( electron != null ){
+   document.getElementById( "profile" ).value = electron.readProfile();
+  } else {
+   document.getElementById( "profile" ).value = "";
+  }
  }
  document.getElementById( "button_ui_main" ).disabled = false;
  document.getElementById( "button_ui_func" ).disabled = false;

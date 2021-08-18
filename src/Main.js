@@ -322,6 +322,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 
 	try {
 		electron = new Electron( require( "electron" ).remote.require( "./electron" ) );
+
+		window.onbeforeunload = function(){
+			electron.writeProfile( exportProfile() );
+		};
 	} catch( e ){
 		electron = null;
 	}
@@ -352,6 +356,15 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 
 	initProfile( useStorage );
 	setProfilePrefix( PROFILE_PREFIX );
+
+	if( electron != null ){
+		var text = electron.readProfile();
+		if( text.length > 0 ){
+			setEnableWriteProfile( true );
+			importProfile( text );
+			setEnableWriteProfile( false );
+		}
+	}
 
 	if( isAndroidTablet() || isIPad() ){
 		cssSetPropertyValue( ".div_body"        , "width" , "357px" );
@@ -685,6 +698,10 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 		} else if( canUseCookie() ){
 			cssSetStyleDisplayById( "button_cookie_clear", true );
 		}
+	}
+	if( !common.isPC() ){
+		cssSetStyleDisplayById( "button_profile_export", true );
+		cssSetStyleDisplayById( "button_profile_import", true );
 	}
 
 	if( common.isApp() ){
@@ -3769,7 +3786,11 @@ function doButtonUIProfile( readOnly ){
 	cssSetStyleDisplayById( "button_profile_import2", readOnly ? false : true );
 	document.getElementById( "profile" ).readOnly = readOnly;
 	if( !readOnly ){
-		document.getElementById( "profile" ).value = "";
+		if( electron != null ){
+			document.getElementById( "profile" ).value = electron.readProfile();
+		} else {
+			document.getElementById( "profile" ).value = "";
+		}
 	}
 
 	document.getElementById( "button_ui_main"   ).disabled = false;
