@@ -796,7 +796,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	started = true;
 
 	if( !common.isPC() ){
-		nativeRequest = new NativeRequest();
+		nativeRequest = new _NativeRequest();
 		nativeRequest.setScheme( "native" );
 		nativeRequest.send( "started" );
 	} else {

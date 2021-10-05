@@ -3088,6 +3088,17 @@ _MultiPrec.prototype.F = function( str ){
 _MultiPrec.prototype.getLen = function( a ){
 	return _INT( _ABS( a[0] / _MP_LEN_COEF ) );
 };
+_MultiPrec.prototype.isMinus = function( a ){
+	return a[0] < 0 ? true : false;
+};
+_MultiPrec.prototype.setLen = function( a , len, isMinus ){
+	var p = _AND( _ABS( a[0] ), _MP_PREC_MASK );
+	if( len == 0 ){
+		a[0] = _MP_LEN_COEF + p; a[1] = 0;
+	} else {
+		a[0] = (len * _MP_LEN_COEF + p) * (isMinus ? -1 : 1);
+	}
+};
 _MultiPrec.prototype._setLen = function( a , len ){
 	var p = _AND( _ABS( a[0] ), _MP_PREC_MASK );
 	if( len == 0 ){
@@ -6009,6 +6020,7 @@ function _GWorld(){
 	this._width = 0;
 	this._height = 0;
 	this._createFlag = false;
+	this._rgbFlag = false;
 	this._offsetX = 0.0;
 	this._offsetY = 0.0;
 	this._ratioX = 1.0;
@@ -6029,7 +6041,7 @@ function _GWorld(){
 	this._gWorldPut = true;
 }
 _GWorld.prototype = {
-	create : function( width, height, initWindow ){
+	create : function( width, height, initWindow, rgbFlag ){
 		this._dispose();
 		if( (width <= 0) || (height <= 0) ){
 			return false;
@@ -6039,6 +6051,7 @@ _GWorld.prototype = {
 		this._width = width;
 		this._height = height;
 		this._createFlag = true;
+		this._rgbFlag = (rgbFlag == undefined) ? false : rgbFlag;
 		if( initWindow ){
 			this.setWindow( 0.0, 0.0, 1.0, 1.0 );
 		} else {
@@ -6048,7 +6061,7 @@ _GWorld.prototype = {
 		this.clear( 0 );
 		return true;
 	},
-	open : function( image, offset, width, height, initWindow ){
+	open : function( image, offset, width, height, initWindow, rgbFlag ){
 		this._dispose();
 		if( (width <= 0) || (height <= 0) ){
 			return false;
@@ -6058,6 +6071,7 @@ _GWorld.prototype = {
 		this._width = width;
 		this._height = height;
 		this._createFlag = false;
+		this._rgbFlag = (rgbFlag == undefined) ? false : rgbFlag;
 		if( initWindow ){
 			this.setWindow( 0.0, 0.0, 1.0, 1.0 );
 		} else {
@@ -6187,7 +6201,16 @@ _GWorld.prototype = {
 		if( (x < 0) || (x >= _INT( this._width )) || (y < 0) || (y >= _INT( this._height )) ){
 			return false;
 		}
-		var color = 255 - this._image[y * this._offset + x];
+		var color;
+		if( this._rgbFlag ){
+			var rgb = this._image[y * this._offset + x];
+			var r = (rgb & 0xFF0000) >> 16;
+			var g = (rgb & 0x00FF00) >> 8;
+			var b = rgb & 0x0000FF;
+			color = ((255 - r) << 16) + ((255 - g) << 8) + (255 - b);
+		} else {
+			color = 255 - this._image[y * this._offset + x];
+		}
 		this._image[y * this._offset + x] = color;
 		if( this._gWorldPut ){
 			gWorldPutColor( this, x, y, color );
@@ -6549,6 +6572,9 @@ _GWorld.prototype = {
 	wndDrawTextTo : function( text, right ){
 		this.wndDrawTextColor( text, this._wndMoveX, this._wndMoveY, this._color, right );
 	},
+	umax : function(){
+		return this._rgbFlag ? _UMAX_24 : _UMAX_8;
+	}
 };
 function defGWorldFunction(){
 	if( window.gWorldClear == undefined ) window.gWorldClear = function( gWorld, color ){};
@@ -8539,7 +8565,7 @@ _Proc.prototype = {
 					token = _get_token;
 					this._curInfo = savInfo;
 					_proc_token.delToken( subInfo._assCode, subInfo._assToken );
-					subInfo.curArray = null;
+					subInfo._curArray = null;
 					return this._retError( 0x210C, code, token );
 				} else {
 					value.mat()._mat[0].setImag( tmpValue1.mat()._mat[0].real() );
@@ -8656,13 +8682,15 @@ _Proc.prototype = {
 					break;
 				}
 				param._mpFlag = this._valAns._mpFlag;
-				param._array.move( 0 );
-				if( this._valAns._mpFlag ){
-					param._array._mp[0] = Array.from( this._valAns._mp );
-				} else {
-					param._array._mat[0].ass( this._valAns._mat );
-					if( param.isMultiPrec() ){
-						param._array._mp[0] = Array.from( this._valAns.mp() );
+				if( !(param._assFlag) ){
+					param._array.move( 0 );
+					if( this._valAns._mpFlag ){
+						param._array._mp[0] = Array.from( this._valAns._mp );
+					} else {
+						param._array._mat[0].ass( this._valAns._mat );
+						if( param.isMultiPrec() ){
+							param._array._mp[0] = Array.from( this._valAns.mp() );
+						}
 					}
 				}
 			}
@@ -8747,7 +8775,7 @@ _Proc.prototype = {
 		}
 		var cur = line._token._top;
 		if( cur != null ){
-			if( (cur._code != 10) || ((cur._token != 101) && (cur._token != 102)) ){
+			if( (cur._code != 10) || ((cur._token != 102) && (cur._token != 103)) ){
 				while( cur != null ){
 					switch( cur._code ){
 					case 9:
@@ -9157,7 +9185,7 @@ _Proc.prototype = {
 		}
 		return func;
 	},
-	mpNum2Str : function( param, val ){
+	mpRound : function( param, val ){
 		var tmp = new Array();
 		if( (param._mode == 0x1104) && (_proc_mp.getPrec( val ) > 0) ){
 			_proc_mp.ftrunc( tmp, val );
@@ -9165,7 +9193,16 @@ _Proc.prototype = {
 			_proc_mp.fset( tmp, val );
 			_proc_mp.fround( tmp, param._mpPrec, param._mpRound );
 		}
+		return tmp;
+	},
+	mpNum2Str : function( param, val ){
+		var tmp = this.mpRound( param, val );
 		return _proc_mp.fnum2str( tmp, param._mpPrec );
+	},
+	mpfCmp : function( param, val1, val2 ){
+		var tmp1 = this.mpRound( param, val1 );
+		var tmp2 = this.mpRound( param, val2 );
+		return _proc_mp.fcmp( tmp1, tmp2 );
 	},
 	printAns : function( childParam ){
 		if( childParam._mpFlag ){
@@ -9771,7 +9808,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) < 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) < 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) < 0) ? 1 : 0 );
 			}
@@ -9788,7 +9825,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) <= 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) <= 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) <= 0) ? 1 : 0 );
 			}
@@ -9805,7 +9842,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) > 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) > 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) > 0) ? 1 : 0 );
 			}
@@ -9822,7 +9859,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) >= 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) >= 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) >= 0) ? 1 : 0 );
 			}
@@ -9839,7 +9876,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) == 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) == 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) == 0) ? 1 : 0 );
 			}
@@ -9856,7 +9893,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) != 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) != 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) != 0) ? 1 : 0 );
 			}
@@ -10167,7 +10204,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) < 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) < 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) < 0) ? 1 : 0 );
 			}
@@ -10187,7 +10224,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) <= 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) <= 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) <= 0) ? 1 : 0 );
 			}
@@ -10207,7 +10244,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) > 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) > 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) > 0) ? 1 : 0 );
 			}
@@ -10227,7 +10264,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) >= 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) >= 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) >= 0) ? 1 : 0 );
 			}
@@ -10247,7 +10284,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) == 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) == 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) == 0) ? 1 : 0 );
 			}
@@ -10267,7 +10304,7 @@ _Proc.prototype = {
 		}
 		if( param._mpFlag ){
 			if( param._mode == 0x1011 ){
-				value.matAss( (_proc_mp.fcmp( value.mp(), tmpValue.mp() ) != 0) ? 1 : 0 );
+				value.matAss( (_this.mpfCmp( param, value.mp(), tmpValue.mp() ) != 0) ? 1 : 0 );
 			} else {
 				value.matAss( (_proc_mp.cmp( value.mp(), tmpValue.mp() ) != 0) ? 1 : 0 );
 			}
@@ -11342,6 +11379,10 @@ _Proc.prototype = {
 		return 0x00;
 	},
 	_funcGColor : function( _this, param, code, token, value, seFlag ){
+		if( procGWorld()._rgbFlag ){
+			value.matAss( procGWorld()._color );
+			return 0x00;
+		}
 		var lock;
 		var tmpValue = new _ProcVal( _this, param );
 		lock = _this._curLine._token.lock();
@@ -11578,6 +11619,20 @@ _Proc.prototype = {
 			ret = _proc_mp.str2num( value.mp(), string.str() );
 		}
 		return ret ? 0x00 : _this._retError( 0x2111, 9, string.str() );
+	},
+	_funcMRound : function( _this, param, code, token, value, seFlag ){
+		var ret;
+		var tmpValue = new _ProcVal( _this, param );
+		if( (ret = _this._getFuncParam( param, code, token, tmpValue, seFlag )) != 0x00 ){
+			return ret;
+		}
+		if( (param._mode == 0x1104) && (_proc_mp.getPrec( tmpValue.mp() ) > 0) ){
+			_proc_mp.ftrunc( value.mp(), tmpValue.mp() );
+		} else {
+			_proc_mp.fset( value.mp(), tmpValue.mp() );
+			_proc_mp.fround( value.mp(), param._mpPrec, param._mpRound );
+		}
+		return 0x00;
 	},
 	_incVal : function( param, code, token, value, incFlag ){
 		switch( this._curInfo._assCode ){
@@ -11932,7 +11987,7 @@ _Proc.prototype = {
 		if( (ret = _this._const( param, code, token, rightValue )) == 0x00 ){
 			if( param._mpFlag ){
 				if( param._mode == 0x1011 ){
-					value.matAss( (_proc_mp.fcmp( value.mp(), rightValue.mp() ) < 0) ? 1 : 0 );
+					value.matAss( (_this.mpfCmp( param, value.mp(), rightValue.mp() ) < 0) ? 1 : 0 );
 				} else {
 					value.matAss( (_proc_mp.cmp( value.mp(), rightValue.mp() ) < 0) ? 1 : 0 );
 				}
@@ -11951,7 +12006,7 @@ _Proc.prototype = {
 		if( (ret = _this._const( param, code, token, rightValue )) == 0x00 ){
 			if( param._mpFlag ){
 				if( param._mode == 0x1011 ){
-					value.matAss( (_proc_mp.fcmp( value.mp(), rightValue.mp() ) <= 0) ? 1 : 0 );
+					value.matAss( (_this.mpfCmp( param, value.mp(), rightValue.mp() ) <= 0) ? 1 : 0 );
 				} else {
 					value.matAss( (_proc_mp.cmp( value.mp(), rightValue.mp() ) <= 0) ? 1 : 0 );
 				}
@@ -11970,7 +12025,7 @@ _Proc.prototype = {
 		if( (ret = _this._const( param, code, token, rightValue )) == 0x00 ){
 			if( param._mpFlag ){
 				if( param._mode == 0x1011 ){
-					value.matAss( (_proc_mp.fcmp( value.mp(), rightValue.mp() ) > 0) ? 1 : 0 );
+					value.matAss( (_this.mpfCmp( param, value.mp(), rightValue.mp() ) > 0) ? 1 : 0 );
 				} else {
 					value.matAss( (_proc_mp.cmp( value.mp(), rightValue.mp() ) > 0) ? 1 : 0 );
 				}
@@ -11989,7 +12044,7 @@ _Proc.prototype = {
 		if( (ret = _this._const( param, code, token, rightValue )) == 0x00 ){
 			if( param._mpFlag ){
 				if( param._mode == 0x1011 ){
-					value.matAss( (_proc_mp.fcmp( value.mp(), rightValue.mp() ) >= 0) ? 1 : 0 );
+					value.matAss( (_this.mpfCmp( param, value.mp(), rightValue.mp() ) >= 0) ? 1 : 0 );
 				} else {
 					value.matAss( (_proc_mp.cmp( value.mp(), rightValue.mp() ) >= 0) ? 1 : 0 );
 				}
@@ -12008,7 +12063,7 @@ _Proc.prototype = {
 		if( (ret = _this._const( param, code, token, rightValue )) == 0x00 ){
 			if( param._mpFlag ){
 				if( param._mode == 0x1011 ){
-					value.matAss( (_proc_mp.fcmp( value.mp(), rightValue.mp() ) == 0) ? 1 : 0 );
+					value.matAss( (_this.mpfCmp( param, value.mp(), rightValue.mp() ) == 0) ? 1 : 0 );
 				} else {
 					value.matAss( (_proc_mp.cmp( value.mp(), rightValue.mp() ) == 0) ? 1 : 0 );
 				}
@@ -12027,7 +12082,7 @@ _Proc.prototype = {
 		if( (ret = _this._const( param, code, token, rightValue )) == 0x00 ){
 			if( param._mpFlag ){
 				if( param._mode == 0x1011 ){
-					value.matAss( (_proc_mp.fcmp( value.mp(), rightValue.mp() ) != 0) ? 1 : 0 );
+					value.matAss( (_this.mpfCmp( param, value.mp(), rightValue.mp() ) != 0) ? 1 : 0 );
 				} else {
 					value.matAss( (_proc_mp.cmp( value.mp(), rightValue.mp() ) != 0) ? 1 : 0 );
 				}
@@ -14562,7 +14617,7 @@ _Proc.prototype = {
 		case 61:
 		case 62:
 			break;
-		case 104:
+		case 105:
 			if( skipCommandLog() ){
 				while( true ){
 					if( !(_this._curLine._token.getTokenParam( param )) ){
@@ -14635,7 +14690,7 @@ _Proc.prototype = {
 			case 62:
 				doCommandPrint( topPrint, true );
 				break;
-			case 104:
+			case 105:
 				doCommandLog( topPrint );
 				break;
 			}
@@ -14772,8 +14827,13 @@ _Proc.prototype = {
 		if( ret == 0x00 ){
 			var width = _INT( value[0].mat()._mat[0].toFloat() );
 			var height = _INT( value[1].mat()._mat[0].toFloat() );
-			doCommandGWorld( width, height );
-			procGWorld().create( width, height, true );
+			if( token == 65 ){
+				doCommandGWorld( width, height );
+				procGWorld().create( width, height, true, false );
+			} else {
+				doCommandGWorld24( width, height );
+				procGWorld().create( width, height, true, true );
+			}
 			return 0x03;
 		}
 		return _this._retError( 0x2141, code, token );
@@ -14798,7 +14858,7 @@ _Proc.prototype = {
 	_commandGClear : function( _this, param, code, token ){
 		var value = new _ProcVal( _this, param );
 		if( _this._const( param, code, token, value ) == 0x00 ){
-			procGWorld().clear( _UNSIGNED( value.mat()._mat[0].toFloat(), 256 ) );
+			procGWorld().clear( _UNSIGNED( value.mat()._mat[0].toFloat(), procGWorld().umax() ) );
 		} else {
 			procGWorld().clear( 0 );
 		}
@@ -14807,9 +14867,15 @@ _Proc.prototype = {
 	_commandGColor : function( _this, param, code, token ){
 		var value = newProcValArray( 2, _this, param );
 		if( _this._const( param, code, token, value[0] ) == 0x00 ){
-			var color = _UNSIGNED( value[0].mat()._mat[0].toFloat(), 256 );
-			if( _this._const( param, code, token, value[1] ) == 0x00 ){
-				doCommandGColor( color, _UNSIGNED( value[1].mat()._mat[0].toFloat(), 16777216 ) );
+			var color = _UNSIGNED( value[0].mat()._mat[0].toFloat(), procGWorld().umax() );
+			if( procGWorld()._rgbFlag ){
+				if( _this._const( param, code, token, value[1] ) == 0x00 ){
+					return _this._retError( 0x2141, code, token );
+				}
+			} else {
+				if( _this._const( param, code, token, value[1] ) == 0x00 ){
+					doCommandGColor( color, _UNSIGNED( value[1].mat()._mat[0].toFloat(), 16777216 ) );
+				}
 			}
 			procGWorld().setColor( color );
 			return 0x03;
@@ -14824,7 +14890,7 @@ _Proc.prototype = {
 		}
 		if( ret == 0x00 ){
 			if( _this._const( param, code, token, value[4] ) == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[4].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[4].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().fill(
 				_INT( value[0].mat()._mat[0].toFloat() ), _INT( value[1].mat()._mat[0].toFloat() ),
@@ -14842,7 +14908,7 @@ _Proc.prototype = {
 		}
 		if( ret == 0x00 ){
 			if( _this._const( param, code, token, value[4] ) == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[4].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[4].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().wndFill(
 				value[0].mat()._mat[0].toFloat(), value[1].mat()._mat[0].toFloat(),
@@ -14887,12 +14953,12 @@ _Proc.prototype = {
 		ret = _this._const( param, code, token, value[0] );
 		if( _this._const( param, code, token, value[1] ) == 0x00 ){
 			if( _this._const( param, code, token, value[2] ) == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().drawText( text.str(), _INT( value[0].mat()._mat[0].toFloat() ), _INT( value[1].mat()._mat[0].toFloat() ), false );
 		} else {
 			if( ret == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().drawTextTo( text.str(), false );
 		}
@@ -14909,12 +14975,12 @@ _Proc.prototype = {
 		ret = _this._const( param, code, token, value[0] );
 		if( _this._const( param, code, token, value[1] ) == 0x00 ){
 			if( _this._const( param, code, token, value[2] ) == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().drawText( text.str(), _INT( value[0].mat()._mat[0].toFloat() ), _INT( value[1].mat()._mat[0].toFloat() ), true );
 		} else {
 			if( ret == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().drawTextTo( text.str(), true );
 		}
@@ -14931,12 +14997,12 @@ _Proc.prototype = {
 		ret = _this._const( param, code, token, value[0] );
 		if( _this._const( param, code, token, value[1] ) == 0x00 ){
 			if( _this._const( param, code, token, value[2] ) == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().wndDrawText( text.str(), value[0].mat()._mat[0].toFloat(), value[1].mat()._mat[0].toFloat(), false );
 		} else {
 			if( ret == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().wndDrawTextTo( text.str(), false );
 		}
@@ -14953,12 +15019,12 @@ _Proc.prototype = {
 		ret = _this._const( param, code, token, value[0] );
 		if( _this._const( param, code, token, value[1] ) == 0x00 ){
 			if( _this._const( param, code, token, value[2] ) == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().wndDrawText( text.str(), value[0].mat()._mat[0].toFloat(), value[1].mat()._mat[0].toFloat(), true );
 		} else {
 			if( ret == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().wndDrawTextTo( text.str(), true );
 		}
@@ -14998,7 +15064,7 @@ _Proc.prototype = {
 			ret = _this._const( param, code, token, value[2] );
 			if( _this._const( param, code, token, value[3] ) == 0x00 ){
 				if( _this._const( param, code, token, value[4] ) == 0x00 ){
-					procGWorld().setColor( _UNSIGNED( value[4].mat()._mat[0].toFloat(), 256 ) );
+					procGWorld().setColor( _UNSIGNED( value[4].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 				}
 				procGWorld().line(
 					_INT( value[0].mat()._mat[0].toFloat() ), _INT( value[1].mat()._mat[0].toFloat() ),
@@ -15007,7 +15073,7 @@ _Proc.prototype = {
 				return 0x03;
 			} else {
 				if( ret == 0x00 ){
-					procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+					procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 				}
 				procGWorld().lineTo(
 					_INT( value[0].mat()._mat[0].toFloat() ), _INT( value[1].mat()._mat[0].toFloat() )
@@ -15027,7 +15093,7 @@ _Proc.prototype = {
 			ret = _this._const( param, code, token, value[2] );
 			if( _this._const( param, code, token, value[3] ) == 0x00 ){
 				if( _this._const( param, code, token, value[4] ) == 0x00 ){
-					procGWorld().setColor( _UNSIGNED( value[4].mat()._mat[0].toFloat(), 256 ) );
+					procGWorld().setColor( _UNSIGNED( value[4].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 				}
 				procGWorld().wndLine(
 					value[0].mat()._mat[0].toFloat(), value[1].mat()._mat[0].toFloat(),
@@ -15036,7 +15102,7 @@ _Proc.prototype = {
 				return 0x03;
 			} else {
 				if( ret == 0x00 ){
-					procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+					procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 				}
 				procGWorld().wndLineTo(
 					value[0].mat()._mat[0].toFloat(), value[1].mat()._mat[0].toFloat()
@@ -15070,7 +15136,7 @@ _Proc.prototype = {
 						arrayList[1] = x;
 						procGWorld().putColor(
 							x, y,
-							_UNSIGNED( param._array.val( _arrayIndex, arrayList, 2 ).toFloat(), 256 )
+							_UNSIGNED( param._array.val( _arrayIndex, arrayList, 2 ).toFloat(), procGWorld().umax() )
 							);
 					}
 				}
@@ -15084,7 +15150,7 @@ _Proc.prototype = {
 				}
 				if( ret == 0x00 ){
 					if( _this._const( param, code, token, value[2] ) == 0x00 ){
-						procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+						procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 					}
 					procGWorld().put( _INT( value[0].mat()._mat[0].toFloat() ), _INT( value[1].mat()._mat[0].toFloat() ) );
 					return 0x03;
@@ -15094,6 +15160,9 @@ _Proc.prototype = {
 		return _this._retError( 0x2141, code, token );
 	},
 	_commandGPut24 : function( _this, param, code, token ){
+		if( procGWorld()._rgbFlag ){
+			return _this._commandGPut( _this, param, code, token );
+		}
 		var newCode;
 		var newToken;
 		if( _this._curLine._token.getTokenParam( param ) ){
@@ -15135,7 +15204,7 @@ _Proc.prototype = {
 		}
 		if( ret == 0x00 ){
 			if( _this._const( param, code, token, value[2] ) == 0x00 ){
-				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+				procGWorld().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 			}
 			procGWorld().wndPut( value[0].mat()._mat[0].toFloat(), value[1].mat()._mat[0].toFloat() );
 			return 0x03;
@@ -15209,6 +15278,9 @@ _Proc.prototype = {
 		return _this._retError( 0x2141, code, token );
 	},
 	_commandGGet24 : function( _this, param, code, token ){
+		if( procGWorld()._rgbFlag ){
+			return _this._commandGGet( _this, param, code, token );
+		}
 		var newCode;
 		var newToken;
 		if( _this._curLine._token.getTokenParam( param ) ){
@@ -15423,7 +15495,7 @@ _Proc.prototype = {
 				switch( procGraph().mode() ){
 				case 0:
 					if( _this._const( param, code, token, value[2] ) == 0x00 ){
-						procGraph().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+						procGraph().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 					} else {
 					}
 					break;
@@ -15431,7 +15503,7 @@ _Proc.prototype = {
 				case 2:
 					if( _this._const( param, code, token, value[2] ) == 0x00 ){
 						if( _this._const( param, code, token, value[3] ) == 0x00 ){
-							procGraph().setColor( _UNSIGNED( value[3].mat()._mat[0].toFloat(), 256 ) );
+							procGraph().setColor( _UNSIGNED( value[3].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 						} else {
 						}
 					} else {
@@ -15440,7 +15512,7 @@ _Proc.prototype = {
 					break;
 				}
 			} else {
-				procGraph().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), 256 ) );
+				procGraph().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 				switch( procGraph().mode() ){
 				case 0:
 					value[0].matAss( procGWorld().wndPosX( 0 ) );
@@ -15484,7 +15556,7 @@ _Proc.prototype = {
 				switch( procGraph().mode() ){
 				case 0:
 					if( _this._const( param, code, token, value[2] ) == 0x00 ){
-						procGraph().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), 256 ) );
+						procGraph().setColor( _UNSIGNED( value[2].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 					} else {
 					}
 					break;
@@ -15492,7 +15564,7 @@ _Proc.prototype = {
 				case 2:
 					if( _this._const( param, code, token, value[2] ) == 0x00 ){
 						if( _this._const( param, code, token, value[3] ) == 0x00 ){
-							procGraph().setColor( _UNSIGNED( value[3].mat()._mat[0].toFloat(), 256 ) );
+							procGraph().setColor( _UNSIGNED( value[3].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 						} else {
 						}
 					} else {
@@ -15501,7 +15573,7 @@ _Proc.prototype = {
 					break;
 				}
 			} else {
-				procGraph().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), 256 ) );
+				procGraph().setColor( _UNSIGNED( value[0].mat()._mat[0].toFloat(), procGWorld().umax() ) );
 				switch( procGraph().mode() ){
 				case 0:
 					value[0].matAss( procGWorld().wndPosX( 0 ) );
@@ -16078,7 +16150,8 @@ var _procSubFunc = [
 	_Proc.prototype._funcColGetB,
 	_Proc.prototype._funcCall,
 	_Proc.prototype._funcEval,
-	_Proc.prototype._funcMp
+	_Proc.prototype._funcMp,
+	_Proc.prototype._funcMRound
 ];
 var _procSubOp = [
 	_Proc.prototype._unaryIncrement,
@@ -16263,6 +16336,7 @@ var _procSubCommand = [
 	_Proc.prototype._commandPrint,
 	_Proc.prototype._commandScan,
 	_Proc.prototype._commandGWorld,
+	_Proc.prototype._commandGWorld,
 	_Proc.prototype._commandGClear,
 	_Proc.prototype._commandGColor,
 	_Proc.prototype._commandGFill,
@@ -16416,6 +16490,7 @@ function defProcFunction(){
 	if( window.doCommandPrint == undefined ) window.doCommandPrint = function( topPrint, flag ){};
 	if( window.doCommandScan == undefined ) window.doCommandScan = function( topScan, proc, param ){};
 	if( window.doCommandGWorld == undefined ) window.doCommandGWorld = function( width, height ){};
+	if( window.doCommandGWorld24 == undefined ) window.doCommandGWorld24 = function( width, height ){};
 	if( window.doCommandWindow == undefined ) window.doCommandWindow = function( left, bottom, right, top ){};
 	if( window.doCommandGColor == undefined ) window.doCommandGColor = function( index, rgb ){};
 	if( window.doCommandGPut24Begin == undefined ) window.doCommandGPut24Begin = function(){};
@@ -16597,7 +16672,8 @@ var _tokenFunc = [
 	"col_getb",
 	"call",
 	"eval",
-	"mp"
+	"mp",
+	"mround"
 ];
 var _tokenStat = [
 	"$LOOPSTART",
@@ -16701,6 +16777,7 @@ var _tokenCommand = [
 	"sprint",
 	"scan",
 	"gworld",
+	"gworld24",
 	"gclear",
 	"gcolor",
 	"gfill",
@@ -19307,6 +19384,7 @@ window._CLIP_FUNC_COL_GETB = 90;
 window._CLIP_FUNC_CALL = 91;
 window._CLIP_FUNC_EVAL = 92;
 window._CLIP_FUNC_MP = 93;
+window._CLIP_FUNC_MROUND = 94;
 window._CLIP_STAT_START = 0;
 window._CLIP_STAT_END = 1;
 window._CLIP_STAT_END_INC = 2;
@@ -19408,45 +19486,46 @@ window._CLIP_COMMAND_PRINTLN = 62;
 window._CLIP_COMMAND_SPRINT = 63;
 window._CLIP_COMMAND_SCAN = 64;
 window._CLIP_COMMAND_GWORLD = 65;
-window._CLIP_COMMAND_GCLEAR = 66;
-window._CLIP_COMMAND_GCOLOR = 67;
-window._CLIP_COMMAND_GFILL = 68;
-window._CLIP_COMMAND_GMOVE = 69;
-window._CLIP_COMMAND_GTEXT = 70;
-window._CLIP_COMMAND_GTEXTR = 71;
-window._CLIP_COMMAND_GTEXTL = 72;
-window._CLIP_COMMAND_GTEXTLR = 73;
-window._CLIP_COMMAND_GLINE = 74;
-window._CLIP_COMMAND_GPUT = 75;
-window._CLIP_COMMAND_GPUT24 = 76;
-window._CLIP_COMMAND_GGET = 77;
-window._CLIP_COMMAND_GGET24 = 78;
-window._CLIP_COMMAND_GUPDATE = 79;
-window._CLIP_COMMAND_WINDOW = 80;
-window._CLIP_COMMAND_WFILL = 81;
-window._CLIP_COMMAND_WMOVE = 82;
-window._CLIP_COMMAND_WTEXT = 83;
-window._CLIP_COMMAND_WTEXTR = 84;
-window._CLIP_COMMAND_WTEXTL = 85;
-window._CLIP_COMMAND_WTEXTLR = 86;
-window._CLIP_COMMAND_WLINE = 87;
-window._CLIP_COMMAND_WPUT = 88;
-window._CLIP_COMMAND_WGET = 89;
-window._CLIP_COMMAND_RECTANGULAR = 90;
-window._CLIP_COMMAND_PARAMETRIC = 91;
-window._CLIP_COMMAND_POLAR = 92;
-window._CLIP_COMMAND_LOGSCALE = 93;
-window._CLIP_COMMAND_NOLOGSCALE = 94;
-window._CLIP_COMMAND_PLOT = 95;
-window._CLIP_COMMAND_REPLOT = 96;
-window._CLIP_COMMAND_CALCULATOR = 97;
-window._CLIP_COMMAND_INCLUDE = 98;
-window._CLIP_COMMAND_BASE = 99;
-window._CLIP_COMMAND_NAMESPACE = 100;
-window._CLIP_COMMAND_USE = 101;
-window._CLIP_COMMAND_UNUSE = 102;
-window._CLIP_COMMAND_DUMP = 103;
-window._CLIP_COMMAND_LOG = 104;
+window._CLIP_COMMAND_GWORLD24 = 66;
+window._CLIP_COMMAND_GCLEAR = 67;
+window._CLIP_COMMAND_GCOLOR = 68;
+window._CLIP_COMMAND_GFILL = 69;
+window._CLIP_COMMAND_GMOVE = 70;
+window._CLIP_COMMAND_GTEXT = 71;
+window._CLIP_COMMAND_GTEXTR = 72;
+window._CLIP_COMMAND_GTEXTL = 73;
+window._CLIP_COMMAND_GTEXTLR = 74;
+window._CLIP_COMMAND_GLINE = 75;
+window._CLIP_COMMAND_GPUT = 76;
+window._CLIP_COMMAND_GPUT24 = 77;
+window._CLIP_COMMAND_GGET = 78;
+window._CLIP_COMMAND_GGET24 = 79;
+window._CLIP_COMMAND_GUPDATE = 80;
+window._CLIP_COMMAND_WINDOW = 81;
+window._CLIP_COMMAND_WFILL = 82;
+window._CLIP_COMMAND_WMOVE = 83;
+window._CLIP_COMMAND_WTEXT = 84;
+window._CLIP_COMMAND_WTEXTR = 85;
+window._CLIP_COMMAND_WTEXTL = 86;
+window._CLIP_COMMAND_WTEXTLR = 87;
+window._CLIP_COMMAND_WLINE = 88;
+window._CLIP_COMMAND_WPUT = 89;
+window._CLIP_COMMAND_WGET = 90;
+window._CLIP_COMMAND_RECTANGULAR = 91;
+window._CLIP_COMMAND_PARAMETRIC = 92;
+window._CLIP_COMMAND_POLAR = 93;
+window._CLIP_COMMAND_LOGSCALE = 94;
+window._CLIP_COMMAND_NOLOGSCALE = 95;
+window._CLIP_COMMAND_PLOT = 96;
+window._CLIP_COMMAND_REPLOT = 97;
+window._CLIP_COMMAND_CALCULATOR = 98;
+window._CLIP_COMMAND_INCLUDE = 99;
+window._CLIP_COMMAND_BASE = 100;
+window._CLIP_COMMAND_NAMESPACE = 101;
+window._CLIP_COMMAND_USE = 102;
+window._CLIP_COMMAND_UNUSE = 103;
+window._CLIP_COMMAND_DUMP = 104;
+window._CLIP_COMMAND_LOG = 105;
 window._CLIP_SE_NULL = 0;
 window._CLIP_SE_INCREMENT = 1;
 window._CLIP_SE_DECREMENT = 2;

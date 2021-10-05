@@ -3322,7 +3322,7 @@ function graphTouchY( index ){
  return ((index < _graph_touch_y.length) ? _graph_touch_y[index] : _graph_touch_y0);
 }
 var graphUI;
-function NativeRequest(){
+function _NativeRequest(){
  this.e = document.createElement( "iframe" );
  this.e.setAttribute( "width", 0 );
  this.e.setAttribute( "height", 0 );
@@ -3333,7 +3333,7 @@ function NativeRequest(){
  document.body.appendChild( this.e );
  this.s = "";
 }
-NativeRequest.prototype = {
+_NativeRequest.prototype = {
  setScheme : function( scheme ){
   this.s = scheme;
  },
@@ -4130,7 +4130,7 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
  }
  started = true;
  if( !common.isPC() ){
-  nativeRequest = new NativeRequest();
+  nativeRequest = new _NativeRequest();
   nativeRequest.setScheme( "native" );
   nativeRequest.send( "started" );
  } else {
