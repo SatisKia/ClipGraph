@@ -1142,31 +1142,31 @@ function graphTouchY( index ){
 	return ((index < _graph_touch_y.length) ? _graph_touch_y[index] : _graph_touch_y0);
 }
 
-//function onGraphInitEnv( _this ){}
+//window.onGraphInitEnv = function( _this ){};
 
-//function onGraphSetMode( _this, mode ){}
-//function onGraphSetIndex( _this, index ){}
-//function onGraphSetLogScaleX( _this, base ){}
-//function onGraphSetLogScaleY( _this, base ){}
-//function onGraphClearExpr( _this ){}
-//function onGraphClearTable( _this ){}
-//function onGraphUpdateStatic( _this ){}
-//function onGraphUpdateValue( _this ){}
-//function onGraphUpdatePitch( _this ){}
-//function onGraphUpdateEnvOffset( _this ){}
-//function onGraphUpdateEnvWindow( _this ){}
+//window.onGraphSetMode = function( _this, mode ){};
+//window.onGraphSetIndex = function( _this, index ){};
+//window.onGraphSetLogScaleX = function( _this, base ){};
+//window.onGraphSetLogScaleY = function( _this, base ){};
+//window.onGraphClearExpr = function( _this ){};
+//window.onGraphClearTable = function( _this ){};
+//window.onGraphUpdateStatic = function( _this ){};
+//window.onGraphUpdateValue = function( _this ){};
+//window.onGraphUpdatePitch = function( _this ){};
+//window.onGraphUpdateEnvOffset = function( _this ){};
+//window.onGraphUpdateEnvWindow = function( _this ){};
 
-//function onGraphStartPlot(){}
-//function onGraphEndPlot(){}
-//function onGraphStartRePlot(){}
-//function onGraphEndRePlot(){}
+//window.onGraphStartPlot = function(){};
+//window.onGraphEndPlot = function(){};
+//window.onGraphStartRePlot = function(){};
+//window.onGraphEndRePlot = function(){};
 
-//function isPC(){ return true; }
-//function onGraphMouseDown(){}
-//function onGraphMouseMove(){}
-//function onGraphMouseOut(){}
-//function onGraphMouseOver(){}
-//function onGraphMouseUp(){}
-//function onGraphTouchStart(){}
-//function onGraphTouchMove(){}
-//function onGraphTouchEnd(){}
+//window.isPC = function(){ return true; };
+//window.onGraphMouseDown = function(){};
+//window.onGraphMouseMove = function(){};
+//window.onGraphMouseOut = function(){};
+//window.onGraphMouseOver = function(){};
+//window.onGraphMouseUp = function(){};
+//window.onGraphTouchStart = function(){};
+//window.onGraphTouchMove = function(){};
+//window.onGraphTouchEnd = function(){};

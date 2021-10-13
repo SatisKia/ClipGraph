@@ -8,49 +8,39 @@ var COLOR_WIN = [
  0x007F2A, 0x557F2A, 0xAA7F2A, 0xFF7F2A, 0x009F2A, 0x559F2A, 0xAA9F2A, 0xFF9F2A,
  0x00BF2A, 0x55BF2A, 0xAABF2A, 0xFFBF2A, 0x00DF2A, 0x55DF2A, 0xAADF2A, 0xFFDF2A,
  0x00FF2A, 0x55FF2A, 0xAAFF2A, 0xFFFF2A,
-
  0x000055, 0x550055, 0xAA0055, 0xFF0055, 0x001F55, 0x551F55, 0xAA1F55, 0xFF1F55,
  0x003F55, 0x553F55, 0xAA3F55, 0xFF3F55, 0x005F55, 0x555F55, 0xAA5F55, 0xFF5F55,
  0x007F55, 0x557F55, 0xAA7F55, 0xFF7F55, 0x009F55, 0x559F55, 0xAA9F55, 0xFF9F55,
  0x00BF55, 0x55BF55, 0xAABF55, 0xFFBF55, 0x00DF55, 0x55DF55, 0xAADF55, 0xFFDF55,
  0x00FF55, 0x55FF55, 0xAAFF55, 0xFFFF55,
-
  0x00007F, 0x55007F, 0xAA007F, 0xFF007F, 0x001F7F, 0x551F7F, 0xAA1F7F, 0xFF1F7F,
  0x003F7F, 0x553F7F, 0xAA3F7F, 0xFF3F7F, 0x005F7F, 0x555F7F, 0xAA5F7F, 0xFF5F7F,
  0x007F7F, 0x557F7F, 0xAA7F7F, 0xFF7F7F, 0x009F7F, 0x559F7F, 0xAA9F7F, 0xFF9F7F,
  0x00BF7F, 0x55BF7F, 0xAABF7F, 0xFFBF7F, 0x00DF7F, 0x55DF7F, 0xAADF7F, 0xFFDF7F,
  0x00FF7F, 0x55FF7F, 0xAAFF7F, 0xFFFF7F,
-
  0x0000AA, 0x5500AA, 0xAA00AA, 0xFF00AA, 0x001FAA, 0x551FAA, 0xAA1FAA, 0xFF1FAA,
  0x003FAA, 0x553FAA, 0xAA3FAA, 0xFF3FAA, 0x005FAA, 0x555FAA, 0xAA5FAA, 0xFF5FAA,
  0x007FAA, 0x557FAA, 0xAA7FAA, 0xFF7FAA, 0x009FAA, 0x559FAA, 0xAA9FAA, 0xFF9FAA,
  0x00BFAA, 0x55BFAA, 0xAABFAA, 0xFFBFAA, 0x00DFAA, 0x55DFAA, 0xAADFAA, 0xFFDFAA,
  0x00FFAA, 0x55FFAA, 0xAAFFAA, 0xFFFFAA,
-
  0x0000D4, 0x5500D4, 0xAA00D4, 0xFF00D4, 0x001FD4, 0x551FD4, 0xAA1FD4, 0xFF1FD4,
  0x003FD4, 0x553FD4, 0xAA3FD4, 0xFF3FD4, 0x005FD4, 0x555FD4, 0xAA5FD4, 0xFF5FD4,
  0x007FD4, 0x557FD4, 0xAA7FD4, 0xFF7FD4, 0x009FD4, 0x559FD4, 0xAA9FD4, 0xFF9FD4,
  0x00BFD4, 0x55BFD4, 0xAABFD4, 0xFFBFD4, 0x00DFD4, 0x55DFD4, 0xAADFD4, 0xFFDFD4,
  0x00FFD4, 0x55FFD4, 0xAAFFD4, 0xFFFFD4,
-
            0x5500FF, 0xAA00FF, 0x001FFF, 0x551FFF, 0xAA1FFF, 0xFF1FFF,
  0x003FFF, 0x553FFF, 0xAA3FFF, 0xFF3FFF, 0x005FFF, 0x555FFF, 0xAA5FFF, 0xFF5FFF,
  0x007FFF, 0x557FFF, 0xAA7FFF, 0xFF7FFF, 0x009FFF, 0x559FFF, 0xAA9FFF, 0xFF9FFF,
  0x00BFFF, 0x55BFFF, 0xAABFFF, 0xFFBFFF, 0x00DFFF, 0x55DFFF, 0xAADFFF, 0xFFDFFF,
            0x55FFFF, 0xAAFFFF,
-
  0xFFCCCC, 0xFFCCFF, 0xFFFF33, 0xFFFF66, 0xFFFF99, 0xFFFFCC,
-
  0x007F00, 0x557F00, 0xAA7F00, 0xFF7F00, 0x009F00, 0x559F00, 0xAA9F00, 0xFF9F00,
  0x00BF00, 0x55BF00, 0xAABF00, 0xFFBF00, 0x00DF00, 0x55DF00, 0xAADF00, 0xFFDF00,
            0x55FF00, 0xAAFF00,
-
  0x00002A, 0x55002A, 0xAA002A, 0xFF002A, 0x001F2A, 0x551F2A, 0xAA1F2A, 0xFF1F2A,
  0x003F2A, 0x553F2A,
-
                                                              0xF0FBFF, 0xA4A0A0,
  0xC0C0C0, 0x0000FF, 0x00FF00, 0x00FFFF, 0xFF0000, 0xFF00FF, 0xFFFF00, 0xFFFFFF
-
 ];
 function regGWorldDefCharInfo( i ){
  newGWorldCharInfo( i );
@@ -5380,9 +5370,9 @@ function loadExtFuncFile(){
   }
  }
 }
-function onHttpSetRequestHeader( header, value ){
-}
-function onHttpResponse( request, data ){
+window.onHttpSetRequestHeader = function( header, value ){
+};
+window.onHttpResponse = function( request, data ){
  extFuncData[loadNum] = splitData( data );
  data = "";
  for( var i = 0; i < extFuncData[loadNum].length; i++ ){
@@ -5398,10 +5388,10 @@ function onHttpResponse( request, data ){
  }
  loadNum++;
  loadExtFuncFile();
-}
-function onHttpError( request, status ){
+};
+window.onHttpError = function( request, status ){
  loading = false;
-}
+};
 function loadExtFuncFile2(){
  var i;
  if( electron != null ){
@@ -5498,13 +5488,13 @@ function extFuncName( str ){
  }
  return "";
 }
-function getExtFuncDataDirect( func ){
+window.getExtFuncDataDirect = function( func ){
  if( (func.charAt( 0 ) == "!") && (func.length == 2) ){
   return splitData( getFunc( func.charAt( 1 ) ) );
  }
  return null;
-}
-function getExtFuncDataNameSpace( func ){
+};
+window.getExtFuncDataNameSpace = function( func ){
  for( var i = 0; i < extFuncFile.length; i++ ){
   if( extFuncName( extFuncFile[i] ).toLowerCase() == func.toLowerCase() ){
    if( i < extFuncData.length ){
@@ -5520,7 +5510,7 @@ function getExtFuncDataNameSpace( func ){
   }
  }
  return null;
-}
+};
 function regExtFuncButton( name ){
  var i;
  if( name.indexOf( ".inc" ) >= 0 ){
@@ -5550,14 +5540,14 @@ function setExtFuncData( index, data ){
  loadNum++;
  nativeRequest.send( "load_extfunc/" + extFuncFile[loadNum] );
 }
-function mainProc( parentProc, parentParam, func, funcParam, childProc, childParam ){
+window.mainProc = function( parentProc, parentParam, func, funcParam, childProc, childParam ){
  var ret;
 try {
  ret = childProc.mainLoop( func, childParam, funcParam, parentParam );
 } catch( e ){ catchError( e ); }
  return ret;
-}
-function assertProc( num, func ){
+};
+window.assertProc = function( num, func ){
  con.newLine();
  if( (func != null) && (func.length > 0) ){
   if( englishFlag ) con.print( func + ": " );
@@ -5570,7 +5560,7 @@ function assertProc( num, func ){
  if( englishFlag ) con.println( "Error " + intToString( _CLIP_ERR_ASSERT, 16, 4 ) + ":" + consoleBreak() + "Failed to assert." );
  else con.println( "エラー(" + intToString( _CLIP_ERR_ASSERT, 16, 4 ) + "):" + consoleBreak() + "アサートに失敗しました" );
  return retAssertProc;
-}
+};
 function getErrorString( err, num, func, token ){
  var string = new String();
  var error = getProcErrorDefString( err, token, topParam._calculator, englishFlag );
@@ -5588,7 +5578,7 @@ function getErrorString( err, num, func, token ){
  }
  return string;
 }
-function errorProc( err, num, func, token ){
+window.errorProc = function( err, num, func, token ){
  if( silentErr ){
   procError.add( err, num, func, token );
  } else {
@@ -5598,8 +5588,8 @@ function errorProc( err, num, func, token ){
    con.println( string );
   }
  }
-}
-function printWarn( warn, num, func ){
+};
+window.printWarn = function( warn, num, func ){
  con.newLine();
  if( (func != null) && (func.length > 0) ){
   if( englishFlag ) con.print( func + ": " );
@@ -5611,8 +5601,8 @@ function printWarn( warn, num, func ){
  }
  if( englishFlag ) con.println( "Warning:" + consoleBreak() + warn );
  else con.println( "警告:" + consoleBreak() + warn );
-}
-function printError( error, num, func ){
+};
+window.printError = function( error, num, func ){
  con.newLine();
  if( (func != null) && (func.length > 0) ){
   if( englishFlag ) con.print( func + ": " );
@@ -5624,24 +5614,24 @@ function printError( error, num, func ){
  }
  if( englishFlag ) con.println( "Error:" + consoleBreak() + error );
  else con.println( "エラー:" + consoleBreak() + error );
-}
-function doFuncGColor( rgb ){
+};
+window.doFuncGColor = function( rgb ){
  return doFuncGColorBGR( rgb, COLOR_WIN );
-}
-function doFuncGColor24( index ){
+};
+window.doFuncGColor24 = function( index ){
  return _RGB2BGR( COLOR_WIN[index] );
-}
-function doFuncEval( parentProc, childProc, childParam, string, value ){
+};
+window.doFuncEval = function( parentProc, childProc, childParam, string, value ){
  var ret;
 try {
  ret = parentProc.doFuncEval( childProc, childParam, string, value );
 } catch( e ){ catchError( e ); }
  return ret;
-}
-function doCommandClear(){
+};
+window.doCommandClear = function(){
  con.clear();
-}
-function doCommandPrint( topPrint, flag ){
+};
+window.doCommandPrint = function( topPrint, flag ){
  var cur = topPrint;
  while( cur != null ){
   if( cur._string != null ){
@@ -5654,8 +5644,8 @@ function doCommandPrint( topPrint, flag ){
  if( flag ){
   con.println();
  }
-}
-function doCommandScan( topScan, proc, param ){
+};
+window.doCommandScan = function( topScan, proc, param ){
  var defString = new String();
  var newString = new String();
  var cur = topScan;
@@ -5668,39 +5658,39 @@ function doCommandScan( topScan, proc, param ){
   cur.setNewValue( newString, proc, param );
   cur = cur._next;
  }
-}
-function gWorldClear( gWorld, color ){
+};
+window.gWorldClear = function( gWorld, color ){
  canvasClear();
  canvasSetColor( COLOR_WIN[color] );
  canvasFill( 0, 0, gWorld._width, gWorld._height );
  canvasSetColor( COLOR_WIN[gWorld._color] );
-}
-function gWorldSetColor( gWorld, color ){
+};
+window.gWorldSetColor = function( gWorld, color ){
  canvasSetColor( COLOR_WIN[color] );
-}
-function gWorldPutColor( gWorld, x, y, color ){
+};
+window.gWorldPutColor = function( gWorld, x, y, color ){
  if( topProc._gUpdateFlag ){
   canvasSetColor( COLOR_WIN[color] );
   canvasPut( x, y );
   canvasSetColor( COLOR_WIN[gWorld._color] );
  }
-}
-function gWorldPut( gWorld, x, y ){
+};
+window.gWorldPut = function( gWorld, x, y ){
  if( topProc._gUpdateFlag ){
   canvasPut( x, y );
  }
-}
-function gWorldFill( gWorld, x, y, w, h ){
+};
+window.gWorldFill = function( gWorld, x, y, w, h ){
  if( topProc._gUpdateFlag ){
   canvasFill( x, y, w, h );
  }
-}
-function gWorldLine( gWorld, x1, y1, x2, y2 ){
+};
+window.gWorldLine = function( gWorld, x1, y1, x2, y2 ){
  if( topProc._gUpdateFlag ){
   canvasLine( x1, y1, x2, y2 );
  }
-}
-function gWorldTextColor( gWorld, text, x, y, color, right ){
+};
+window.gWorldTextColor = function( gWorld, text, x, y, color, right ){
  if( topProc._gUpdateFlag ){
   if( right ){
    x -= su.stringWidth( text );
@@ -5709,11 +5699,11 @@ function gWorldTextColor( gWorld, text, x, y, color, right ){
   canvasDrawString( text, x, y );
   canvasSetColor( COLOR_WIN[gWorld._color] );
  }
-}
-function doCommandGColor( index, rgb ){
+};
+window.doCommandGColor = function( index, rgb ){
  COLOR_WIN[index] = _RGB2BGR( rgb );
-}
-function doCommandGUpdate( gWorld ){
+};
+window.doCommandGUpdate = function( gWorld ){
  canvasClear();
  var image = gWorld._image;
  var offset = gWorld._offset;
@@ -5727,22 +5717,22 @@ function doCommandGUpdate( gWorld ){
   }
  }
  canvasSetColor( COLOR_WIN[gWorld._color] );
-}
-function doCommandPlot( parentProc, childProc, childParam, graph, start, end, step ){
+};
+window.doCommandPlot = function( parentProc, childProc, childParam, graph, start, end, step ){
  childParam._enableOpPow = true;
 try {
  initProcLoopCount();
  parentProc.doCommandPlot( childProc, childParam, graph, start, end, step );
 } catch( e ){ catchError( e ); }
-}
-function doCommandRePlot( parentProc, childProc, childParam, graph, start, end, step ){
+};
+window.doCommandRePlot = function( parentProc, childProc, childParam, graph, start, end, step ){
  childParam._enableOpPow = true;
 try {
  initProcLoopCount();
  parentProc.doCommandRePlot( childProc, childParam, graph, start, end, step );
 } catch( e ){ catchError( e ); }
-}
-function doCommandUsage( topUsage ){
+};
+window.doCommandUsage = function( topUsage ){
  common.setFont( 16, "Helvetica" );
  var usage = new String();
  var cur = topUsage;
@@ -5753,11 +5743,11 @@ function doCommandUsage( topUsage ){
   cur = cur._next;
  }
  document.getElementById( "graph_usage" ).innerHTML = usage;
-}
-function onStartPlot(){
+};
+window.onStartPlot = function(){
  silentErr = true;
-}
-function onEndPlot(){
+};
+window.onEndPlot = function(){
  silentErr = false;
  var err = new _Integer();
  var num = new _Integer();
@@ -5768,13 +5758,13 @@ function onEndPlot(){
   errorProc( err._val, num._val, func.str(), token.str() );
  }
  procError.delAll();
-}
-function onStartRePlot(){
+};
+window.onStartRePlot = function(){
  onStartPlot();
-}
-function onEndRePlot(){
+};
+window.onEndRePlot = function(){
  onEndPlot();
-}
+};
 function dummy(){}
 function updateGraphRadioAngType(){
  var type = new _Integer();
@@ -6343,39 +6333,39 @@ function doGraphEditTop(){
   graphUI.resetEnvOffset();
  }
 }
-function onGraphSetMode( _this, mode ){
+window.onGraphSetMode = function( _this, mode ){
  var saveIndex = graphIndex();
  for( var i = 0; i < 3; i++ ){
   _this._graph.selGraph( i );
   _this._graph.setMode( mode );
  }
  _this._graph.selGraph( saveIndex );
-}
-function onGraphSetIndex( _this, index ){
+};
+window.onGraphSetIndex = function( _this, index ){
  var saveIndex = graphIndex();
  for( var i = 0; i < 3; i++ ){
   _this._graph.selGraph( i );
   _this._graph.setIndex( index );
  }
  _this._graph.selGraph( saveIndex );
-}
-function onGraphSetLogScaleX( _this, base ){
+};
+window.onGraphSetLogScaleX = function( _this, base ){
  var saveIndex = graphIndex();
  for( var i = 0; i < 3; i++ ){
   _this._graph.selGraph( i );
   _this._graph.setLogScaleX( base );
  }
  _this._graph.selGraph( saveIndex );
-}
-function onGraphSetLogScaleY( _this, base ){
+};
+window.onGraphSetLogScaleY = function( _this, base ){
  var saveIndex = graphIndex();
  for( var i = 0; i < 3; i++ ){
   _this._graph.selGraph( i );
   _this._graph.setLogScaleY( base );
  }
  _this._graph.selGraph( saveIndex );
-}
-function onGraphClearExpr( _this ){
+};
+window.onGraphClearExpr = function( _this ){
  for( var i = 0; i < 3; i++ ){
   editExpr[i][0].delAll();
   editExpr[i][1].delAll();
@@ -6384,70 +6374,70 @@ function onGraphClearExpr( _this ){
  updateEditExpr();
  document.getElementById( "graph_edit_expr1" ).value = "";
  document.getElementById( "graph_edit_expr2" ).value = "";
-}
-function onGraphClearTable( _this ){
+};
+window.onGraphClearTable = function( _this ){
  for( var i = 0; i < 3; i++ ){
   listTable[i].delAll();
  }
  updateListTable( _this );
  writeProfileTable();
-}
-function onGraphUpdateStatic( _this ){
+};
+window.onGraphUpdateStatic = function( _this ){
  document.getElementById( "graph_static_expr1" ).innerHTML = _this._staticExpr1;
  document.getElementById( "graph_static_expr2" ).innerHTML = _this._staticExpr2;
  document.getElementById( "graph_static_x" ).innerHTML = _this._staticX;
  document.getElementById( "graph_static_y1" ).innerHTML = _this._staticY1;
  document.getElementById( "graph_static_y2" ).innerHTML = _this._staticY2;
-}
-function onGraphUpdateValue( _this ){
+};
+window.onGraphUpdateValue = function( _this ){
  document.getElementById( "graph_edit_trace_x" ).value = _this._editX;
  document.getElementById( "graph_edit_trace_y1" ).value = _this._editY1;
  document.getElementById( "graph_edit_trace_y2" ).value = _this._editY2;
-}
-function onGraphUpdatePitch( _this ){
+};
+window.onGraphUpdatePitch = function( _this ){
  document.getElementById( "graph_edit_min" ).value = _this._editMin;
  document.getElementById( "graph_edit_max" ).value = _this._editMax;
  document.getElementById( "graph_edit_pitch" ).value = _this._editPitch;
-}
-function onGraphUpdateEnvOffset( _this ){
+};
+window.onGraphUpdateEnvOffset = function( _this ){
  document.getElementById( "graph_edit_offset_x" ).value = _this._editEnvOffsetX;
  document.getElementById( "graph_edit_offset_y" ).value = _this._editEnvOffsetY;
  document.getElementById( "graph_edit_ratio_x" ).value = _this._editEnvRatioX;
  document.getElementById( "graph_edit_ratio_y" ).value = _this._editEnvRatioY;
-}
-function onGraphUpdateEnvWindow( _this ){
+};
+window.onGraphUpdateEnvWindow = function( _this ){
  document.getElementById( "graph_edit_left" ).value = _this._editEnvLeft;
  document.getElementById( "graph_edit_bottom" ).value = _this._editEnvBottom;
  document.getElementById( "graph_edit_right" ).value = _this._editEnvRight;
  document.getElementById( "graph_edit_top" ).value = _this._editEnvTop;
-}
-function onGraphStartPlot(){
+};
+window.onGraphStartPlot = function(){
  onStartPlot();
-}
-function onGraphEndPlot(){
+};
+window.onGraphEndPlot = function(){
  onEndPlot();
-}
-function onGraphStartRePlot(){
+};
+window.onGraphStartRePlot = function(){
  onStartRePlot();
-}
-function onGraphEndRePlot(){
+};
+window.onGraphEndRePlot = function(){
  onEndRePlot();
-}
-function isPC(){
+};
+window.isPC = function(){
  return common.isPC();
-}
-function onGraphMouseDown(){
+};
+window.onGraphMouseDown = function(){
  graphUI.startTool( graphMouseX(), graphMouseY() );
-}
-function onGraphMouseMove(){
+};
+window.onGraphMouseMove = function(){
  graphUI.moveTool( graphMouseX(), graphMouseY() );
-}
-function onGraphMouseOut(){
+};
+window.onGraphMouseOut = function(){
  onGraphMouseUp();
-}
-function onGraphMouseOver(){
-}
-function onGraphMouseUp(){
+};
+window.onGraphMouseOver = function(){
+};
+window.onGraphMouseUp = function(){
  graphUI.endTool();
  switch( graphUI._tool ){
  case 0:
@@ -6457,14 +6447,14 @@ function onGraphMouseUp(){
   writeProfileWindow();
   break;
  }
-}
-function onGraphTouchStart(){
+};
+window.onGraphTouchStart = function(){
  graphUI.startTool( graphTouchX( 0 ), graphTouchY( 0 ) );
-}
-function onGraphTouchMove(){
+};
+window.onGraphTouchMove = function(){
  graphUI.moveTool( graphTouchX( 0 ), graphTouchY( 0 ) );
-}
-function onGraphTouchEnd(){
+};
+window.onGraphTouchEnd = function(){
  graphUI.endTool();
  switch( graphUI._tool ){
  case 0:
@@ -6474,7 +6464,7 @@ function onGraphTouchEnd(){
   writeProfileWindow();
   break;
  }
-}
+};
 function setMenu( newMenu ){
  if( menu == 5 ){
   for( var i = 65; i <= 90; i++ ){
@@ -7576,7 +7566,7 @@ function doCheckCalculator(){
  changeExpr();
  writeProfileInt( "ENV_", "Calculator", topParam._calculator ? 1 : 0 );
 }
-function onGraphInitEnv( _this ){
+window.onGraphInitEnv = function( _this ){
  _this._mode = getProfileInt( "ENV_", "Mode", 0 );
  _this._rePlotModeFlag = (getProfileInt( "ENV_", "RePlotMode" , 1 ) == 1);
  _this._rePlotAngleFlag = (getProfileInt( "ENV_", "RePlotAngle" , 1 ) == 1);
@@ -7622,7 +7612,7 @@ function onGraphInitEnv( _this ){
  }
  _this._param._calculator = (calculatorMode == 1);
  colorBack = COLOR_WIN[_this.indexToColor( _this._colorBack )];
-}
+};
 function getProfileVar(){
  for( var i = 65; i <= 90; i++ ){
   var val = parseFloat( getProfileString( "VAR_", String.fromCharCode( i ), "0.0" ) );
@@ -7663,8 +7653,8 @@ function writeProfileExpr(){
   writeProfileString( "EXPR" + (i + 1) + "_", "2", expr.str() );
  }
 }
-function onEditExprUpdateSelAll( id, flag ){
-}
+window.onEditExprUpdateSelAll = function( id, flag ){
+};
 function getProfileLogExpr(){
  var expr = new String();
  beginGetProfile( "LOG_" + "Expr" );
@@ -7975,7 +7965,7 @@ function onContentBase64( data ){
 function onInputFileLoadImage( name, image ){
  onContentBase64( image.src );
 }
-function onKeyDown( key ){
+window.onKeyDown = function( key ){
  if( menu != 2 ){
   return false;
  }
@@ -8131,11 +8121,11 @@ function onKeyDown( key ){
  case 13: doButtonEnter(); return true;
  }
  return false;
-}
-function onKeyUp( key ){
+};
+window.onKeyUp = function( key ){
  if( (key == 16) && keyShiftOnly ){
   doButtonSHIFT();
   return true;
  }
  return false;
-}
+};

@@ -1,22 +1,13 @@
 var extFuncData = new Array();
 var extFuncFile2 = new Array();
 var extFuncData2 = new Array();
-
-
-
-
 var _EPS5 = 0.001;
 var _SQRT05 = 0.7071067811865475244008444;
-
-
 function _Complex( re, im ){
  this._re = (re == undefined) ? 0.0 : re;
  this._im = (im == undefined) ? 0.0 : im;
 }
-
 _Complex.prototype = {
-
-
  angToAng : function( oldType, newType ){
   if( oldType != newType ){
    switch( oldType ){
@@ -35,18 +26,12 @@ _Complex.prototype = {
    }
   }
  },
-
-
  setReal : function( re ){
-
 assert( re != undefined );
-
   this._re = re;
  },
  setImag : function( im ){
-
 assert( im != undefined );
-
   this._im = im;
  },
  polar : function( rho, theta ){
@@ -54,25 +39,17 @@ assert( im != undefined );
   this._re = rho * _COS( theta );
   this._im = rho * _SIN( theta );
  },
-
-
  real : function(){
   return this._re;
  },
  imag : function(){
   return this._im;
  },
-
-
  toFloat : function(){
   return this._re;
  },
-
-
  ass : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    this._re = r._re;
    this._im = r._im;
@@ -82,26 +59,18 @@ assert( r != undefined );
   }
   return this;
  },
-
-
  minus : function(){
   return new _Complex( -this._re, -this._im );
  },
-
-
  add : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    return new _Complex( this._re + r._re, this._im + r._im );
   }
   return new _Complex( this._re + r, this._im );
  },
  addAndAss : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    this._re += r._re;
    this._im += r._im;
@@ -110,21 +79,15 @@ assert( r != undefined );
   }
   return this;
  },
-
-
  sub : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    return new _Complex( this._re - r._re, this._im - r._im );
   }
   return new _Complex( this._re - r, this._im );
  },
  subAndAss : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    this._re -= r._re;
    this._im -= r._im;
@@ -133,12 +96,8 @@ assert( r != undefined );
   }
   return this;
  },
-
-
  mul : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    if( r._im == 0.0 ){
     return new _Complex( this._re * r._re, this._im * r._re );
@@ -148,9 +107,7 @@ assert( r != undefined );
   return new _Complex( this._re * r, this._im * r );
  },
  mulAndAss : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    if( r._im == 0.0 ){
     this._re *= r._re;
@@ -166,12 +123,8 @@ assert( r != undefined );
   }
   return this;
  },
-
-
  div : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    if( r._im == 0.0 ){
     return new _Complex( this._re / r._re, this._im / r._re );
@@ -188,9 +141,7 @@ assert( r != undefined );
   return new _Complex( this._re / r, this._im / r );
  },
  divAndAss : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    if( r._im == 0.0 ){
     this._re /= r._re;
@@ -214,12 +165,8 @@ assert( r != undefined );
   }
   return this;
  },
-
-
  mod : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    if( r._im == 0.0 ){
     return new _Complex( this._re % r._re, this._im % r._re );
@@ -234,9 +181,7 @@ assert( r != undefined );
   return new _Complex( this._re % r, this._im % r );
  },
  modAndAss : function( r ){
-
 assert( r != undefined );
-
   if( r instanceof _Complex ){
    if( r._im == 0.0 ){
     this._re = this._re % r._re;
@@ -255,8 +200,6 @@ assert( r != undefined );
   }
   return this;
  },
-
-
  equal : function( r ){
   if( r instanceof _Complex ){
    return (this._re == r._re) && (this._im == r._im);
@@ -269,8 +212,6 @@ assert( r != undefined );
   }
   return (this._re != r) || (this._im != 0.0);
  },
-
-
  fabs : function(){
   if( this._re == 0.0 ){
    return _ABS( this._im );
@@ -285,23 +226,15 @@ assert( r != undefined );
   var t = this._im / this._re;
   return _ABS( this._re ) * _SQRT( 1.0 + t * t );
  },
-
-
  farg : function(){
   return fatan2( this._im, this._re );
  },
-
-
  fnorm : function(){
   return this._re * this._re + this._im * this._im;
  },
-
-
  conjg : function(){
   return new _Complex( this._re, -this._im );
  },
-
-
  sin : function(){
   if( this._im == 0.0 ){
    return floatToComplex( fsin( this._re ) );
@@ -313,8 +246,6 @@ assert( r != undefined );
    _COS( re ) * fsinh( im )
    );
  },
-
-
  cos : function(){
   if( this._im == 0.0 ){
    return floatToComplex( fcos( this._re ) );
@@ -326,8 +257,6 @@ assert( r != undefined );
    -_SIN( re ) * fsinh( im )
    );
  },
-
-
  tan : function(){
   if( this._im == 0.0 ){
    return floatToComplex( ftan( this._re ) );
@@ -343,8 +272,6 @@ assert( r != undefined );
    fsinh( im2 ) / d
    );
  },
-
-
  asin : function(){
   if( this._im == 0.0 ){
    if( (this._re < -1.0) || (this._re > 1.0) ){
@@ -356,15 +283,12 @@ assert( r != undefined );
     return floatToComplex( fasin( this._re ) );
    }
   }
-
   var i = new _Complex( 0.0, 1.0 );
   var c = i.minus().mul( i.mul( this ).add( this.sqr().minus().add( 1.0 ).sqrt() ).log() );
   c._re = _radToAng( c._re );
   c._im = _radToAng( c._im );
   return c;
  },
-
-
  acos : function(){
   if( this._im == 0.0 ){
    if( (this._re < -1.0) || (this._re > 1.0) ){
@@ -376,19 +300,12 @@ assert( r != undefined );
     return floatToComplex( facos( this._re ) );
    }
   }
-
-
-
-
-
   var i = new _Complex( 0.0, 1.0 );
   var c = i.mul( this.sub( i.mul( this.sqr().minus().add( 1.0 ).sqrt() ) ).log() );
   c._re = _radToAng( c._re );
   c._im = _radToAng( c._im );
   return c;
  },
-
-
  atan : function(){
   if( this._im == 0.0 ){
    return floatToComplex( fatan( this._re ) );
@@ -397,15 +314,12 @@ assert( r != undefined );
   if( d.equal( 0.0 ) ){
    setComplexError();
   }
-
   var i = new _Complex( 0.0, 1.0 );
   var c = i.mul( i.add( this ).div( d ).log() ).mul( 0.5 );
   c._re = _radToAng( c._re );
   c._im = _radToAng( c._im );
   return c;
  },
-
-
  sinh : function(){
   if( this._im == 0.0 ){
    return floatToComplex( fsinh( this._re ) );
@@ -415,8 +329,6 @@ assert( r != undefined );
    fcosh( this._re ) * _SIN( this._im )
    );
  },
-
-
  cosh : function(){
   if( this._im == 0.0 ){
    return floatToComplex( fcosh( this._re ) );
@@ -426,8 +338,6 @@ assert( r != undefined );
    fsinh( this._re ) * _SIN( this._im )
    );
  },
-
-
  tanh : function(){
   if( this._im == 0.0 ){
    return floatToComplex( ftanh( this._re ) );
@@ -443,17 +353,12 @@ assert( r != undefined );
    _SIN( im2 ) / d
    );
  },
-
-
  asinh : function(){
   if( this._im == 0.0 ){
    return floatToComplex( fasinh( this._re ) );
   }
-
   return this.add( this.sqr().add( 1.0 ).sqrt() ).log();
  },
-
-
  acosh : function(){
   if( this._im == 0.0 ){
    if( this._re < 1.0 ){
@@ -465,11 +370,8 @@ assert( r != undefined );
     return floatToComplex( facosh( this._re ) );
    }
   }
-
   return this.add( this.sqr().sub( 1.0 ).sqrt() ).log();
  },
-
-
  atanh : function(){
   if( this._im == 0.0 ){
    if( (this._re <= -1.0) || (this._re >= 1.0) ){
@@ -485,27 +387,20 @@ assert( r != undefined );
   if( d.equal( 0.0 ) ){
    setComplexError();
   }
-
   return this.add( 1.0 ).div( d ).log().mul( 0.5 );
  },
-
-
  ceil : function(){
   return new _Complex(
    _CEIL( this._re ),
    _CEIL( this._im )
    );
  },
-
-
  floor : function(){
   return new _Complex(
    _FLOOR( this._re ),
    _FLOOR( this._im )
    );
  },
-
-
  exp : function(){
   if( this._im == 0.0 ){
    return floatToComplex( _EXP( this._re ) );
@@ -527,8 +422,6 @@ assert( r != undefined );
    e * _SIN( im )
    );
  },
-
-
  log : function(){
   if( this._im == 0.0 ){
    if( this._re <= 0.0 ){
@@ -561,40 +454,30 @@ assert( r != undefined );
    _ATAN2( this._im, this._re ) * _NORMALIZE
    );
  },
-
-
  pow : function( y ){
   if( y instanceof _Complex ){
    if( y._im == 0.0 ){
     if( this._im == 0.0 ){
      return floatToComplex( _POW( this._re, y._re ) );
     }
-
     return this.log().mul( y._re ).exp();
    }
    if( this._im == 0.0 ){
-
     return y.mul( _LOG( this._re ) ).exp();
    }
-
    return this.log().mul( y ).exp();
   }
   if( this._im == 0.0 ){
    return floatToComplex( _POW( this._re, y ) );
   }
-
   return this.log().mul( y ).exp();
  },
-
-
  sqr : function(){
   if( this._im == 0.0 ){
    return floatToComplex( this._re * this._re );
   }
   return new _Complex( this._re * this._re - this._im * this._im, this._re * this._im + this._im * this._re );
  },
-
-
  sqrt : function(){
   if( this._im == 0.0 ){
    if( this._re < 0.0 ){
@@ -626,9 +509,7 @@ assert( r != undefined );
    -_SQRT05 * r
    );
  }
-
 };
-
 function getComplex( c, re , im ){
  re.set( c._re );
  im.set( c._im );
@@ -638,26 +519,18 @@ function setComplex( c, re, im ){
  c._im = im;
  return c;
 }
-
 function dupComplex( x ){
  return new _Complex( x._re, x._im );
 }
-
 function floatToComplex( x ){
  return new _Complex( x, 0.0 );
 }
-
-
 function _radToAng( rad ){
  return complexIsRad() ? rad : rad * complexAngCoef() / _PI;
 }
-
-
 function _angToRad( ang ){
  return complexIsRad() ? ang : ang * _PI / complexAngCoef();
 }
-
-
 function fsin( x ){
  return _SIN( _angToRad( x ) );
 }
@@ -16626,7 +16499,6 @@ function defProcFunction(){
  if( window.doCommandPlot == undefined ) window.doCommandPlot = function( parentProc, childProc, childParam, graph, start, end, step ){};
  if( window.doCommandRePlot == undefined ) window.doCommandRePlot = function( parentProc, childProc, childParam, graph, start, end, step ){};
  if( window.doCommandUsage == undefined ) window.doCommandUsage = function( topUsage ){};
- if( window.doCustomCommand == undefined ) window.doCustomCommand = function( _this, param, code, token ){ return 0x2140 ; };
  if( window.skipCommandLog == undefined ) window.skipCommandLog = function(){ return true; };
  if( window.doCommandLog == undefined ) window.doCommandLog = function( topPrint ){};
  if( window.doCommandDumpVar == undefined ) window.doCommandDumpVar = function( param, index ){};
@@ -24457,9 +24329,9 @@ function loadExtFuncFile(){
   }
  }
 }
-function onHttpSetRequestHeader( header, value ){
-}
-function onHttpResponse( request, data ){
+window.onHttpSetRequestHeader = function( header, value ){
+};
+window.onHttpResponse = function( request, data ){
  extFuncData[loadNum] = splitData( data );
  data = "";
  for( var i = 0; i < extFuncData[loadNum].length; i++ ){
@@ -24475,10 +24347,10 @@ function onHttpResponse( request, data ){
  }
  loadNum++;
  loadExtFuncFile();
-}
-function onHttpError( request, status ){
+};
+window.onHttpError = function( request, status ){
  loading = false;
-}
+};
 function loadExtFuncFile2(){
  var i;
  if( electron != null ){
@@ -24575,13 +24447,13 @@ function extFuncName( str ){
  }
  return "";
 }
-function getExtFuncDataDirect( func ){
+window.getExtFuncDataDirect = function( func ){
  if( (func.charAt( 0 ) == "!") && (func.length == 2) ){
   return splitData( getFunc( func.charAt( 1 ) ) );
  }
  return null;
-}
-function getExtFuncDataNameSpace( func ){
+};
+window.getExtFuncDataNameSpace = function( func ){
  for( var i = 0; i < extFuncFile.length; i++ ){
   if( extFuncName( extFuncFile[i] ).toLowerCase() == func.toLowerCase() ){
    if( i < extFuncData.length ){
@@ -24597,7 +24469,7 @@ function getExtFuncDataNameSpace( func ){
   }
  }
  return null;
-}
+};
 function regExtFuncButton( name ){
  var i;
  if( name.indexOf( ".inc" ) >= 0 ){
@@ -24627,14 +24499,14 @@ function setExtFuncData( index, data ){
  loadNum++;
  nativeRequest.send( "load_extfunc/" + extFuncFile[loadNum] );
 }
-function mainProc( parentProc, parentParam, func, funcParam, childProc, childParam ){
+window.mainProc = function( parentProc, parentParam, func, funcParam, childProc, childParam ){
  var ret;
 try {
  ret = childProc.mainLoop( func, childParam, funcParam, parentParam );
 } catch( e ){ catchError( e ); }
  return ret;
-}
-function assertProc( num, func ){
+};
+window.assertProc = function( num, func ){
  con.newLine();
  if( (func != null) && (func.length > 0) ){
   if( englishFlag ) con.print( func + ": " );
@@ -24647,7 +24519,7 @@ function assertProc( num, func ){
  if( englishFlag ) con.println( "Error " + intToString( 0x2001, 16, 4 ) + ":" + consoleBreak() + "Failed to assert." );
  else con.println( "エラー(" + intToString( 0x2001, 16, 4 ) + "):" + consoleBreak() + "アサートに失敗しました" );
  return retAssertProc;
-}
+};
 function getErrorString( err, num, func, token ){
  var string = new String();
  var error = getProcErrorDefString( err, token, topParam._calculator, englishFlag );
@@ -24665,7 +24537,7 @@ function getErrorString( err, num, func, token ){
  }
  return string;
 }
-function errorProc( err, num, func, token ){
+window.errorProc = function( err, num, func, token ){
  if( silentErr ){
   procError.add( err, num, func, token );
  } else {
@@ -24675,8 +24547,8 @@ function errorProc( err, num, func, token ){
    con.println( string );
   }
  }
-}
-function printWarn( warn, num, func ){
+};
+window.printWarn = function( warn, num, func ){
  con.newLine();
  if( (func != null) && (func.length > 0) ){
   if( englishFlag ) con.print( func + ": " );
@@ -24688,8 +24560,8 @@ function printWarn( warn, num, func ){
  }
  if( englishFlag ) con.println( "Warning:" + consoleBreak() + warn );
  else con.println( "警告:" + consoleBreak() + warn );
-}
-function printError( error, num, func ){
+};
+window.printError = function( error, num, func ){
  con.newLine();
  if( (func != null) && (func.length > 0) ){
   if( englishFlag ) con.print( func + ": " );
@@ -24701,24 +24573,24 @@ function printError( error, num, func ){
  }
  if( englishFlag ) con.println( "Error:" + consoleBreak() + error );
  else con.println( "エラー:" + consoleBreak() + error );
-}
-function doFuncGColor( rgb ){
+};
+window.doFuncGColor = function( rgb ){
  return doFuncGColorBGR( rgb, COLOR_WIN );
-}
-function doFuncGColor24( index ){
+};
+window.doFuncGColor24 = function( index ){
  return _RGB2BGR( COLOR_WIN[index] );
-}
-function doFuncEval( parentProc, childProc, childParam, string, value ){
+};
+window.doFuncEval = function( parentProc, childProc, childParam, string, value ){
  var ret;
 try {
  ret = parentProc.doFuncEval( childProc, childParam, string, value );
 } catch( e ){ catchError( e ); }
  return ret;
-}
-function doCommandClear(){
+};
+window.doCommandClear = function(){
  con.clear();
-}
-function doCommandPrint( topPrint, flag ){
+};
+window.doCommandPrint = function( topPrint, flag ){
  var cur = topPrint;
  while( cur != null ){
   if( cur._string != null ){
@@ -24731,8 +24603,8 @@ function doCommandPrint( topPrint, flag ){
  if( flag ){
   con.println();
  }
-}
-function doCommandScan( topScan, proc, param ){
+};
+window.doCommandScan = function( topScan, proc, param ){
  var defString = new String();
  var newString = new String();
  var cur = topScan;
@@ -24745,39 +24617,39 @@ function doCommandScan( topScan, proc, param ){
   cur.setNewValue( newString, proc, param );
   cur = cur._next;
  }
-}
-function gWorldClear( gWorld, color ){
+};
+window.gWorldClear = function( gWorld, color ){
  canvasClear();
  canvasSetColor( COLOR_WIN[color] );
  canvasFill( 0, 0, gWorld._width, gWorld._height );
  canvasSetColor( COLOR_WIN[gWorld._color] );
-}
-function gWorldSetColor( gWorld, color ){
+};
+window.gWorldSetColor = function( gWorld, color ){
  canvasSetColor( COLOR_WIN[color] );
-}
-function gWorldPutColor( gWorld, x, y, color ){
+};
+window.gWorldPutColor = function( gWorld, x, y, color ){
  if( topProc._gUpdateFlag ){
   canvasSetColor( COLOR_WIN[color] );
   canvasPut( x, y );
   canvasSetColor( COLOR_WIN[gWorld._color] );
  }
-}
-function gWorldPut( gWorld, x, y ){
+};
+window.gWorldPut = function( gWorld, x, y ){
  if( topProc._gUpdateFlag ){
   canvasPut( x, y );
  }
-}
-function gWorldFill( gWorld, x, y, w, h ){
+};
+window.gWorldFill = function( gWorld, x, y, w, h ){
  if( topProc._gUpdateFlag ){
   canvasFill( x, y, w, h );
  }
-}
-function gWorldLine( gWorld, x1, y1, x2, y2 ){
+};
+window.gWorldLine = function( gWorld, x1, y1, x2, y2 ){
  if( topProc._gUpdateFlag ){
   canvasLine( x1, y1, x2, y2 );
  }
-}
-function gWorldTextColor( gWorld, text, x, y, color, right ){
+};
+window.gWorldTextColor = function( gWorld, text, x, y, color, right ){
  if( topProc._gUpdateFlag ){
   if( right ){
    x -= su.stringWidth( text );
@@ -24786,11 +24658,11 @@ function gWorldTextColor( gWorld, text, x, y, color, right ){
   canvasDrawString( text, x, y );
   canvasSetColor( COLOR_WIN[gWorld._color] );
  }
-}
-function doCommandGColor( index, rgb ){
+};
+window.doCommandGColor = function( index, rgb ){
  COLOR_WIN[index] = _RGB2BGR( rgb );
-}
-function doCommandGUpdate( gWorld ){
+};
+window.doCommandGUpdate = function( gWorld ){
  canvasClear();
  var image = gWorld._image;
  var offset = gWorld._offset;
@@ -24804,22 +24676,22 @@ function doCommandGUpdate( gWorld ){
   }
  }
  canvasSetColor( COLOR_WIN[gWorld._color] );
-}
-function doCommandPlot( parentProc, childProc, childParam, graph, start, end, step ){
+};
+window.doCommandPlot = function( parentProc, childProc, childParam, graph, start, end, step ){
  childParam._enableOpPow = true;
 try {
  initProcLoopCount();
  parentProc.doCommandPlot( childProc, childParam, graph, start, end, step );
 } catch( e ){ catchError( e ); }
-}
-function doCommandRePlot( parentProc, childProc, childParam, graph, start, end, step ){
+};
+window.doCommandRePlot = function( parentProc, childProc, childParam, graph, start, end, step ){
  childParam._enableOpPow = true;
 try {
  initProcLoopCount();
  parentProc.doCommandRePlot( childProc, childParam, graph, start, end, step );
 } catch( e ){ catchError( e ); }
-}
-function doCommandUsage( topUsage ){
+};
+window.doCommandUsage = function( topUsage ){
  common.setFont( 16, "Helvetica" );
  var usage = new String();
  var cur = topUsage;
@@ -24830,11 +24702,11 @@ function doCommandUsage( topUsage ){
   cur = cur._next;
  }
  document.getElementById( "graph_usage" ).innerHTML = usage;
-}
-function onStartPlot(){
+};
+window.onStartPlot = function(){
  silentErr = true;
-}
-function onEndPlot(){
+};
+window.onEndPlot = function(){
  silentErr = false;
  var err = new _Integer();
  var num = new _Integer();
@@ -24845,13 +24717,13 @@ function onEndPlot(){
   errorProc( err._val, num._val, func.str(), token.str() );
  }
  procError.delAll();
-}
-function onStartRePlot(){
+};
+window.onStartRePlot = function(){
  onStartPlot();
-}
-function onEndRePlot(){
+};
+window.onEndRePlot = function(){
  onEndPlot();
-}
+};
 function dummy(){}
 function updateGraphRadioAngType(){
  var type = new _Integer();
@@ -25420,39 +25292,39 @@ function doGraphEditTop(){
   graphUI.resetEnvOffset();
  }
 }
-function onGraphSetMode( _this, mode ){
+window.onGraphSetMode = function( _this, mode ){
  var saveIndex = graphIndex();
  for( var i = 0; i < 3; i++ ){
   _this._graph.selGraph( i );
   _this._graph.setMode( mode );
  }
  _this._graph.selGraph( saveIndex );
-}
-function onGraphSetIndex( _this, index ){
+};
+window.onGraphSetIndex = function( _this, index ){
  var saveIndex = graphIndex();
  for( var i = 0; i < 3; i++ ){
   _this._graph.selGraph( i );
   _this._graph.setIndex( index );
  }
  _this._graph.selGraph( saveIndex );
-}
-function onGraphSetLogScaleX( _this, base ){
+};
+window.onGraphSetLogScaleX = function( _this, base ){
  var saveIndex = graphIndex();
  for( var i = 0; i < 3; i++ ){
   _this._graph.selGraph( i );
   _this._graph.setLogScaleX( base );
  }
  _this._graph.selGraph( saveIndex );
-}
-function onGraphSetLogScaleY( _this, base ){
+};
+window.onGraphSetLogScaleY = function( _this, base ){
  var saveIndex = graphIndex();
  for( var i = 0; i < 3; i++ ){
   _this._graph.selGraph( i );
   _this._graph.setLogScaleY( base );
  }
  _this._graph.selGraph( saveIndex );
-}
-function onGraphClearExpr( _this ){
+};
+window.onGraphClearExpr = function( _this ){
  for( var i = 0; i < 3; i++ ){
   editExpr[i][0].delAll();
   editExpr[i][1].delAll();
@@ -25461,70 +25333,70 @@ function onGraphClearExpr( _this ){
  updateEditExpr();
  document.getElementById( "graph_edit_expr1" ).value = "";
  document.getElementById( "graph_edit_expr2" ).value = "";
-}
-function onGraphClearTable( _this ){
+};
+window.onGraphClearTable = function( _this ){
  for( var i = 0; i < 3; i++ ){
   listTable[i].delAll();
  }
  updateListTable( _this );
  writeProfileTable();
-}
-function onGraphUpdateStatic( _this ){
+};
+window.onGraphUpdateStatic = function( _this ){
  document.getElementById( "graph_static_expr1" ).innerHTML = _this._staticExpr1;
  document.getElementById( "graph_static_expr2" ).innerHTML = _this._staticExpr2;
  document.getElementById( "graph_static_x" ).innerHTML = _this._staticX;
  document.getElementById( "graph_static_y1" ).innerHTML = _this._staticY1;
  document.getElementById( "graph_static_y2" ).innerHTML = _this._staticY2;
-}
-function onGraphUpdateValue( _this ){
+};
+window.onGraphUpdateValue = function( _this ){
  document.getElementById( "graph_edit_trace_x" ).value = _this._editX;
  document.getElementById( "graph_edit_trace_y1" ).value = _this._editY1;
  document.getElementById( "graph_edit_trace_y2" ).value = _this._editY2;
-}
-function onGraphUpdatePitch( _this ){
+};
+window.onGraphUpdatePitch = function( _this ){
  document.getElementById( "graph_edit_min" ).value = _this._editMin;
  document.getElementById( "graph_edit_max" ).value = _this._editMax;
  document.getElementById( "graph_edit_pitch" ).value = _this._editPitch;
-}
-function onGraphUpdateEnvOffset( _this ){
+};
+window.onGraphUpdateEnvOffset = function( _this ){
  document.getElementById( "graph_edit_offset_x" ).value = _this._editEnvOffsetX;
  document.getElementById( "graph_edit_offset_y" ).value = _this._editEnvOffsetY;
  document.getElementById( "graph_edit_ratio_x" ).value = _this._editEnvRatioX;
  document.getElementById( "graph_edit_ratio_y" ).value = _this._editEnvRatioY;
-}
-function onGraphUpdateEnvWindow( _this ){
+};
+window.onGraphUpdateEnvWindow = function( _this ){
  document.getElementById( "graph_edit_left" ).value = _this._editEnvLeft;
  document.getElementById( "graph_edit_bottom" ).value = _this._editEnvBottom;
  document.getElementById( "graph_edit_right" ).value = _this._editEnvRight;
  document.getElementById( "graph_edit_top" ).value = _this._editEnvTop;
-}
-function onGraphStartPlot(){
+};
+window.onGraphStartPlot = function(){
  onStartPlot();
-}
-function onGraphEndPlot(){
+};
+window.onGraphEndPlot = function(){
  onEndPlot();
-}
-function onGraphStartRePlot(){
+};
+window.onGraphStartRePlot = function(){
  onStartRePlot();
-}
-function onGraphEndRePlot(){
+};
+window.onGraphEndRePlot = function(){
  onEndRePlot();
-}
-function isPC(){
+};
+window.isPC = function(){
  return common.isPC();
-}
-function onGraphMouseDown(){
+};
+window.onGraphMouseDown = function(){
  graphUI.startTool( graphMouseX(), graphMouseY() );
-}
-function onGraphMouseMove(){
+};
+window.onGraphMouseMove = function(){
  graphUI.moveTool( graphMouseX(), graphMouseY() );
-}
-function onGraphMouseOut(){
+};
+window.onGraphMouseOut = function(){
  onGraphMouseUp();
-}
-function onGraphMouseOver(){
-}
-function onGraphMouseUp(){
+};
+window.onGraphMouseOver = function(){
+};
+window.onGraphMouseUp = function(){
  graphUI.endTool();
  switch( graphUI._tool ){
  case 0:
@@ -25534,14 +25406,14 @@ function onGraphMouseUp(){
   writeProfileWindow();
   break;
  }
-}
-function onGraphTouchStart(){
+};
+window.onGraphTouchStart = function(){
  graphUI.startTool( graphTouchX( 0 ), graphTouchY( 0 ) );
-}
-function onGraphTouchMove(){
+};
+window.onGraphTouchMove = function(){
  graphUI.moveTool( graphTouchX( 0 ), graphTouchY( 0 ) );
-}
-function onGraphTouchEnd(){
+};
+window.onGraphTouchEnd = function(){
  graphUI.endTool();
  switch( graphUI._tool ){
  case 0:
@@ -25551,7 +25423,7 @@ function onGraphTouchEnd(){
   writeProfileWindow();
   break;
  }
-}
+};
 function setMenu( newMenu ){
  if( menu == 5 ){
   for( var i = 65; i <= 90; i++ ){
@@ -26653,7 +26525,7 @@ function doCheckCalculator(){
  changeExpr();
  writeProfileInt( "ENV_", "Calculator", topParam._calculator ? 1 : 0 );
 }
-function onGraphInitEnv( _this ){
+window.onGraphInitEnv = function( _this ){
  _this._mode = getProfileInt( "ENV_", "Mode", 0 );
  _this._rePlotModeFlag = (getProfileInt( "ENV_", "RePlotMode" , 1 ) == 1);
  _this._rePlotAngleFlag = (getProfileInt( "ENV_", "RePlotAngle" , 1 ) == 1);
@@ -26699,7 +26571,7 @@ function onGraphInitEnv( _this ){
  }
  _this._param._calculator = (calculatorMode == 1);
  colorBack = COLOR_WIN[_this.indexToColor( _this._colorBack )];
-}
+};
 function getProfileVar(){
  for( var i = 65; i <= 90; i++ ){
   var val = parseFloat( getProfileString( "VAR_", String.fromCharCode( i ), "0.0" ) );
@@ -26740,8 +26612,8 @@ function writeProfileExpr(){
   writeProfileString( "EXPR" + (i + 1) + "_", "2", expr.str() );
  }
 }
-function onEditExprUpdateSelAll( id, flag ){
-}
+window.onEditExprUpdateSelAll = function( id, flag ){
+};
 function getProfileLogExpr(){
  var expr = new String();
  beginGetProfile( "LOG_" + "Expr" );
@@ -27052,7 +26924,7 @@ function onContentBase64( data ){
 function onInputFileLoadImage( name, image ){
  onContentBase64( image.src );
 }
-function onKeyDown( key ){
+window.onKeyDown = function( key ){
  if( menu != 2 ){
   return false;
  }
@@ -27208,11 +27080,11 @@ function onKeyDown( key ){
  case 13: doButtonEnter(); return true;
  }
  return false;
-}
-function onKeyUp( key ){
+};
+window.onKeyUp = function( key ){
  if( (key == 16) && keyShiftOnly ){
   doButtonSHIFT();
   return true;
  }
  return false;
-}
+};
