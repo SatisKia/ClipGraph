@@ -3746,8 +3746,8 @@ function printAppVersion( version ){
 }
 function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFileIds, editorId ){
  var i;
- defGWorldFunction();
- defProcFunction();
+ defGWorldFunction( window );
+ defProcFunction( window );
  con = new _Console( conId );
  con.setMaxLen( conMaxLen );
  try {
