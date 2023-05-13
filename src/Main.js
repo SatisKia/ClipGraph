@@ -219,7 +219,7 @@ var nativeRequest;
 #include "KeyEvent.js"
 var keyShiftOnly = false;
 
-#include "Electron.js"
+#include "ElectronV2.js"
 var electron = null;
 
 var divEdit;

@@ -6,7 +6,7 @@ const mainIcon     = "favicon.ico";
 const mainTrayIcon = "trayicon.png";
 const mainPage     = "index.html";
 
-const { app, BrowserWindow, Menu, nativeImage, Tray, shell } = require( "electron" );
+const { app, BrowserWindow, globalShortcut, Menu, nativeImage, shell, Tray } = require( "electron" );
 const fs = require( "fs" );
 const path = require( "path" );
 
@@ -14,9 +14,15 @@ const boundsInfoPath   = path.join( app.getPath( "userData" ), "bounds-info.json
 const extFuncCachePath = path.join( app.getPath( "userData" ), "extfunc-cache.json" );
 const profilePath      = path.join( app.getPath( "home" ), "ClipGraph.env" );
 
+const singleLockFilePath   = path.join( app.getPath( "userData" ), "single_lock" );
+const requestFocusFilePath = path.join( app.getPath( "userData" ), "request_focus" );
+
 let mainWindow = null;
 let trayIcon;
 let contextMenu;
+
+let _globalShortcut = "Ctrl+Alt+G";
+let _globalShortcutRegistered = false;
 
 const createWindow = () => {
 	// バージョンの取得
@@ -50,13 +56,31 @@ const createWindow = () => {
 		"icon": mainIcon,
 		"frame": true
 	} );
+
+	// グローバルショートカットを登録
+	globalShortcut.register( _globalShortcut, () => {
+		_globalShortcutRegistered = true;
+		mainWindow.focus();
+	} );
+
 	mainWindow.on( "close", () => {
 		// ウィンドウ位置の保存
 		fs.writeFileSync( boundsInfoPath, JSON.stringify( mainWindow.getBounds() ) );
 	} );
 	mainWindow.on( "closed", () => {
+		// グローバルショートカットを登録解除
+		if( _globalShortcutRegistered ){
+			globalShortcut.unregister( _globalShortcut );
+		}
+
+		// 多重起動防止解除
+		singleUnlock();
+
 		mainWindow = null;
 	} );
+
+	// デベロッパーツール
+//	mainWindow.webContents.openDevTools({ mode: 'detach' });
 
 	// メイン・コンテンツ
 	mainWindow.loadURL( "file://" + __dirname + "/" + mainPage );
@@ -84,7 +108,60 @@ const createWindow = () => {
 	} );
 };
 
-app.on( "ready", createWindow );
+// 多重起動防止
+const singleLock = () => {
+	try {
+		let file = fs.openSync(singleLockFilePath, 'r');
+		fs.close(file);
+		try {
+			fs.writeFileSync(requestFocusFilePath, "");
+		} catch (e) {
+		}
+		return false;
+	} catch (e) {
+	}
+	try {
+		fs.writeFileSync(singleLockFilePath, "");
+	} catch (e) {
+		// 権限等で書き込み失敗した場合もtrueとする
+	}
+	return true;
+};
+const singleUnlock = () => {
+	try {
+		fs.unlinkSync(singleLockFilePath);
+	} catch (e) {
+	}
+};
+
+setInterval( function(){
+	try {
+		let file = fs.openSync(requestFocusFilePath, 'r');
+		fs.close(file);
+		try {
+			fs.unlinkSync(requestFocusFilePath);
+		} catch (e) {
+		}
+
+		// アプリを手前に持ってくる
+		if( mainWindow != null ){
+			let saveFlag = mainWindow.isAlwaysOnTop();
+			mainWindow.setAlwaysOnTop( true );
+			mainWindow.setAlwaysOnTop( saveFlag );
+		}
+	} catch (e) {
+	}
+}, 500 );
+
+app.on( "ready", () => {
+	// 多重起動防止
+	if( !singleLock() ){
+		app.quit();
+		return;
+	}
+
+	createWindow();
+} );
 
 app.on( "window-all-closed", () => {
 	if( process.platform != "darwin" ){
