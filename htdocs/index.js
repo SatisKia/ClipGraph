@@ -60,7 +60,7 @@ const createWindow = () => {
 	// グローバルショートカットを登録
 	globalShortcut.register( _globalShortcut, () => {
 		_globalShortcutRegistered = true;
-		mainWindow.focus();
+		focusMainWindow();
 	} );
 
 	mainWindow.on( "close", () => {
@@ -88,12 +88,12 @@ const createWindow = () => {
 	// トレイアイコン
 	trayIcon = new Tray( nativeImage.createFromPath( __dirname + "/" + mainTrayIcon ) );
 	trayIcon.on( "click", () => {
-		mainWindow.focus();
+		focusMainWindow();
 	} );
 
 	// トレイアイコンにメニューを設定
 	contextMenu = Menu.buildFromTemplate( [
-		{ "label": (exports.isEnglish ? "Show" : "表示"), "click": () => { mainWindow.focus(); } },
+		{ "label": (exports.isEnglish ? "Show" : "表示"), "click": () => { focusMainWindow(); } },
 		{ "label": (exports.isEnglish ? "Quit" : "終了"), "click": () => { mainWindow.close(); } }
 	] );
 	trayIcon.setContextMenu( contextMenu );
@@ -106,6 +106,15 @@ const createWindow = () => {
 		event.preventDefault();
 		shell.openExternal( url );
 	} );
+};
+
+// アプリを手前に持ってくる
+const focusMainWindow = () => {
+	if( mainWindow != null ){
+		let saveFlag = mainWindow.isAlwaysOnTop();
+		mainWindow.setAlwaysOnTop( true );
+		mainWindow.setAlwaysOnTop( saveFlag );
+	}
 };
 
 // 多重起動防止
@@ -144,11 +153,7 @@ setInterval( function(){
 		}
 
 		// アプリを手前に持ってくる
-		if( mainWindow != null ){
-			let saveFlag = mainWindow.isAlwaysOnTop();
-			mainWindow.setAlwaysOnTop( true );
-			mainWindow.setAlwaysOnTop( saveFlag );
-		}
+		focusMainWindow();
 	} catch (e) {
 	}
 }, 500 );
