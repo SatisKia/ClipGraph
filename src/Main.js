@@ -872,7 +872,7 @@ function setHeight( height ){
 		cssSetPropertyValue( ".div_gworld", "height", "" + canvasHeight + "px" );
 		canvas.element().setAttribute( "height", "" + canvasHeight );
 		procGWorld().create( canvas.width(), canvas.height(), false );
-		graphUI.redraw();
+		graphUI.updateSize();
 	}
 
 	updateButtonHeight();

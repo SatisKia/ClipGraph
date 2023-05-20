@@ -118,6 +118,12 @@ function GraphUI( proc, param ){
 
 GraphUI.prototype = {
 
+	updateSize : function(){
+		onGraphInitEnv( this );
+		this._setWindow();
+		this.redraw();
+	},
+
 	setRePlotModeFlag : function( flag ){
 		this._rePlotModeFlag = flag;
 	},
