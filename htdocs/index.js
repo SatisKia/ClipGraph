@@ -118,16 +118,33 @@ const focusMainWindow = () => {
 };
 
 // 多重起動防止
-const singleLock = () => {
+const requestFocus = () => {
 	try {
-		let file = fs.openSync(singleLockFilePath, 'r');
+		let file = fs.openSync(requestFocusFilePath, 'r');
 		fs.close(file);
 		try {
-			fs.writeFileSync(requestFocusFilePath, "");
+			fs.unlinkSync(requestFocusFilePath);
 		} catch (e) {
 		}
-		return false;
+		return true;
 	} catch (e) {
+		// 手前表示要求ファイルが存在しない場合、ここに来る
+	}
+	return false;
+};
+const singleLock = () => {
+	if( !requestFocus() ){
+		try {
+			let file = fs.openSync(singleLockFilePath, 'r');
+			fs.close(file);
+			try {
+				// 存在していたので、手前へ表示させるためのファイルを作成
+				fs.writeFileSync(requestFocusFilePath, "");
+			} catch (e) {
+			}
+			return false;
+		} catch (e) {
+		}
 	}
 	try {
 		fs.writeFileSync(singleLockFilePath, "");
@@ -144,17 +161,9 @@ const singleUnlock = () => {
 };
 
 setInterval( function(){
-	try {
-		let file = fs.openSync(requestFocusFilePath, 'r');
-		fs.close(file);
-		try {
-			fs.unlinkSync(requestFocusFilePath);
-		} catch (e) {
-		}
-
+	if( requestFocus() ){
 		// アプリを手前に持ってくる
 		focusMainWindow();
-	} catch (e) {
 	}
 }, 500 );
 
