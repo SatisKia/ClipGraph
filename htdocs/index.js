@@ -22,7 +22,6 @@ let trayIcon;
 let contextMenu;
 
 let _globalShortcut = "Ctrl+Alt+G";
-let _globalShortcutRegistered = false;
 
 const createWindow = () => {
 	// バージョンの取得
@@ -59,7 +58,6 @@ const createWindow = () => {
 
 	// グローバルショートカットを登録
 	globalShortcut.register( _globalShortcut, () => {
-		_globalShortcutRegistered = true;
 		focusMainWindow();
 	} );
 
@@ -69,9 +67,7 @@ const createWindow = () => {
 	} );
 	mainWindow.on( "closed", () => {
 		// グローバルショートカットを登録解除
-		if( _globalShortcutRegistered ){
-			globalShortcut.unregister( _globalShortcut );
-		}
+		globalShortcut.unregister( _globalShortcut );
 
 		// 多重起動防止解除
 		singleUnlock();
