@@ -5010,7 +5010,7 @@ _Func.prototype = {
   }
   var cur = this._top;
   while( cur != null ){
-   if( name.toLowerCase() == cur._info._name.toLowerCase() ){
+   if( name == cur._info._name ){
     if( updateCnt ){
      cur._info._cnt++;
     }
@@ -5155,10 +5155,10 @@ _Graph.prototype = {
   return this._info[this._curIndex]._expr2;
  },
  _checkExpr : function( expr, func ){
-  var pos = expr.toLowerCase().indexOf( func.toLowerCase() );
+  var pos = expr.indexOf( func );
   if( pos >= 0 ){
    if( expr.length > pos + func.length ){
-    var chr = expr.toLowerCase().charAt( pos + func.length );
+    var chr = expr.charAt( pos + func.length );
     var chrs = "0123456789_abcdefghijklmnopqrstuvwxyz";
     if( chrs.indexOf( chr ) < 0 ){
      return true;
@@ -18077,7 +18077,7 @@ _Token.prototype = {
     }
    } else if( tmp.charAt( 0 ) == '!' ){
     cur._code = 14;
-    cur._token = tmp.substring( 1, len ).toLowerCase();
+    cur._token = tmp.substring( 1, len );
    } else if( tmp.charAt( 0 ) == '"' ){
     cur._code = 20;
     cur._token = new String();
@@ -18103,7 +18103,7 @@ _Token.prototype = {
       cur._token += tmp.charAt( i );
      }
     }
-   } else if( this.checkFunc( tmp.toLowerCase(), code ) ){
+   } else if( this.checkFunc( tmp, code ) ){
     cur._code = 13;
     cur._token = code._val;
    } else if( this.checkStat( tmp, code ) ){
@@ -18621,6 +18621,8 @@ _Token.prototype = {
         case '8':
         case '9':
         case '.':
+        case 'e':
+        case 'E':
          break;
         default:
          _break = true;
@@ -20068,7 +20070,7 @@ function _onInputFileChangeExtfunc( e ){
       }
      }
      var tmp = data.substring( top, top + 11 );
-     if( tmp.toLowerCase() == "#!namespace" ){
+     if( tmp == "#!NAMESPACE" ){
       var data2 = new _String( data );
       var data3 = data2.replaceNewLine().str();
       if( data3.indexOf( "\n" ) < 0 ){
