@@ -56,6 +56,27 @@ const createWindow = () => {
 		"frame": true
 	} );
 
+	// macOSメニューバー
+	if( process.platform == "darwin" ){
+		Menu.setApplicationMenu(Menu.buildFromTemplate([
+			{
+				label: "",
+				submenu: [
+					{
+						role: "about",
+					},
+					{
+						label: _isEnglish ? "Quit" : "終了",
+						accelerator: "Command+Q",
+						click() {
+							app.quit();
+						},
+					},
+				],
+			},
+		]));
+	}
+
 	// グローバルショートカットを登録
 	globalShortcut.register( _globalShortcut, () => {
 		focusMainWindow();
