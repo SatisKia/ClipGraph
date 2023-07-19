@@ -3,7 +3,7 @@
 cd htdocs
 
 iconutil -c icns icon.iconset
-electron-packager . ClipGraph --app-version=4.2.5 --electron-version=2.0.0 --platform=darwin --arch=x64 --app-copyright="Copyright (C) SatisKia" --icon=./icon.icns --overwrite
+electron-packager . ClipGraph --app-version=4.2.6 --electron-version=2.0.0 --platform=darwin --arch=x64 --app-copyright="Copyright (C) SatisKia" --icon=./icon.icns --overwrite
 
 cd ..
 
