@@ -1,4 +1,4 @@
-function Electron( main ){
+function DesktopApp( main ){
 	this._main = main;
 
 	try {
@@ -13,7 +13,7 @@ function Electron( main ){
 	this._extfunc_str = "";
 }
 
-Electron.prototype = {
+DesktopApp.prototype = {
 
 	version : function(){
 		return this._main.version;

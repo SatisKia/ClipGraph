@@ -66,7 +66,7 @@ const createWindow = () => {
 						role: "about",
 					},
 					{
-						label: _isEnglish ? "Quit" : "終了",
+						label: exports.isEnglish ? "Quit" : "終了",
 						accelerator: "Command+Q",
 						click() {
 							app.quit();

@@ -219,8 +219,8 @@ var nativeRequest;
 #include "KeyEvent.js"
 var keyShiftOnly = false;
 
-#include "ElectronV2.js"
-var electron = null;
+#include "DesktopApp.js"
+var desktopApp = null;
 
 var divEdit;
 
@@ -295,11 +295,11 @@ function printAppVersion( version ){
 		con.setBold( false );
 		con.println( window.navigator.userAgent );
 	}
-	if( electron != null ){
+	if( desktopApp != null ){
 		con.setBold( true );
 		con.print( "Platform: " );
 		con.setBold( false );
-		con.println( electron.platform() );
+		con.println( desktopApp.platform() );
 	} else {
 		con.setBold( true );
 		con.print( "App: " );
@@ -320,14 +320,12 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	con = new _Console( conId );
 	con.setMaxLen( conMaxLen );
 
-	try {
-		electron = new Electron( require( "electron" ).remote.require( "./electron" ) );
+	if( window.desktopAppAPI != undefined ){
+		desktopApp = new DesktopApp( window.desktopAppAPI );
 
 		window.onbeforeunload = function(){
-			electron.writeProfile( exportProfile() );
+			desktopApp.writeProfile( exportProfile() );
 		};
-	} catch( e ){
-		electron = null;
 	}
 
 	common = new Common();
@@ -357,8 +355,8 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	initProfile( useStorage );
 	setProfilePrefix( PROFILE_PREFIX );
 
-	if( electron != null ){
-		var text = electron.readProfile();
+	if( desktopApp != null ){
+		var text = desktopApp.readProfile();
 		if( text.length > 0 ){
 			setEnableWriteProfile( true );
 			importProfile( text );
@@ -801,8 +799,8 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 		nativeRequest.send( "started" );
 	} else {
 		var version = "";
-		if( electron != null ){
-			version = " " + electron.version();
+		if( desktopApp != null ){
+			version = " " + desktopApp.version();
 		}
 		printAppVersion( version );
 	}
@@ -816,8 +814,8 @@ function main( editId, logId, conId, tableId, selectImageId, canvasId, inputFile
 	_addGraphEventListener( document, "keydown", keyDown );
 	_addGraphEventListener( document, "keyup", keyUp );
 
-	if( electron != null ){
-		setEnglish( electron.isEnglish() );
+	if( desktopApp != null ){
+		setEnglish( desktopApp.isEnglish() );
 	}
 
 	if( androidTabletTest || iPadTest || (bodyHeight != defHeight( false )) ){
@@ -1889,8 +1887,8 @@ function doLoadExtFuncFile(){
 }
 function loadExtFuncFile(){
 	if( loadNum >= extFuncFile.length ){
-		if( electron != null ){
-			electron.applyExtFunc();
+		if( desktopApp != null ){
+			desktopApp.applyExtFunc();
 		}
 
 		cssSetStyleDisplayById( "graph_button_loadextfunc", false );
@@ -1903,8 +1901,8 @@ function loadExtFuncFile(){
 	}
 
 	var data;
-	if( electron != null ){
-		data = electron.getExtFunc( extFuncFile[loadNum], "" );
+	if( desktopApp != null ){
+		data = desktopApp.getExtFunc( extFuncFile[loadNum], "" );
 	} else {
 		data = getProfileString( "TMP_", extFuncFile[loadNum], "" );
 	}
@@ -1929,8 +1927,8 @@ window.onHttpResponse = function( request, data ){
 	}
 
 	if( request != null ){
-		if( electron != null ){
-			electron.setExtFunc( extFuncFile[loadNum], data );
+		if( desktopApp != null ){
+			desktopApp.setExtFunc( extFuncFile[loadNum], data );
 		} else {
 			writeProfileString( "TMP_", extFuncFile[loadNum], data );
 		}
@@ -1946,16 +1944,16 @@ window.onHttpError = function( request, status ){
 function loadExtFuncFile2(){
 	var i;
 
-	if( electron != null ){
-		electron.beginReadExtFunc( "load" );
+	if( desktopApp != null ){
+		desktopApp.beginReadExtFunc( "load" );
 		for( i = 0; ; i++ ){
-			file = electron.readExtFunc();
+			file = desktopApp.readExtFunc();
 			if( file.length == 0 ){
 				break;
 			}
 			extFuncFile2[i] = file;
 		}
-		electron.endReadExtFunc();
+		desktopApp.endReadExtFunc();
 	} else {
 		beginGetProfile( "TMP_LOADCEF_" );
 		for( i = 0; ; i++ ){
@@ -1970,8 +1968,8 @@ function loadExtFuncFile2(){
 
 	for( i = 0; i < extFuncFile2.length; i++ ){
 		var data;
-		if( electron != null ){
-			data = electron.getExtFunc( extFuncFile2[i], "" );
+		if( desktopApp != null ){
+			data = desktopApp.getExtFunc( extFuncFile2[i], "" );
 		} else {
 			data = getProfileString( "TMP_", extFuncFile2[i], "" );
 		}
@@ -2019,14 +2017,14 @@ function onInputFileLoad( func, data ){
 		data += extFuncData2[index][i];
 	}
 
-	if( electron != null ){
-		electron.beginWriteExtFunc();
+	if( desktopApp != null ){
+		desktopApp.beginWriteExtFunc();
 		for( i = 0; i < extFuncFile2.length; i++ ){
-			electron.writeExtFunc( extFuncFile2[i] );
+			desktopApp.writeExtFunc( extFuncFile2[i] );
 		}
-		electron.endWriteExtFunc( "load" );
+		desktopApp.endWriteExtFunc( "load" );
 
-		electron.setExtFunc( extFuncFile2[index], data );
+		desktopApp.setExtFunc( extFuncFile2[index], data );
 	} else {
 		beginWriteProfile();
 		for( i = 0; i < extFuncFile2.length; i++ ){
@@ -2038,8 +2036,8 @@ function onInputFileLoad( func, data ){
 	}
 }
 function onInputFileLoadEnd( num ){
-	if( electron != null ){
-		electron.applyExtFunc();
+	if( desktopApp != null ){
+		desktopApp.applyExtFunc();
 	}
 }
 
@@ -3786,8 +3784,8 @@ function doButtonUIProfile( readOnly ){
 	cssSetStyleDisplayById( "button_profile_import2", readOnly ? false : true );
 	document.getElementById( "profile" ).readOnly = readOnly;
 	if( !readOnly ){
-		if( electron != null ){
-			document.getElementById( "profile" ).value = electron.readProfile();
+		if( desktopApp != null ){
+			document.getElementById( "profile" ).value = desktopApp.readProfile();
 		} else {
 			document.getElementById( "profile" ).value = "";
 		}

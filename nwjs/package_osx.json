@@ -1,0 +1,26 @@
+{
+  "name": "ClipGraph",
+  "version": "4.2.6",
+  "main": "index.html",
+  "window": {
+    "show": false,
+    "width": 322,
+    "height": 506,
+    "icon": "trayicon.png",
+    "resizable": false
+  },
+  "chromium-args": "--disable-devtools",
+  "scripts": {
+    "start": "./node_modules/.bin/nw ."
+  },
+  "nwbuild": {
+    "app": {
+      "fileDescription": "ClipGraph",
+      "icon": "./../icns/icon.icns",
+      "legalCopyright": "Copyright (C) SatisKia"
+    }
+  },
+  "dependencies": {
+    "nw": "^0.79.1-sdk"
+  }
+}

@@ -1,0 +1,11 @@
+{
+	"name": "ClipGraph",
+	"author": "SatisKia",
+	"main": "index.js",
+	"scripts": {
+		"start": ".\\node_modules\\.bin\\electron ."
+	},
+	"dependencies": {
+		"electron": "^2.0.0"
+	}
+}
