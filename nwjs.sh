@@ -11,7 +11,7 @@ iconutil -c icns icon.iconset
 cd ..
 
 cd build/tmp
-npm install
+npm install --production
 cd ..
 nwbuild --platform=osx --arch=x64 --glob=false ./tmp
 cd ..

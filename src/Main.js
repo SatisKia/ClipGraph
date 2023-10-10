@@ -1260,10 +1260,10 @@ function updateSkin(){
 
 		cssSetPropertyValue( ".div_edit"       , "background-color", "#FFFFFF" );
 		cssSetPropertyValue( ".input_expr"     , "background-color", "#FFFFFF" );
-		cssSetPropertyValue( ".div_log"        , "background-color", "rgba(255,255,255,0.0)" );
-		cssSetPropertyValue( ".div_table"      , "background-color", "rgba(255,255,255,0.0)" );
+		cssSetPropertyValue( ".div_log"        , "background-color", color );
+		cssSetPropertyValue( ".div_table"      , "background-color", color );
 		cssSetPropertyValue( ".div_selectimage", "background-color", "rgba(255,255,255,0.0)" );
-		cssSetPropertyValue( ".div_console"    , "background-color", "rgba(255,255,255,0.0)" );
+		cssSetPropertyValue( ".div_console"    , "background-color", color );
 
 		cursorText = "#FFFFFF";
 		cursorBack = IMAGE_CHECKED;

@@ -20,7 +20,7 @@
       "legalCopyright": "Copyright (C) SatisKia"
     }
   },
-  "dependencies": {
+  "devDependencies": {
     "nw": "^0.79.1-sdk"
   }
 }

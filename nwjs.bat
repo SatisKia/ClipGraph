@@ -5,7 +5,7 @@ copy nwjs\api.js           build\tmp
 copy nwjs\package_win.json build\tmp\package.json
 
 cd build\tmp
-call npm install
+call npm install --production
 @echo on
 cd ..
 call nwbuild --platform=win --arch=x64 --glob=false ./tmp
