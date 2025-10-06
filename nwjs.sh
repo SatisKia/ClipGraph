@@ -13,7 +13,8 @@ cd ..
 cd build/tmp
 npm install --production
 cd ..
-nwbuild --platform=osx --arch=x64 --glob=false ./tmp
+cp ../nwjs/app.json tmp/package.json
+nwbuild --version=0.79.1 --platform=osx --arch=x64 --glob=false tmp
 cd ..
 
 rm build/out/ClipGraph.app/Contents/Resources/app.nw/All.debug.js
